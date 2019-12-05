@@ -13,11 +13,15 @@ class MemoManager(Observer):
         self.dataManager = DataManager()
         self._loadMemo()
 
-    
     def _loadMemo(self):
         fm = FileManager()
         memoData = fm.loadDataFile()
         self.dataManager.setMemoList(memoData)
+        if self.parent != None:
+            self.parent.OnUpdateMemoList(self.dataManager.getMemoList())
+
+    def OnSetParent(self, parent):
+        self.parent = parent
         if self.parent != None:
             self.parent.OnUpdateMemoList(self.dataManager.getMemoList())
 

@@ -2,6 +2,7 @@ import wx
 import logging
 import logging.handlers
 from MemoUIFrame import *
+from MemoManager import MemoManager
 '''
 Start  : 2019.12.05
 Update : 2019.12.06
@@ -33,7 +34,9 @@ def printEnd():
 
 def main(): 
     app = wx.App()
+    memoManager = MemoManager()
     frm = MemoUIFrame(None, swVersion=SW_VERSION, size=(800,600))
+    frm.OnRegister(memoManager)
     frm.Show()
     app.MainLoop()
     pass

@@ -15,22 +15,22 @@ class ListPanel(wx.Panel):
         sizer = wx.BoxSizer(wx.VERTICAL)
 
         ##
-        fileMngBtnBox = wx.BoxSizer(wx.HORIZONTAL)
+        listMngBtnBox = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.cmdText = wx.TextCtrl(self, style = wx.TE_PROCESS_ENTER,size=(200,25))
-        #self.cmdText.Bind(wx.EVT_TEXT_ENTER, self.onRunCmd)
-        self.cmdText.SetValue("")
-        fileMngBtnBox.Add(self.cmdText, 0, wx.ALIGN_CENTRE, 5)
+        self.searchText = wx.TextCtrl(self, style = wx.TE_PROCESS_ENTER,size=(200,25))
+        self.searchText.Bind(wx.EVT_TEXT_ENTER, self.OnSearchKeyword)
+        self.searchText.SetValue("")
+        listMngBtnBox.Add(self.searchText, 0, wx.ALIGN_CENTRE, 5)
 
-        self.topicAddBtn = wx.Button(self, 10, "Find", size=(50,30))
-        #self.topicAddBtn.Bind(wx.EVT_BUTTON, self.OnAddTopic)
-        fileMngBtnBox.Add(self.topicAddBtn, 0, wx.ALIGN_CENTRE, 5)        
+        self.searchBtn = wx.Button(self, 10, "Find", size=(50,30))
+        self.searchBtn.Bind(wx.EVT_BUTTON, self.OnSearchKeyword)
+        listMngBtnBox.Add(self.searchBtn, 0, wx.ALIGN_CENTRE, 5)        
 
-        self.topicClearBtn = wx.Button(self, 10, "Clear", size=(50,30))
-        #self.topicClearBtn.Bind(wx.EVT_BUTTON, self.OnClearTopic)
-        fileMngBtnBox.Add(self.topicClearBtn, 1, wx.ALIGN_CENTRE, 5)
+        self.searchClearBtn = wx.Button(self, 10, "Clear", size=(50,30))
+        self.searchClearBtn.Bind(wx.EVT_BUTTON, self.OnSearchClear)
+        listMngBtnBox.Add(self.searchClearBtn, 1, wx.ALIGN_CENTRE, 5)
 
-        sizer.Add(fileMngBtnBox, 0, wx.ALIGN_CENTER_VERTICAL, 1)
+        sizer.Add(listMngBtnBox, 0, wx.ALIGN_CENTER_VERTICAL, 1)
 
         ## memoListCtrl
         memoListID = wx.NewId()
@@ -69,6 +69,14 @@ class ListPanel(wx.Panel):
         ##
         self.SetSizer(sizer)
         self.SetAutoLayout(True)
+
+    def OnSearchClear(self, event):
+        self.searchText.SetValue("")
+
+    def OnSearchKeyword(self, event):
+        searchKeyword = self.searchText.GetValue()
+        self.logger.info(searchKeyword)
+        self.parent.OnSearchKeyword(searchKeyword)
 
     def OnItemSelected(self, evt):
         self.currentItem = evt.Index

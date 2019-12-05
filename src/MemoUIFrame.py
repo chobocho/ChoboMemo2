@@ -5,7 +5,6 @@ import wx
 from MemoPanel import *
 from ListPanel import *
 from memomenu import * 
-from MemoManager import MemoManager
 import logging
 
 from Observable import Observable
@@ -30,10 +29,13 @@ class MemoUIFrame(wx.Frame, Observable):
         self.SetSizer(sizer)
 
         self._addMenubar()
-        self.memoManager = MemoManager(self)
 
     def _addMenubar(self):
         self.menu = MemoMenu(self)
+
+    def OnRegister(self, observer):
+        self.observer = observer
+        self.observer.OnSetParent(self)
 
     def OnQuit(self, event):
         self.Close()
@@ -43,10 +45,13 @@ class MemoUIFrame(wx.Frame, Observable):
         title = 'About'
         wx.MessageBox(msg, title, wx.OK | wx.ICON_INFORMATION)
 
+    def OnSearchKeyword(self, searchKeyword):
+        self.logger.info(searchKeyword)
+
     def OnUpdateMemoList(self, memoList):
         self.logger.info('.')
         self.leftPanel.OnUpdateList(memoList)
 
     def OnUpdateMemo(self, memoIdx):
         self.logger.info(memoIdx)
-        self.rightPanel.OnSetMemo(self.memoManager.OnGetMemo(memoIdx))
+        self.rightPanel.OnSetMemo(self.observer.OnGetMemo(memoIdx))
