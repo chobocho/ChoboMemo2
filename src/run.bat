@@ -1,0 +1,2 @@
+python chobomemo.py
+pause
