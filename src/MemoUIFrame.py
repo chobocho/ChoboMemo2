@@ -35,9 +35,16 @@ class MemoUIFrame(wx.Frame, Observer):
     def _addMenubar(self):
         self.menu = MemoMenu(self)
 
+    def OnCreateMemo(self, memo):
+        self.memoManager.OnCreateMemo(memo)
+
     def OnDeleteMemo(self, memoIdx):
         self.logger.info(memoIdx)
         self.memoManager.OnDeleteMemo(memoIdx)
+
+    def OnUpdateMemo(self, memo):
+        self.memoManager.OnUpdateMemo(memo)
+        self.rightPanel.OnSetMemo(memo[1])
 
     def OnSetMemoManager(self, memoManager):
         self.memoManager = memoManager
@@ -60,9 +67,14 @@ class MemoUIFrame(wx.Frame, Observer):
         self.logger.info('.')
         self.leftPanel.OnUpdateList(memoList)
 
-    def OnUpdateMemo(self, memoIdx):
+    def OnGetMemoItem(self, memoIdx):
         self.logger.info(memoIdx)
-        self.rightPanel.OnSetMemo(self.memoManager.OnGetMemo(memoIdx))
+        return self.memoManager.OnGetMemo(memoIdx)
+        
+    def OnGetMemo(self, memoIdx):
+        self.logger.info(memoIdx)
+        memo = self.memoManager.OnGetMemo(memoIdx)
+        self.rightPanel.OnSetMemo(memo[1])
 
     def OnNotify(self, event = None):
         self.logger.info(event)

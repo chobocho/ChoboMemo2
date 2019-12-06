@@ -2,6 +2,7 @@
 #-*- coding: utf-8 -*-
 import wx
 import logging
+from MemoUI import MemoDialog
 
 class ListPanel(wx.Panel):
     def __init__(self, parent, *args, **kw):
@@ -41,6 +42,7 @@ class ListPanel(wx.Panel):
                                  )
         sizer.Add(self.memoList, 1, wx.EXPAND)
         self.memoList.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnItemSelected)
+        self.memoList.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.OnUpdateMemo)
         self.memoList.InsertColumn(0, "No", width=30)
         self.memoList.InsertColumn(1, "Title", width=270)
         self.currentItem = -1
@@ -48,13 +50,13 @@ class ListPanel(wx.Panel):
         ##
         memoMngBtnBox = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.editBtn = wx.Button(self, 10, "Edit", size=(70,30))
-        #self.urlExportBtn.Bind(wx.EVT_BUTTON, self.OnExportUrlToHtml)
-        memoMngBtnBox.Add(self.editBtn, 1, wx.ALIGN_CENTRE, 1)
+        self.editMemoBtn = wx.Button(self, 10, "Edit", size=(70,30))
+        self.editMemoBtn.Bind(wx.EVT_BUTTON, self.OnUpdateMemo)
+        memoMngBtnBox.Add(self.editMemoBtn, 1, wx.ALIGN_CENTRE, 1)
 
-        self.creatBtn = wx.Button(self, 10, "New", size=(70,30))
-        #self.urlExportBtn.Bind(wx.EVT_BUTTON, self.OnExportUrlToHtml)
-        memoMngBtnBox.Add(self.creatBtn, 1, wx.ALIGN_CENTRE, 1)
+        self.createMemoBtn = wx.Button(self, 10, "New", size=(70,30))
+        self.createMemoBtn.Bind(wx.EVT_BUTTON, self.OnCreateMemo)
+        memoMngBtnBox.Add(self.createMemoBtn, 1, wx.ALIGN_CENTRE, 1)
 
         self.memoSaveBtn = wx.Button(self, 10, "Save", size=(70,30))
         self.memoSaveBtn.Bind(wx.EVT_BUTTON, self.OnSaveMemo)
@@ -69,6 +71,33 @@ class ListPanel(wx.Panel):
         ##
         self.SetSizer(sizer)
         self.SetAutoLayout(True)
+
+    def OnCreateMemo(self, event):
+        dlg = MemoDialog(None, title='Create new memo')
+        if dlg.ShowModal() == wx.ID_OK:
+            memo = []
+            memo.append(dlg.GetTopic())
+            memo.append(dlg.GetValue())
+            self.parent.OnCreateMemo(memo)
+        dlg.Destroy()
+
+    def OnUpdateMemo(self, event):
+        if self.currentItem < 0:
+            self.logger.info("Not choosen item to delete")
+            return
+   
+        chosenItem = self.memoList.GetItem(self.currentItem, 0).GetText()
+        self.logger.info(str(self.currentItem) + ':' + chosenItem)
+        memo = self.parent.OnGetMemoItem(chosenItem)
+
+        dlg = MemoDialog(None, title='Update memo')
+        dlg.SetTopic(memo[0])
+        dlg.SetValue(memo[1])
+        if dlg.ShowModal() == wx.ID_OK:
+            memo[0] = dlg.GetTopic()
+            memo[1] = dlg.GetValue()
+            self.parent.OnUpdateMemo(memo)
+        dlg.Destroy()
 
     def OnDeleteMemo(self, event):
         self.logger.info(self.currentItem)
@@ -98,7 +127,7 @@ class ListPanel(wx.Panel):
         self.currentItem = event.Index
         chosenItem = self.memoList.GetItem(self.currentItem, 0).GetText()
         self.logger.info(str(self.currentItem) + ':' + chosenItem)
-        self.parent.OnUpdateMemo(chosenItem)
+        self.parent.OnGetMemo(chosenItem)
 
     def OnUpdateList(self, memoList):
         self.logger.info('.')

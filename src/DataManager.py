@@ -7,6 +7,23 @@ class DataManager:
         self.logger = logging.getLogger("chobomemo")
         self.memoList = {}
     
+    def OnCreateMemo(self, memo):
+        nextKey = len(self.memoList) + 1
+        self.logger.info(nextKey)
+        while (str(nextKey) in self.memoList) == True:
+            self.logger.info("Exist " + str(nextKey))
+            nextKey += 1
+        
+        strNextKey = str(nextKey)
+        memo.append(strNextKey)
+        self.memoList[strNextKey] = memo
+        self.logger.info(strNextKey)
+
+    def OnUpdateMemo(self, memo):
+        key = memo[2]
+        self.memoList[key] = memo
+        self.logger.info(key)
+
     def OnDeleteMemo(self, memoIdx):
         if (memoIdx in self.memoList) == False:
             return 
@@ -24,7 +41,7 @@ class DataManager:
         self.logger.info("length of memoList is " + str(len(self.memoList)))
 
     def OnGetMemo(self, memoIdx):
-        return self.memoList[memoIdx][1]
+        return self.memoList[memoIdx]
 
 def test():
     '''Test code for TDD'''

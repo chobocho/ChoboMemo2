@@ -22,7 +22,8 @@ class MemoPanel(wx.Panel):
         font = wx.Font(14, wx.DEFAULT, wx.NORMAL, wx.NORMAL)
         self.text.SetFont(font)
         sizer.Add(self.text, 1, wx.EXPAND)
-        
+
+        '''
         btnBox = wx.BoxSizer(wx.HORIZONTAL)
 
         clearBtnId = wx.NewId()
@@ -31,6 +32,8 @@ class MemoPanel(wx.Panel):
         btnBox.Add(clearBtn, 1, wx.ALIGN_CENTRE|wx.ALL, 1)
 
         sizer.Add(btnBox, 0, wx.ALIGN_CENTER_VERTICAL, 1)
+        '''
+        
         self.SetSizer(sizer)
 
     def OnClearBtn(self, event):
