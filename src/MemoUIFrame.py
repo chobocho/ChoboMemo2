@@ -36,6 +36,7 @@ class MemoUIFrame(wx.Frame, Observer):
         self.menu = MemoMenu(self)
 
     def OnDeleteMemo(self, memoIdx):
+        self.logger.info(memoIdx)
         self.memoManager.OnDeleteMemo(memoIdx)
 
     def OnSetMemoManager(self, memoManager):

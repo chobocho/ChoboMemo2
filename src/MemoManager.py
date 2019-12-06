@@ -19,11 +19,12 @@ class MemoManager(Observable):
     def _loadMemo(self):
         memoData = self.fileManager.loadDataFile()
         self.dataManager.OnSetMemoList(memoData)
-        if self.observer != None:
-            self.observer.OnNotify(UPDATE_MEMO)
+        self.OnNotify(UPDATE_MEMO)
    
     def OnDeleteMemo(self, memoIdx):
-        pass
+        self.logger.info(memoIdx)
+        self.dataManager.OnDeleteMemo(memoIdx)
+        self.OnNotify(UPDATE_MEMO)
 
     def OnGetMemo(self, memoIdx):
         return self.dataManager.OnGetMemo(memoIdx)
@@ -33,11 +34,15 @@ class MemoManager(Observable):
 
     def OnRegister(self, observer):
         self.observer = observer
-        if self.observer != None:
-            self.observer.OnNotify(UPDATE_MEMO)
+        self.OnNotify(UPDATE_MEMO)
 
     def OnSave(self):
         self.fileManager.saveDataFile(self.OnGetMemoList())
+
+    def OnNotify(self, evt):
+        if self.observer == None:
+            return
+        self.observer.OnNotify(evt)
 
 def test():
     '''Test code for TDD'''

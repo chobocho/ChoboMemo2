@@ -5,8 +5,17 @@ import logging
 class DataManager:
     def __init__(self):
         self.logger = logging.getLogger("chobomemo")
-        self.memoList = []
+        self.memoList = {}
     
+    def OnDeleteMemo(self, memoIdx):
+        if (memoIdx in self.memoList) == False:
+            return 
+        del self.memoList[memoIdx]
+        #idx = 0
+        #for key in self.memoList.keys():
+        #    idx += 1
+        #    self.memoList[key][2] = str(idx)
+
     def OnGetMemoList(self):
         return self.memoList
 

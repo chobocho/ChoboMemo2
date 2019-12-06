@@ -102,6 +102,7 @@ class ListPanel(wx.Panel):
 
     def OnUpdateList(self, memoList):
         self.logger.info('.')
+        self.memoList.DeleteAllItems()
         for key in memoList.keys():
             memo = memoList[key]
             index = self.memoList.InsertItem(self.memoList.GetItemCount(), 1)
