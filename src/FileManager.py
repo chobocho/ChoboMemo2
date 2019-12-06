@@ -17,6 +17,7 @@ class FileManager:
             dataFile = self.saveFileName
 
             if len(fileName) > 0:
+                self.logger.info(fileName)
                 dataFile = fileName
             if os.path.isfile(dataFile) == False:
                 self.logger.warning("File not exist " + dataFile)

@@ -2,9 +2,11 @@
 #-*- coding: utf-8 -*-
 
 import wx
+import os
 from MemoPanel import *
 from ListPanel import *
 from memomenu import * 
+from filedrop import *
 import MemoManager
 import logging
 
@@ -30,11 +32,21 @@ class MemoUIFrame(wx.Frame, Observer):
         self.SetSizer(sizer)
         self._addMenubar()
 
+        filedrop = FileDrop(self)
+        self.SetDropTarget(filedrop)
+
         self.memoManager = None
 
     def _addMenubar(self):
         self.menu = MemoMenu(self)
  
+    def OnCallback(self, filelist):
+        loadFile = filelist[0]
+        self.logger.info(loadFile)
+        
+        if self.memoManager != None:
+            self.memoManager.OnLoadFile(loadFile)
+
     def OnCreateMemo(self, memo):
         self.memoManager.OnCreateMemo(memo)
 
@@ -48,6 +60,20 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def OnSetMemoManager(self, memoManager):
         self.memoManager = memoManager
+
+    def OnSaveFilteredItems(self, event):
+        exportFilePath = ""
+        dlg = wx.FileDialog(
+             self, message="Save file as ...", defaultDir=os.getcwd(),
+             defaultFile="", wildcard="Cfm files (*.cfm)|*.cfm", style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT
+        )
+
+        if dlg.ShowModal() == wx.ID_OK:
+            exportFilePath = dlg.GetPath()
+            self.memoManager.OnSave(filter=".", filename=exportFilePath)
+        dlg.Destroy()
+
+        
 
     def OnQuit(self, event):
         self.Close()

@@ -21,6 +21,11 @@ class MemoManager(Observable):
         self.dataManager.OnSetMemoList(memoData)
         self.OnNotify(UPDATE_MEMO)
    
+    def OnLoadFile(self, filename):
+        memoData = self.fileManager.loadDataFile(filename)
+        self.dataManager.OnSetMemoList(memoData)
+        self.OnNotify(UPDATE_MEMO)
+
     def OnCreateMemo(self, memo):
         self.dataManager.OnCreateMemo(memo)
         self.OnNotify(UPDATE_MEMO)
@@ -46,10 +51,10 @@ class MemoManager(Observable):
         self.OnNotify(UPDATE_MEMO)
 
     def OnSave(self, filter="", filename=""):
-        if self.dataManager.OnGetNeedToSave() == False:
-            self.logger.info("No need to save!")
-            return
         if len(filter) == 0:
+            if self.dataManager.OnGetNeedToSave() == False:
+                self.logger.info("No need to save!")
+                return
             if self.fileManager.saveDataFile(self.dataManager.OnGetMemoList()):
                 self.dataManager.OnSetNeedToSave(False)
         else:

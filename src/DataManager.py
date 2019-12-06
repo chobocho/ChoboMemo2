@@ -35,10 +35,15 @@ class DataManager:
         self.logger.info(key)
 
     def OnDeleteMemo(self, memoIdx):
+        if (memoIdx in self.memoListOrigin) == False:
+            return 
+        del self.memoListOrigin[memoIdx]
+        self.hasUpdated = True
+
         if (memoIdx in self.memoList) == False:
             return 
         del self.memoList[memoIdx]
-        self.hasUpdated = True
+   
 
     def OnGetFilteredMemoList(self):
         return self.memoList
