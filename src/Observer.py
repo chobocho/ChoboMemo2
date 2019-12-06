@@ -7,9 +7,3 @@ class Observer:
 
     def OnNotify(self, event):
         pass
-
-    def OnSetParent(self, parent):
-        pass
-
-    def OnGetMemo(self):
-        return []

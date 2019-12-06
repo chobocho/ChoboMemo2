@@ -5,14 +5,15 @@ import wx
 from MemoPanel import *
 from ListPanel import *
 from memomenu import * 
+import MemoManager
 import logging
 
-from Observable import Observable
+from Observer import Observer
 
 WINDOW_SIZE_W = 800
 WINDOW_SIZE_H = 600
 
-class MemoUIFrame(wx.Frame, Observable):
+class MemoUIFrame(wx.Frame, Observer):
     def __init__(self, *args, swVersion,  **kw):
         super(MemoUIFrame, self).__init__(*args, title = swVersion, **kw)
         self.logger = logging.getLogger("chobomemo")
@@ -27,15 +28,15 @@ class MemoUIFrame(wx.Frame, Observable):
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.splitter, 1, wx.EXPAND)
         self.SetSizer(sizer)
-
         self._addMenubar()
+
+        self.memoManager = None
 
     def _addMenubar(self):
         self.menu = MemoMenu(self)
 
-    def OnRegister(self, observer):
-        self.observer = observer
-        self.observer.OnSetParent(self)
+    def OnSetMemoManager(self, memoManager):
+        self.memoManager = memoManager
 
     def OnQuit(self, event):
         self.Close()
@@ -54,4 +55,9 @@ class MemoUIFrame(wx.Frame, Observable):
 
     def OnUpdateMemo(self, memoIdx):
         self.logger.info(memoIdx)
-        self.rightPanel.OnSetMemo(self.observer.OnGetMemo(memoIdx))
+        self.rightPanel.OnSetMemo(self.memoManager.OnGetMemo(memoIdx))
+
+    def OnNotify(self, event = None):
+        self.logger.info(event)
+        if event == MemoManager.UPDATE_MEMO:
+            self.OnUpdateMemoList(self.memoManager.OnGetMemoList())

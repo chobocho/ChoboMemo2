@@ -33,13 +33,14 @@ def printEnd():
     logger.info('=== END ===')
 
 def main(): 
-    app = wx.App()
     memoManager = MemoManager()
+    app = wx.App()
     frm = MemoUIFrame(None, swVersion=SW_VERSION, size=(800,600))
-    frm.OnRegister(memoManager)
+    frm.OnSetMemoManager(memoManager)
+    memoManager.OnRegister(frm)
     frm.Show()
     app.MainLoop()
-    pass
+
 
 if __name__ == '__main__':
     initLogger()

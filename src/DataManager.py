@@ -7,10 +7,10 @@ class DataManager:
         self.logger = logging.getLogger("chobomemo")
         self.memoList = []
     
-    def getMemoList(self):
+    def OnGetMemoList(self):
         return self.memoList;
 
-    def setMemoList(self, list):
+    def OnSetMemoList(self, list):
         self.memoList = list[:]
         self.logger.info("length of memoList is " + str(len(self.memoList)))
 

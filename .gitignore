@@ -3,3 +3,4 @@ build
 dist
 /src/backup
 /src/chobomemo.log
+/src/chobomemo.spec
