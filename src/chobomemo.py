@@ -1,4 +1,5 @@
 import wx
+import os
 import logging
 import logging.handlers
 from MemoUIFrame import *
@@ -20,11 +21,12 @@ def initLogger():
     stream_hander.setFormatter(formatter)
     logger.addHandler(stream_hander)
     
-    max_log_size = 128 * 1024
-
-    file_handler = logging.handlers.RotatingFileHandler(filename='./chobomemo.log', maxBytes=max_log_size)
-    file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
+    needFileLogging = os.path.exists(".\\needlog.txt")
+    if needFileLogging:
+        max_log_size = 128 * 1024
+        file_handler = logging.handlers.RotatingFileHandler(filename='./chobomemo.log', maxBytes=max_log_size)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
     
     logger.info('=== ' + SW_VERSION + ' ===')
 
