@@ -48,6 +48,7 @@ class MemoUIFrame(wx.Frame, Observer):
             return
         if self.memoManager != None:
             self.memoManager.OnLoadFile(loadFile)
+            self.SetTitle(self.swVersion + ' : ' + loadFile)
 
     def OnCreateMemo(self, memo):
         self.memoManager.OnCreateMemo(memo)
