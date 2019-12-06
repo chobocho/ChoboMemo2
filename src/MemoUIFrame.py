@@ -34,7 +34,7 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def _addMenubar(self):
         self.menu = MemoMenu(self)
-
+ 
     def OnCreateMemo(self, memo):
         self.memoManager.OnCreateMemo(memo)
 

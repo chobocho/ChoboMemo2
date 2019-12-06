@@ -10,6 +10,7 @@ class ListPanel(wx.Panel):
         self.logger = logging.getLogger("chobomemo")
         self.parent = parent
         self._initUI()
+        self._addShortKey()
 
     def _initUI(self):
         self.logger.info('.')
@@ -72,6 +73,31 @@ class ListPanel(wx.Panel):
         self.SetSizer(sizer)
         self.SetAutoLayout(True)
 
+    def _addShortKey(self):
+        ctrl_D_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.OnDeleteMemo, id=ctrl_D_Id)
+        ctrl_E_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.OnUpdateMemo, id=ctrl_E_Id)
+        ctrl_U_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.OnUpdateMemo, id=ctrl_U_Id)
+        ctrl_F_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.OnFind, id=ctrl_F_Id)
+        ctrl_N_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.OnCreateMemo, id=ctrl_N_Id)
+        ctrl_Q_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.OnQuit, id=ctrl_Q_Id)
+        ctrl_S_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.OnSaveMemo, id=ctrl_S_Id)
+                                    
+        accel_tbl = wx.AcceleratorTable([(wx.ACCEL_CTRL,  ord('D'), ctrl_D_Id ),
+                                         (wx.ACCEL_CTRL,  ord('E'), ctrl_E_Id ),
+                                         (wx.ACCEL_CTRL,  ord('F'), ctrl_F_Id ),
+                                         (wx.ACCEL_CTRL,  ord('N'), ctrl_N_Id ),
+                                         (wx.ACCEL_CTRL,  ord('U'), ctrl_U_Id ),
+                                         (wx.ACCEL_CTRL,  ord('S'), ctrl_S_Id ),
+                                         (wx.ACCEL_CTRL,  ord('Q'), ctrl_Q_Id )])
+        self.SetAcceleratorTable(accel_tbl)
+
     def OnCreateMemo(self, event):
         dlg = MemoDialog(None, title='Create new memo')
         if dlg.ShowModal() == wx.ID_OK:
@@ -123,6 +149,15 @@ class ListPanel(wx.Panel):
         self.logger.info(searchKeyword)
         self.parent.OnSearchKeyword(searchKeyword)
 
+    def OnFind(self, event):
+        dlg = wx.TextEntryDialog(None, 'Input keyword','Find')
+        dlg.SetValue("")
+
+        if dlg.ShowModal() == wx.ID_OK:
+            keyword = dlg.GetValue()
+            self.parent.OnSearchKeyword(keyword)
+        dlg.Destroy()
+
     def OnItemSelected(self, event):
         self.currentItem = event.Index
         chosenItem = self.memoList.GetItem(self.currentItem, 0).GetText()
@@ -143,3 +178,6 @@ class ListPanel(wx.Panel):
     def OnSaveMemo(self, event):
         self.logger.info('.')
         self.parent.OnSaveMemo()
+
+    def OnQuit(self, event):
+        self.parent.Close()
