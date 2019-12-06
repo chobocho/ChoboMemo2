@@ -7,7 +7,14 @@ class DataManager:
         self.logger = logging.getLogger("chobomemo")
         self.memoList = {}
         self.memoListOrigin = {}
+        self.hasUpdated = False
     
+    def OnSetNeedToSave(self, flag):
+        self.hasUpdated = flag
+
+    def OnGetNeedToSave(self):
+        return self.hasUpdated
+
     def OnCreateMemo(self, memo):
         nextKey = len(self.memoList) + 1
         self.logger.info(nextKey)
@@ -18,21 +25,20 @@ class DataManager:
         strNextKey = str(nextKey)
         memo.append(strNextKey)
         self.memoList[strNextKey] = memo
+        self.hasUpdated = True
         self.logger.info(strNextKey)
 
     def OnUpdateMemo(self, memo):
         key = memo[2]
         self.memoList[key] = memo
+        self.hasUpdated = True
         self.logger.info(key)
 
     def OnDeleteMemo(self, memoIdx):
         if (memoIdx in self.memoList) == False:
             return 
         del self.memoList[memoIdx]
-        #idx = 0
-        #for key in self.memoList.keys():
-        #    idx += 1
-        #    self.memoList[key][2] = str(idx)
+        self.hasUpdated = True
 
     def OnGetMemoList(self):
         return self.memoList

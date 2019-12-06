@@ -23,21 +23,23 @@ class MemoPanel(wx.Panel):
         self.text.SetFont(font)
         sizer.Add(self.text, 1, wx.EXPAND)
 
-        '''
         btnBox = wx.BoxSizer(wx.HORIZONTAL)
 
-        clearBtnId = wx.NewId()
-        clearBtn = wx.Button(self, clearBtnId, "Clear", size=(50,30))
-        clearBtn.Bind(wx.EVT_BUTTON, self.OnClearBtn)
-        btnBox.Add(clearBtn, 1, wx.ALIGN_CENTRE|wx.ALL, 1)
+        copyBtnId = wx.NewId()
+        copyBtn = wx.Button(self, copyBtnId, "Copy", size=(50,30))
+        copyBtn.Bind(wx.EVT_BUTTON, self.OnCopyToClipboard)
+        btnBox.Add(copyBtn, 1, wx.ALIGN_CENTRE|wx.ALL, 1)
 
         sizer.Add(btnBox, 0, wx.ALIGN_CENTER_VERTICAL, 1)
-        '''
-        
+
         self.SetSizer(sizer)
 
-    def OnClearBtn(self, event):
-        self.text.SetValue("")
+    def OnCopyToClipboard(self, event):
+        text = self.text.GetValue()
+        if wx.TheClipboard.Open():
+            wx.TheClipboard.SetData(wx.TextDataObject(text))
+            wx.TheClipboard.Close()
+        self.logger.info('')
 
     def OnSetMemo(self, memo):
         self.text.SetValue(memo)

@@ -46,7 +46,11 @@ class MemoManager(Observable):
         self.OnNotify(UPDATE_MEMO)
 
     def OnSave(self):
-        self.fileManager.saveDataFile(self.OnGetMemoList())
+        if self.dataManager.OnGetNeedToSave() == False:
+            self.logger.info("No need to save!")
+            return
+        if self.fileManager.saveDataFile(self.OnGetMemoList()):
+            self.dataManager.OnSetNeedToSave(False)
 
     def OnSetFilter(self, searchKeyword):
         self.dataManager.OnSetFilter(searchKeyword)

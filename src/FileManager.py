@@ -65,6 +65,7 @@ class FileManager:
            json.dump(savedata, outfile)
 
         self.logger.info("Success to save at " + self.saveFileName)
+        return True
 
 def test():
     fm = FileManager()
