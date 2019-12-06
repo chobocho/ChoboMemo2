@@ -13,14 +13,17 @@ class MemoManager(Observable):
         self.logger = logging.getLogger("chobomemo")
         self.dataManager = DataManager()
         self.observer = None
+        self.fileManager = FileManager()
         self._loadMemo()
 
     def _loadMemo(self):
-        fm = FileManager()
-        memoData = fm.loadDataFile()
+        memoData = self.fileManager.loadDataFile()
         self.dataManager.OnSetMemoList(memoData)
         if self.observer != None:
             self.observer.OnNotify(UPDATE_MEMO)
+   
+    def OnDeleteMemo(self, memoIdx):
+        pass
 
     def OnGetMemo(self, memoIdx):
         return self.dataManager.OnGetMemo(memoIdx)
@@ -32,6 +35,9 @@ class MemoManager(Observable):
         self.observer = observer
         if self.observer != None:
             self.observer.OnNotify(UPDATE_MEMO)
+
+    def OnSave(self):
+        self.fileManager.saveDataFile(self.OnGetMemoList())
 
 def test():
     '''Test code for TDD'''

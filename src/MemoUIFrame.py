@@ -35,6 +35,9 @@ class MemoUIFrame(wx.Frame, Observer):
     def _addMenubar(self):
         self.menu = MemoMenu(self)
 
+    def OnDeleteMemo(self, memoIdx):
+        self.memoManager.OnDeleteMemo(memoIdx)
+
     def OnSetMemoManager(self, memoManager):
         self.memoManager = memoManager
 
@@ -45,6 +48,9 @@ class MemoUIFrame(wx.Frame, Observer):
         msg = self.swVersion + '\nhttp://chobocho.com'
         title = 'About'
         wx.MessageBox(msg, title, wx.OK | wx.ICON_INFORMATION)
+
+    def OnSaveMemo(self):
+        self.memoManager.OnSave()
 
     def OnSearchKeyword(self, searchKeyword):
         self.logger.info(searchKeyword)

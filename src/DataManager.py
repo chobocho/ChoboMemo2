@@ -8,10 +8,10 @@ class DataManager:
         self.memoList = []
     
     def OnGetMemoList(self):
-        return self.memoList;
+        return self.memoList
 
     def OnSetMemoList(self, list):
-        self.memoList = list[:]
+        self.memoList = list.copy()
         self.logger.info("length of memoList is " + str(len(self.memoList)))
 
     def OnGetMemo(self, memoIdx):

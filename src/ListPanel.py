@@ -46,30 +46,46 @@ class ListPanel(wx.Panel):
         self.currentItem = -1
 
         ##
-        urlMngBtnBox = wx.BoxSizer(wx.HORIZONTAL)
+        memoMngBtnBox = wx.BoxSizer(wx.HORIZONTAL)
 
         self.editBtn = wx.Button(self, 10, "Edit", size=(70,30))
         #self.urlExportBtn.Bind(wx.EVT_BUTTON, self.OnExportUrlToHtml)
-        urlMngBtnBox.Add(self.editBtn, 1, wx.ALIGN_CENTRE, 1)
+        memoMngBtnBox.Add(self.editBtn, 1, wx.ALIGN_CENTRE, 1)
 
         self.creatBtn = wx.Button(self, 10, "New", size=(70,30))
         #self.urlExportBtn.Bind(wx.EVT_BUTTON, self.OnExportUrlToHtml)
-        urlMngBtnBox.Add(self.creatBtn, 1, wx.ALIGN_CENTRE, 1)
+        memoMngBtnBox.Add(self.creatBtn, 1, wx.ALIGN_CENTRE, 1)
 
-        self.urlSaveBtn = wx.Button(self, 10, "Save", size=(70,30))
-        #self.urlSaveBtn.Bind(wx.EVT_BUTTON, self.OnSaveURL)
-        urlMngBtnBox.Add(self.urlSaveBtn, 1, wx.ALIGN_CENTRE, 1)
+        self.memoSaveBtn = wx.Button(self, 10, "Save", size=(70,30))
+        self.memoSaveBtn.Bind(wx.EVT_BUTTON, self.OnSaveMemo)
+        memoMngBtnBox.Add(self.memoSaveBtn, 1, wx.ALIGN_CENTRE, 1)
 
-        self.urlDeleteBtn = wx.Button(self, 10, "Delete", size=(70,30))
-        #self.urlDeleteBtn.Bind(wx.EVT_BUTTON, self.OnDeleteURL)
-        urlMngBtnBox.Add(self.urlDeleteBtn, 1, wx.ALIGN_CENTRE, 1)
+        self.memoDeleteBtn = wx.Button(self, 10, "Delete", size=(70,30))
+        self.memoDeleteBtn.Bind(wx.EVT_BUTTON, self.OnDeleteMemo)
+        memoMngBtnBox.Add(self.memoDeleteBtn, 1, wx.ALIGN_CENTRE, 1)
 
-        sizer.Add(urlMngBtnBox, 0, wx.ALIGN_CENTER_VERTICAL, 1)
+        sizer.Add(memoMngBtnBox, 0, wx.ALIGN_CENTER_VERTICAL, 1)
         
         ##
         self.SetSizer(sizer)
         self.SetAutoLayout(True)
 
+    def OnDeleteMemo(self, event):
+        self.logger.info(self.currentItem)
+        if self.currentItem < 0:
+            self.logger.info("Not choosen item to delete")
+            return
+        
+        chosenItem = self.memoList.GetItem(self.currentItem, 0).GetText()
+        title = self.memoList.GetItem(self.currentItem, 1).GetText()
+        msg = 'Do you want to delete [' + chosenItem +'] ' + title
+        title = 'Delete memo'
+        askDeleteDialog = wx.MessageDialog(None, msg, title, wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
+        if askDeleteDialog.ShowModal() == wx.ID_YES:
+           self.parent.OnDeleteMemo(chosenItem)
+           self.logger.info(msg)
+        askDeleteDialog.Destroy()
+    
     def OnSearchClear(self, event):
         self.searchText.SetValue("")
 
@@ -78,16 +94,22 @@ class ListPanel(wx.Panel):
         self.logger.info(searchKeyword)
         self.parent.OnSearchKeyword(searchKeyword)
 
-    def OnItemSelected(self, evt):
-        self.currentItem = evt.Index
-        self.logger.info(self.currentItem)
-        self.parent.OnUpdateMemo(self.currentItem)
+    def OnItemSelected(self, event):
+        self.currentItem = event.Index
+        chosenItem = self.memoList.GetItem(self.currentItem, 0).GetText()
+        self.logger.info(str(self.currentItem) + ':' + chosenItem)
+        self.parent.OnUpdateMemo(chosenItem)
 
     def OnUpdateList(self, memoList):
         self.logger.info('.')
-        for memo in memoList:
+        for key in memoList.keys():
+            memo = memoList[key]
             index = self.memoList.InsertItem(self.memoList.GetItemCount(), 1)
-            self.memoList.SetItem(index, 0, str(index+1))
+            self.memoList.SetItem(index, 0, memo[2])
             self.memoList.SetItem(index, 1, memo[0])
             if index % 2 == 0:
                 self.memoList.SetItemBackgroundColour(index, "Light blue")
+
+    def OnSaveMemo(self, event):
+        self.logger.info('.')
+        self.parent.OnSaveMemo()
