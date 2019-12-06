@@ -48,6 +48,10 @@ class MemoManager(Observable):
     def OnSave(self):
         self.fileManager.saveDataFile(self.OnGetMemoList())
 
+    def OnSetFilter(self, searchKeyword):
+        self.dataManager.OnSetFilter(searchKeyword)
+        self.OnNotify(UPDATE_MEMO)
+
     def OnUpdateMemo(self, memo):
         self.logger.info(memo[2])
         self.dataManager.OnUpdateMemo(memo)

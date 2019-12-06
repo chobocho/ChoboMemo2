@@ -62,6 +62,7 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def OnSearchKeyword(self, searchKeyword):
         self.logger.info(searchKeyword)
+        self.memoManager.OnSetFilter(searchKeyword)
 
     def OnUpdateMemoList(self, memoList):
         self.logger.info('.')

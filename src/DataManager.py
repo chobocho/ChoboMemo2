@@ -6,6 +6,7 @@ class DataManager:
     def __init__(self):
         self.logger = logging.getLogger("chobomemo")
         self.memoList = {}
+        self.memoListOrigin = {}
     
     def OnCreateMemo(self, memo):
         nextKey = len(self.memoList) + 1
@@ -37,11 +38,25 @@ class DataManager:
         return self.memoList
 
     def OnSetMemoList(self, list):
-        self.memoList = list.copy()
+        self.memoListOrigin = list.copy()
+        self.memoList =  list.copy()
         self.logger.info("length of memoList is " + str(len(self.memoList)))
 
     def OnGetMemo(self, memoIdx):
         return self.memoList[memoIdx]
+
+    def OnSetFilter(self, filter_):
+        filter = filter_.strip().lower()
+        if len(filter) == 0:
+            self.memoList = self.memoListOrigin.copy()
+            return
+
+        self.memoList = {}
+        for key in self.memoListOrigin.keys():
+            if filter in self.memoListOrigin[key][0].lower():
+                self.memoList[key] = self.memoListOrigin[key]
+            elif filter in self.memoListOrigin[key][1].lower():
+                self.memoList[key] = self.memoListOrigin[key]
 
 def test():
     '''Test code for TDD'''
