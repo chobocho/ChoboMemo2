@@ -42,8 +42,10 @@ class MemoUIFrame(wx.Frame, Observer):
  
     def OnCallback(self, filelist):
         loadFile = filelist[0]
-        self.logger.info(loadFile)
-        
+
+        if (".cfm" in loadFile.lower()) == False:
+            self.logger.info(loadFile + "is not CFM file!")
+            return
         if self.memoManager != None:
             self.memoManager.OnLoadFile(loadFile)
 
