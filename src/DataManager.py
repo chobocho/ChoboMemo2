@@ -16,34 +16,32 @@ class DataManager:
         return self.hasUpdated
 
     def OnCreateMemo(self, memo):
-        nextKey = len(self.memoList) + 1
+        nextKey = len(self.memoListOrigin) + 1
         self.logger.info(nextKey)
-        while (str(nextKey) in self.memoList) == True:
+        while (str(nextKey) in self.memoListOrigin) == True:
             self.logger.info("Exist " + str(nextKey))
             nextKey += 1
         
         strNextKey = str(nextKey)
         memo.append(strNextKey)
-        self.memoList[strNextKey] = memo
+        self.memoListOrigin[strNextKey] = memo
         self.hasUpdated = True
         self.logger.info(strNextKey)
+        self.memoList = self.memoListOrigin.copy()
 
     def OnUpdateMemo(self, memo):
         key = memo[2]
-        self.memoList[key] = memo
+        self.memoListOrigin[key] = memo
         self.hasUpdated = True
         self.logger.info(key)
+        self.memoList = self.memoListOrigin.copy()
 
     def OnDeleteMemo(self, memoIdx):
         if (memoIdx in self.memoListOrigin) == False:
             return 
         del self.memoListOrigin[memoIdx]
         self.hasUpdated = True
-
-        if (memoIdx in self.memoList) == False:
-            return 
-        del self.memoList[memoIdx]
-   
+        self.memoList = self.memoListOrigin.copy()
 
     def OnGetFilteredMemoList(self):
         return self.memoList
