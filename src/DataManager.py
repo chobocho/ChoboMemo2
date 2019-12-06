@@ -40,8 +40,11 @@ class DataManager:
         del self.memoList[memoIdx]
         self.hasUpdated = True
 
-    def OnGetMemoList(self):
+    def OnGetFilteredMemoList(self):
         return self.memoList
+
+    def OnGetMemoList(self):
+        return self.memoListOrigin
 
     def OnSetMemoList(self, list):
         self.memoListOrigin = list.copy()

@@ -34,7 +34,7 @@ class MemoManager(Observable):
         return self.dataManager.OnGetMemo(memoIdx)
 
     def OnGetMemoList(self):
-        return self.dataManager.OnGetMemoList()
+        return self.dataManager.OnGetFilteredMemoList()
 
     def OnNotify(self, evt):
         if self.observer == None:
@@ -45,12 +45,18 @@ class MemoManager(Observable):
         self.observer = observer
         self.OnNotify(UPDATE_MEMO)
 
-    def OnSave(self):
+    def OnSave(self, filter="", filename=""):
         if self.dataManager.OnGetNeedToSave() == False:
             self.logger.info("No need to save!")
             return
-        if self.fileManager.saveDataFile(self.OnGetMemoList()):
-            self.dataManager.OnSetNeedToSave(False)
+        if len(filter) == 0:
+            if self.fileManager.saveDataFile(self.dataManager.OnGetMemoList()):
+                self.dataManager.OnSetNeedToSave(False)
+        else:
+            if len(filename) == 0:
+                self.fileManager.saveDataFile(self.OnGetMemoList())
+            else:
+                self.fileManager.saveDataFile(self.OnGetMemoList(), filename)
 
     def OnSetFilter(self, searchKeyword):
         self.dataManager.OnSetFilter(searchKeyword)
