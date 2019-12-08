@@ -3,6 +3,7 @@
 
 import wx
 import logging
+import textutil
 
 WINDOW_SIZE = 480
 
@@ -34,6 +35,19 @@ class MemoPanel(wx.Panel):
         copyBtn.Bind(wx.EVT_BUTTON, self.OnCopyToClipboard)
         btnBox.Add(copyBtn, 1, wx.ALIGN_CENTRE|wx.ALL, 1)
 
+        self.searchText = wx.TextCtrl(self, style = wx.TE_PROCESS_ENTER,size=(200,25))
+        self.searchText.Bind(wx.EVT_TEXT_ENTER, self.OnSearchKeyword)
+        self.searchText.SetValue("")
+        btnBox.Add(self.searchText, 0, wx.ALIGN_CENTRE, 5)
+
+        self.searchBtn = wx.Button(self, 10, "Find", size=(50,30))
+        self.searchBtn.Bind(wx.EVT_BUTTON, self.OnSearchKeyword)
+        btnBox.Add(self.searchBtn, 0, wx.ALIGN_CENTRE, 5)        
+
+        self.searchClearBtn = wx.Button(self, 10, "Clear", size=(50,30))
+        self.searchClearBtn.Bind(wx.EVT_BUTTON, self.OnSearchClear)
+        btnBox.Add(self.searchClearBtn, 1, wx.ALIGN_CENTRE, 5)
+
         sizer.Add(btnBox, 0, wx.ALIGN_CENTER_VERTICAL, 1)
 
         self.SetSizer(sizer)
@@ -52,3 +66,26 @@ class MemoPanel(wx.Panel):
 
     def OnSetMemo(self, memo):
         self.text.SetValue(memo)
+        self._OnSearchKeyword()
+
+    def OnSearchClear(self, event):
+        self.searchText.SetValue("")
+
+    def OnSetSearchKeyword(self, keyword):
+        self.searchText.SetValue(keyword)
+        self._OnSearchKeyword()
+
+    def OnSearchKeyword(self, event):
+        self._OnSearchKeyword()
+
+    def _OnSearchKeyword(self):
+        searchKeyword = self.searchText.GetValue()
+        self.logger.info(searchKeyword)
+        keywordList = searchKeyword.lower().split('|')
+        
+        originalText = self.text.GetValue()
+        HighLightPosition = textutil.searchKeyword(originalText, keywordList)
+        self.logger.info(HighLightPosition)
+        self.text.SetValue(originalText)
+        for pos in HighLightPosition:
+            self.text.SetStyle(pos[0], pos[1], wx.TextAttr(wx.BLACK,"Light blue"))
