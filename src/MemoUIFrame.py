@@ -79,6 +79,15 @@ class MemoUIFrame(wx.Frame, Observer):
     def OnQuit(self, event):
         self.Close()
 
+    def OnSetBlueColorBg(self, event):
+        self.rightPanel.OnSetBGColor((0,51,102), wx.WHITE)
+
+    def OnSetYellowColorBg(self, event):
+        self.rightPanel.OnSetBGColor((255, 255, 204), wx.BLACK)
+
+    def OnSetWhiteColorBg(self, event):
+        self.rightPanel.OnSetBGColor(wx.WHITE, wx.BLACK)
+
     def OnAbout(self, event):
         msg = self.swVersion + '\nhttp://chobocho.com'
         title = 'About'

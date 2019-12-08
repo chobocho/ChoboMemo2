@@ -20,6 +20,23 @@ class MemoMenu():
         menubar.Append(fileMenu, '&File')
 
         ##
+        viewMenu = wx.Menu()
+
+        bgBlueColorItemsId = wx.NewId()
+        bgBlueColorItems = viewMenu.Append(bgBlueColorItemsId, 'Set Blue', 'Set backgourd as Blue')
+        self.parent.Bind(wx.EVT_MENU, self.parent.OnSetBlueColorBg, bgBlueColorItems)
+
+        bgWhiteColorItemsId = wx.NewId()
+        bgWhiteColorItems = viewMenu.Append(bgWhiteColorItemsId, 'Set White', 'Set backgourd as White')
+        self.parent.Bind(wx.EVT_MENU, self.parent.OnSetWhiteColorBg, bgWhiteColorItems)
+
+        bgYellowColorItemsId = wx.NewId()
+        bgYellowColorItems = viewMenu.Append(bgYellowColorItemsId, 'Set Yellow', 'Set backgourd as Yellow')
+        self.parent.Bind(wx.EVT_MENU, self.parent.OnSetYellowColorBg, bgYellowColorItems)
+
+        menubar.Append(viewMenu, '&View')
+
+        ##
         helpMenu = wx.Menu()
 
         aboutItemId = wx.NewId()

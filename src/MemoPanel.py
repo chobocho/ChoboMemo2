@@ -41,5 +41,10 @@ class MemoPanel(wx.Panel):
             wx.TheClipboard.Close()
         self.logger.info('')
 
+    def OnSetBGColor(self, bgColor, fontColor):
+        self.text.SetBackgroundColour(bgColor)
+        self.text.SetForegroundColour(fontColor)
+        self.text.Refresh()
+
     def OnSetMemo(self, memo):
         self.text.SetValue(memo)

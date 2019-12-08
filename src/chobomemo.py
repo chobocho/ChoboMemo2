@@ -6,10 +6,10 @@ from MemoUIFrame import *
 from MemoManager import MemoManager
 '''
 Start  : 2019.12.05
-Update : 2019.12.07
+Update : 2019.12.08
 '''
 
-SW_VERSION = "ChoboMemo v0.1105SL3"
+SW_VERSION = "ChoboMemo v0.1105SL4"
 
 def initLogger():
     logger = logging.getLogger("chobomemo")
