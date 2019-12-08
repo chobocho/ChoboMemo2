@@ -15,12 +15,16 @@ class MemoPanel(wx.Panel):
 
     def _initUi(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
-        self.text = wx.TextCtrl(self, style = wx.TE_PROCESS_ENTER|wx.TE_MULTILINE, size=(WINDOW_SIZE/2,WINDOW_SIZE))
+        self.text = wx.TextCtrl(self, style = wx.TE_PROCESS_ENTER|
+                                              wx.TE_MULTILINE|
+                                              wx.TE_READONLY|
+                                              wx.TE_RICH2, 
+                                size=(WINDOW_SIZE/2,WINDOW_SIZE))
         self.text.SetValue("")
-        self.text.SetBackgroundColour((0,51,102))
-        self.text.SetForegroundColour(wx.WHITE)
         font = wx.Font(14, wx.DEFAULT, wx.NORMAL, wx.NORMAL)
         self.text.SetFont(font)
+        self.text.SetBackgroundColour((0,51,102))
+        self.text.SetForegroundColour(wx.WHITE)
         sizer.Add(self.text, 1, wx.EXPAND)
 
         btnBox = wx.BoxSizer(wx.HORIZONTAL)
