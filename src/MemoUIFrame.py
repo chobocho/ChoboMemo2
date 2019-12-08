@@ -76,8 +76,6 @@ class MemoUIFrame(wx.Frame, Observer):
             self.memoManager.OnSave(filter=".", filename=exportFilePath)
         dlg.Destroy()
 
-        
-
     def OnQuit(self, event):
         self.Close()
 
