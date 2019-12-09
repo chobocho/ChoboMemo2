@@ -1,2 +1,2 @@
-python chobomemo.py
+python minim.py
 pause

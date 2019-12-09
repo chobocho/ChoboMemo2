@@ -9,7 +9,7 @@ Start  : 2019.12.05
 Update : 2019.12.08
 '''
 
-SW_VERSION = "ChoboMemo v0.1105SL4"
+SW_VERSION = "minim v0.1105SL5"
 
 def initLogger():
     logger = logging.getLogger("chobomemo")
@@ -24,7 +24,7 @@ def initLogger():
     needFileLogging = os.path.exists(".\\needlog.txt")
     if needFileLogging:
         max_log_size = 128 * 1024
-        file_handler = logging.handlers.RotatingFileHandler(filename='./chobomemo.log', maxBytes=max_log_size)
+        file_handler = logging.handlers.RotatingFileHandler(filename='./minim.log', maxBytes=max_log_size)
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
     

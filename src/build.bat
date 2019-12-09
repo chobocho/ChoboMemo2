@@ -1,2 +1,2 @@
-pyinstaller -F -w --icon=memo.ico chobomemo.py
+pyinstaller -F -w --icon=minim.ico minim.py
 pause
