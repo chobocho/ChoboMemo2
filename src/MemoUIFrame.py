@@ -31,6 +31,7 @@ class MemoUIFrame(wx.Frame, Observer):
         sizer.Add(self.splitter, 1, wx.EXPAND)
         self.SetSizer(sizer)
         self._addMenubar()
+        self._addShortKey()
 
         filedrop = FileDrop(self)
         self.SetDropTarget(filedrop)
@@ -40,6 +41,32 @@ class MemoUIFrame(wx.Frame, Observer):
     def _addMenubar(self):
         self.menu = MemoMenu(self)
  
+    def _addShortKey(self):
+        ctrl_D_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self._OnDeleteMemo, id=ctrl_D_Id)
+        ctrl_E_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self._OnUpdateMemo, id=ctrl_E_Id)
+        ctrl_U_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self._OnUpdateMemo, id=ctrl_U_Id)
+        ctrl_F_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.OnFind, id=ctrl_F_Id)
+        ctrl_N_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self._OnCreateMemo, id=ctrl_N_Id)
+        ctrl_Q_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.OnQuit, id=ctrl_Q_Id)
+        ctrl_S_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self._OnSaveMemo, id=ctrl_S_Id)
+                                    
+        accel_tbl = wx.AcceleratorTable([(wx.ACCEL_CTRL,  ord('D'), ctrl_D_Id ),
+                                         (wx.ACCEL_CTRL,  ord('E'), ctrl_E_Id ),
+                                         (wx.ACCEL_CTRL,  ord('F'), ctrl_F_Id ),
+                                         (wx.ACCEL_CTRL,  ord('N'), ctrl_N_Id ),
+                                         (wx.ACCEL_CTRL,  ord('U'), ctrl_U_Id ),
+                                         (wx.ACCEL_CTRL,  ord('S'), ctrl_S_Id ),
+                                         (wx.ACCEL_CTRL,  ord('Q'), ctrl_Q_Id )])
+        self.SetAcceleratorTable(accel_tbl)
+
+
     def OnCallback(self, filelist):
         loadFile = filelist[0]
 
@@ -49,6 +76,27 @@ class MemoUIFrame(wx.Frame, Observer):
         if self.memoManager != None:
             self.memoManager.OnLoadFile(loadFile)
             self.SetTitle(self.swVersion + ' : ' + loadFile)
+
+    def _OnCreateMemo(self, event):
+        self.leftPanel.OnCreateMemo()
+
+    def _OnUpdateMemo(self, event):
+        self.leftPanel.OnUpdateMemo()
+
+    def _OnDeleteMemo(self, event):
+        self.leftPanel.OnDeleteMemo()
+
+    def _OnSaveMemo(self, event):
+        self.OnSaveMemo()
+
+    def OnFind(self, event):
+        dlg = wx.TextEntryDialog(None, 'Input keyword','Find')
+        dlg.SetValue("")
+
+        if dlg.ShowModal() == wx.ID_OK:
+            keyword = dlg.GetValue()
+            self.OnSearchKeyword(keyword)
+        dlg.Destroy()
 
     def OnCreateMemo(self, memo):
         self.memoManager.OnCreateMemo(memo)

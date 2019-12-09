@@ -10,7 +10,6 @@ class ListPanel(wx.Panel):
         self.logger = logging.getLogger("chobomemo")
         self.parent = parent
         self._initUI()
-        self._addShortKey()
 
     def _initUI(self):
         self.logger.info('.')
@@ -52,19 +51,19 @@ class ListPanel(wx.Panel):
         memoMngBtnBox = wx.BoxSizer(wx.HORIZONTAL)
 
         self.editMemoBtn = wx.Button(self, 10, "Edit", size=(70,30))
-        self.editMemoBtn.Bind(wx.EVT_BUTTON, self.OnUpdateMemo)
+        self.editMemoBtn.Bind(wx.EVT_BUTTON, self._OnUpdateMemo)
         memoMngBtnBox.Add(self.editMemoBtn, 1, wx.ALIGN_CENTRE, 1)
 
         self.createMemoBtn = wx.Button(self, 10, "New", size=(70,30))
-        self.createMemoBtn.Bind(wx.EVT_BUTTON, self.OnCreateMemo)
+        self.createMemoBtn.Bind(wx.EVT_BUTTON, self._OnCreateMemo)
         memoMngBtnBox.Add(self.createMemoBtn, 1, wx.ALIGN_CENTRE, 1)
 
         self.memoSaveBtn = wx.Button(self, 10, "Save", size=(70,30))
-        self.memoSaveBtn.Bind(wx.EVT_BUTTON, self.OnSaveMemo)
+        self.memoSaveBtn.Bind(wx.EVT_BUTTON, self._OnSaveMemo)
         memoMngBtnBox.Add(self.memoSaveBtn, 1, wx.ALIGN_CENTRE, 1)
 
         self.memoDeleteBtn = wx.Button(self, 10, "Delete", size=(70,30))
-        self.memoDeleteBtn.Bind(wx.EVT_BUTTON, self.OnDeleteMemo)
+        self.memoDeleteBtn.Bind(wx.EVT_BUTTON, self._OnDeleteMemo)
         memoMngBtnBox.Add(self.memoDeleteBtn, 1, wx.ALIGN_CENTRE, 1)
 
         sizer.Add(memoMngBtnBox, 0, wx.ALIGN_CENTER_VERTICAL, 1)
@@ -73,32 +72,10 @@ class ListPanel(wx.Panel):
         self.SetSizer(sizer)
         self.SetAutoLayout(True)
 
-    def _addShortKey(self):
-        ctrl_D_Id = wx.NewIdRef()
-        self.Bind(wx.EVT_MENU, self.OnDeleteMemo, id=ctrl_D_Id)
-        ctrl_E_Id = wx.NewIdRef()
-        self.Bind(wx.EVT_MENU, self.OnUpdateMemo, id=ctrl_E_Id)
-        ctrl_U_Id = wx.NewIdRef()
-        self.Bind(wx.EVT_MENU, self.OnUpdateMemo, id=ctrl_U_Id)
-        ctrl_F_Id = wx.NewIdRef()
-        self.Bind(wx.EVT_MENU, self.OnFind, id=ctrl_F_Id)
-        ctrl_N_Id = wx.NewIdRef()
-        self.Bind(wx.EVT_MENU, self.OnCreateMemo, id=ctrl_N_Id)
-        ctrl_Q_Id = wx.NewIdRef()
-        self.Bind(wx.EVT_MENU, self.OnQuit, id=ctrl_Q_Id)
-        ctrl_S_Id = wx.NewIdRef()
-        self.Bind(wx.EVT_MENU, self.OnSaveMemo, id=ctrl_S_Id)
-                                    
-        accel_tbl = wx.AcceleratorTable([(wx.ACCEL_CTRL,  ord('D'), ctrl_D_Id ),
-                                         (wx.ACCEL_CTRL,  ord('E'), ctrl_E_Id ),
-                                         (wx.ACCEL_CTRL,  ord('F'), ctrl_F_Id ),
-                                         (wx.ACCEL_CTRL,  ord('N'), ctrl_N_Id ),
-                                         (wx.ACCEL_CTRL,  ord('U'), ctrl_U_Id ),
-                                         (wx.ACCEL_CTRL,  ord('S'), ctrl_S_Id ),
-                                         (wx.ACCEL_CTRL,  ord('Q'), ctrl_Q_Id )])
-        self.SetAcceleratorTable(accel_tbl)
+    def _OnCreateMemo(self, event):
+        self.OnCreateMemo()
 
-    def OnCreateMemo(self, event):
+    def OnCreateMemo(self):
         dlg = MemoDialog(None, title='Create new memo')
         if dlg.ShowModal() == wx.ID_OK:
             memo = []
@@ -107,7 +84,10 @@ class ListPanel(wx.Panel):
             self.parent.OnCreateMemo(memo)
         dlg.Destroy()
 
-    def OnUpdateMemo(self, event):
+    def _OnUpdateMemo(self, event):
+        self.OnUpdateMemo()
+
+    def OnUpdateMemo(self):
         if self.currentItem < 0:
             self.logger.info("Not choosen item to delete")
             return
@@ -125,7 +105,10 @@ class ListPanel(wx.Panel):
             self.parent.OnUpdateMemo(memo)
         dlg.Destroy()
 
-    def OnDeleteMemo(self, event):
+    def _OnDeleteMemo(self, event):
+        self.OnDeleteMemo()
+
+    def OnDeleteMemo(self):
         self.logger.info(self.currentItem)
         if self.currentItem < 0:
             self.logger.info("Not choosen item to delete")
@@ -149,15 +132,6 @@ class ListPanel(wx.Panel):
         self.logger.info(searchKeyword)
         self.parent.OnSearchKeyword(searchKeyword)
 
-    def OnFind(self, event):
-        dlg = wx.TextEntryDialog(None, 'Input keyword','Find')
-        dlg.SetValue("")
-
-        if dlg.ShowModal() == wx.ID_OK:
-            keyword = dlg.GetValue()
-            self.parent.OnSearchKeyword(keyword)
-        dlg.Destroy()
-
     def OnItemSelected(self, event):
         self.currentItem = event.Index
         chosenItem = self.memoList.GetItem(self.currentItem, 0).GetText()
@@ -174,10 +148,10 @@ class ListPanel(wx.Panel):
             self.memoList.SetItem(index, 1, memo[0])
             if index % 2 == 0:
                 self.memoList.SetItemBackgroundColour(index, "Light blue")
+    
+    def _OnSaveMemo(self, event):
+        self.OnSaveMemo()
 
-    def OnSaveMemo(self, event):
+    def OnSaveMemo(self):
         self.logger.info('.')
         self.parent.OnSaveMemo()
-
-    def OnQuit(self, event):
-        self.parent.Close()
