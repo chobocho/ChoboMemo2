@@ -42,7 +42,7 @@ class ListPanel(wx.Panel):
                                  )
         sizer.Add(self.memoList, 1, wx.EXPAND)
         self.memoList.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnItemSelected)
-        self.memoList.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.OnUpdateMemo)
+        self.memoList.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self._OnUpdateMemo)
         self.memoList.InsertColumn(0, "No", width=30)
         self.memoList.InsertColumn(1, "Title", width=270)
         self.currentItem = -1
