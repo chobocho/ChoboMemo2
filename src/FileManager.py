@@ -4,6 +4,9 @@ import logging
 import json
 import os
 import wx
+import loadfilev1
+import loadfilev2
+import savefilev2
 
 class FileManager:
     def __init__(self):
@@ -12,39 +15,39 @@ class FileManager:
         self.alternativeDataFileName = "d:\\cfm20181105.cfm"
 
     def loadDataFile(self, fileName=""):
-        memoList = {}
-        try:
+        dataFile = self.saveFileName
+
+        if len(fileName) > 0:
+            self.logger.info(fileName)
+            dataFile = fileName
+        if os.path.isfile(dataFile) == False:
+            self.logger.warning("File not exist " + dataFile)
             dataFile = self.saveFileName
+        if os.path.isfile(dataFile) == False:
+            self.logger.warning("File not exist " + dataFile)
+            dataFile = self.alternativeDataFileName
 
-            if len(fileName) > 0:
-                self.logger.info(fileName)
-                dataFile = fileName
-            if os.path.isfile(dataFile) == False:
-                self.logger.warning("File not exist " + dataFile)
-                dataFile = self.saveFileName
-            if os.path.isfile(dataFile) == False:
-                self.logger.warning("File not exist " + dataFile)
-                dataFile = self.alternativeDataFileName
-
-            if (os.path.isfile(dataFile)):
-                with open(dataFile) as f:
-                    jsonData = json.load(f)
-                memoList = {}
-                idx = 0
-                for memo in jsonData["data"]:
-                    idx += 1
-                    item = []
-                    item.append(memo["id"])
-                    item.append(memo["memo"])
-                    item.append(str(idx))
-                    memoList[item[2]] = item
-                self.saveFileName = dataFile
-            self.logger.info("Success to load " + dataFile)
-            return memoList
-        except:
-            self.logger.exception("Loading faile:" + dataFile)
+        if (os.path.isfile(dataFile)) == False:
             return {}
-        return {}
+
+        version = ""
+        try:
+            file = open(dataFile, 'rt', encoding="UTF-8")
+            version = file.readline()
+            file.close()
+        except:
+            self.logger.exception("File to load " + dataFile)
+            return {}
+
+        self.saveFileName = dataFile
+        fm = None
+
+        if version.strip() == "version:1105.1":
+             fm = loadfilev2.LoadFile()
+        else:
+             fm = loadfilev1.LoadFile()
+        return fm.loadfile(dataFile)
+
 
     def saveDataFile(self, memoList, fileName=""):
         saveFileName = self.saveFileName
@@ -52,18 +55,9 @@ class FileManager:
         if len(fileName) > 0:
             saveFileName = fileName
             self.saveFileName = saveFileName
-        savedata = {}
-        savedata["version"] = "20201105"
-        savedata["data"] = []
-        for key in memoList.keys():
-            memo = memoList[key]
-            item = {}
-            item["id"] = memo[0]
-            item["memo"] = memo[1]
-            savedata["data"].append(item)
 
-        with open(saveFileName, 'w') as outfile:
-           json.dump(savedata, outfile)
+        fm = savefilev2.SaveFile()
+        fm.savefile(memoList, saveFileName)
 
         self.logger.info("Success to save at " + self.saveFileName)
         return True
