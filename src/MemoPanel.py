@@ -16,6 +16,12 @@ class MemoPanel(wx.Panel):
 
     def _initUi(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
+
+        self.title = wx.TextCtrl(self, style = wx.TE_READONLY,
+                                 size=(WINDOW_SIZE,25))
+        self.title.SetValue("")
+        sizer.Add(self.title, 1, wx.ALIGN_CENTER_VERTICAL)
+
         self.text = wx.TextCtrl(self, style = wx.TE_PROCESS_ENTER|
                                               wx.TE_MULTILINE|
                                               wx.TE_READONLY|
@@ -64,7 +70,8 @@ class MemoPanel(wx.Panel):
         self.text.SetForegroundColour(fontColor)
         self.text.Refresh()
 
-    def OnSetMemo(self, memo):
+    def OnSetMemo(self, title, memo):
+        self.title.SetValue(title)
         self.text.SetValue(memo)
         self._OnSearchKeyword()
 

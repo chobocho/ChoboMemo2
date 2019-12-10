@@ -107,7 +107,7 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def OnUpdateMemo(self, memo):
         self.memoManager.OnUpdateMemo(memo)
-        self.rightPanel.OnSetMemo(memo[1])
+        self.rightPanel.OnSetMemo(memo[0], memo[1])
 
     def OnSetMemoManager(self, memoManager):
         self.memoManager = memoManager
@@ -156,11 +156,11 @@ class MemoUIFrame(wx.Frame, Observer):
     def OnGetMemoItem(self, memoIdx):
         self.logger.info(memoIdx)
         return self.memoManager.OnGetMemo(memoIdx)
-        
+
     def OnGetMemo(self, memoIdx):
         self.logger.info(memoIdx)
         memo = self.memoManager.OnGetMemo(memoIdx)
-        self.rightPanel.OnSetMemo(memo[1])
+        self.rightPanel.OnSetMemo(memo[0], memo[1])
 
     def OnNotify(self, event = None):
         self.logger.info(event)
