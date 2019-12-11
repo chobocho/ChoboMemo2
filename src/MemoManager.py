@@ -35,8 +35,8 @@ class MemoManager(Observable):
         self.dataManager.OnDeleteMemo(memoIdx)
         self.OnNotify(UPDATE_MEMO)
 
-    def OnGetMemo(self, memoIdx):
-        return self.dataManager.OnGetMemo(memoIdx)
+    def OnGetMemo(self, memoIdx, searchKeyword = ""):
+        return self.dataManager.OnGetMemo(memoIdx, searchKeyword)
 
     def OnGetMemoList(self):
         return self.dataManager.OnGetFilteredMemoList()

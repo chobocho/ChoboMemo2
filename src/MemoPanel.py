@@ -3,16 +3,17 @@
 
 import wx
 import logging
-import textutil
 
 WINDOW_SIZE = 480
 
 class MemoPanel(wx.Panel):
-    def __init__(self, *args, **kw):
+    def __init__(self, parent, *args, **kw):
         super(MemoPanel, self).__init__(*args, **kw)
         self.logger = logging.getLogger("chobomemo")
+        self.parent = parent
         self._initUi()
         self.SetAutoLayout(True)
+        self.memoIdx = ""
 
     def _initUi(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -70,17 +71,20 @@ class MemoPanel(wx.Panel):
         self.text.SetForegroundColour(fontColor)
         self.text.Refresh()
 
-    def OnSetMemo(self, title, memo):
+    def OnSetMemo(self, title, memo, index, hightlight = []):
+        self.memoIdx = index
         self.title.SetValue(title)
         self.text.SetValue(memo)
-        self._OnSearchKeyword()
+        self.OnShowHighLight(hightlight)
 
     def OnSearchClear(self, event):
         self.searchText.SetValue("")
 
+    def OnGetSearchKeyword(self):
+        return self.searchText.GetValue()
+
     def OnSetSearchKeyword(self, keyword):
         self.searchText.SetValue(keyword)
-        self._OnSearchKeyword()
 
     def OnSearchKeyword(self, event):
         self._OnSearchKeyword()
@@ -88,11 +92,9 @@ class MemoPanel(wx.Panel):
     def _OnSearchKeyword(self):
         searchKeyword = self.searchText.GetValue()
         self.logger.info(searchKeyword)
-        keywordList = searchKeyword.lower().split('|')
-        
-        originalText = self.text.GetValue()
-        HighLightPosition = textutil.searchKeyword(originalText, keywordList)
-        self.logger.info(HighLightPosition)
-        self.text.SetValue(originalText)
-        for pos in HighLightPosition:
+        self.parent.OnGetMemo(self.memoIdx)
+
+    def OnShowHighLight(self, highLightPosition):
+        self.logger.info(highLightPosition)
+        for pos in highLightPosition:
             self.text.SetStyle(pos[0], pos[1], wx.TextAttr(wx.BLACK,"Light blue"))

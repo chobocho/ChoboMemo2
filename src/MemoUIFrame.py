@@ -23,7 +23,7 @@ class MemoUIFrame(wx.Frame, Observer):
         self.swVersion = swVersion
         self.splitter = wx.SplitterWindow(self, -1, wx.Point(0, 0), wx.Size(WINDOW_SIZE_W, WINDOW_SIZE_H), wx.SP_3D | wx.SP_BORDER)
         self.leftPanel = ListPanel(self, self.splitter)
-        self.rightPanel = MemoPanel(self.splitter)
+        self.rightPanel = MemoPanel(self, self.splitter)
         self.splitter.SplitVertically(self.leftPanel, self.rightPanel)
         self.splitter.SetMinimumPaneSize(20)
         self.splitter.SetSashPosition(300, redraw=True)
@@ -107,7 +107,7 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def OnUpdateMemo(self, memo):
         self.memoManager.OnUpdateMemo(memo)
-        self.rightPanel.OnSetMemo(memo[0], memo[1])
+        self.rightPanel.OnSetMemo(memo[0], memo[1], memo[2], memo[3])
 
     def OnSetMemoManager(self, memoManager):
         self.memoManager = memoManager
@@ -153,14 +153,15 @@ class MemoUIFrame(wx.Frame, Observer):
         self.logger.info('.')
         self.leftPanel.OnUpdateList(memoList)
 
-    def OnGetMemoItem(self, memoIdx):
-        self.logger.info(memoIdx)
-        return self.memoManager.OnGetMemo(memoIdx)
+    def OnGetMemoItem(self, memoIdx, searchKeyword = ""):
+        self.logger.info(memoIdx + ":" + searchKeyword)
+        return self.memoManager.OnGetMemo(memoIdx, searchKeyword)
 
     def OnGetMemo(self, memoIdx):
         self.logger.info(memoIdx)
-        memo = self.memoManager.OnGetMemo(memoIdx)
-        self.rightPanel.OnSetMemo(memo[0], memo[1])
+        searchKeyword = self.rightPanel.OnGetSearchKeyword()
+        memo = self.memoManager.OnGetMemo(memoIdx, searchKeyword)
+        self.rightPanel.OnSetMemo(memo[0], memo[1], memo[2], memo[3])
 
     def OnNotify(self, event = None):
         self.logger.info(event)

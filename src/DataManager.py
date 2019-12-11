@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #-*- coding: utf-8 -*-
 import logging
-
+import textutil
 class DataManager:
     def __init__(self):
         self.logger = logging.getLogger("chobomemo")
@@ -54,8 +54,12 @@ class DataManager:
         self.memoList =  list.copy()
         self.logger.info("length of memoList is " + str(len(self.memoList)))
 
-    def OnGetMemo(self, memoIdx):
-        return self.memoList[memoIdx]
+    def OnGetMemo(self, memoIdx, searchKeyword=""):
+        memo = self.memoList[memoIdx][:]
+        keywordList = searchKeyword.lower().split('|')
+        highLightPosition = textutil.searchKeyword(memo[1].lower(), keywordList)
+        memo.append(highLightPosition)
+        return memo
 
     def OnSetFilter(self, filter_):
         filter = filter_.strip().lower()
