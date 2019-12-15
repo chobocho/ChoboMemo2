@@ -22,6 +22,10 @@ class MemoMenu():
         ##
         viewMenu = wx.Menu()
 
+        bgBlackColorItemsId = wx.NewId()
+        bgBlackColorItems = viewMenu.Append(bgBlackColorItemsId, 'Set Black', 'Set backgourd as Black')
+        self.parent.Bind(wx.EVT_MENU, self.parent.OnSetBlackColorBg, bgBlackColorItems)
+
         bgBlueColorItemsId = wx.NewId()
         bgBlueColorItems = viewMenu.Append(bgBlueColorItemsId, 'Set Blue', 'Set backgourd as Blue')
         self.parent.Bind(wx.EVT_MENU, self.parent.OnSetBlueColorBg, bgBlueColorItems)

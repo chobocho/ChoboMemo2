@@ -127,6 +127,9 @@ class MemoUIFrame(wx.Frame, Observer):
     def OnQuit(self, event):
         self.Close()
 
+    def OnSetBlackColorBg(self, event):
+        self.rightPanel.OnSetBGColor(wx.BLACK, wx.WHITE)
+
     def OnSetBlueColorBg(self, event):
         self.rightPanel.OnSetBGColor((0,51,102), wx.WHITE)
 
