@@ -9,7 +9,7 @@ Start  : 2019.12.05
 Update : 2019.12.08
 '''
 
-SW_VERSION = "minim v0.1105SL6.1"
+SW_VERSION = "minim v0.1105SL6.2"
 
 def initLogger():
     logger = logging.getLogger("chobomemo")

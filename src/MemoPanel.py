@@ -18,10 +18,12 @@ class MemoPanel(wx.Panel):
     def _initUi(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
 
+        titleBox = wx.BoxSizer(wx.HORIZONTAL)
         self.title = wx.TextCtrl(self, style = wx.TE_READONLY,
                                  size=(WINDOW_SIZE,25))
         self.title.SetValue("")
-        sizer.Add(self.title, 1, wx.ALIGN_CENTER_VERTICAL)
+        titleBox.Add(self.title, 1, wx.ALIGN_CENTER_VERTICAL, 1)
+        sizer.Add(titleBox, 0, wx.ALIGN_CENTER_VERTICAL)
 
         self.text = wx.TextCtrl(self, style = wx.TE_PROCESS_ENTER|
                                               wx.TE_MULTILINE|
