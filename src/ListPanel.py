@@ -78,9 +78,9 @@ class ListPanel(wx.Panel):
     def OnCreateMemo(self):
         dlg = MemoDialog(None, title='Create new memo')
         if dlg.ShowModal() == wx.ID_OK:
-            memo = []
-            memo.append(dlg.GetTopic())
-            memo.append(dlg.GetValue())
+            memo = {}
+            memo['id'] = dlg.GetTopic()
+            memo['memo'] = dlg.GetValue()
             self.parent.OnCreateMemo(memo)
         dlg.Destroy()
 
@@ -97,11 +97,11 @@ class ListPanel(wx.Panel):
         memo = self.parent.OnGetMemoItem(chosenItem)
 
         dlg = MemoDialog(None, title='Update memo')
-        dlg.SetTopic(memo[0])
-        dlg.SetValue(memo[1])
+        dlg.SetTopic(memo['id'])
+        dlg.SetValue(memo['memo'])
         if dlg.ShowModal() == wx.ID_OK:
-            memo[0] = dlg.GetTopic()
-            memo[1] = dlg.GetValue()
+            memo['id'] = dlg.GetTopic()
+            memo['memo'] = dlg.GetValue()
             self.parent.OnUpdateMemo(memo)
         dlg.Destroy()
 
@@ -144,8 +144,8 @@ class ListPanel(wx.Panel):
         for key in memoList.keys():
             memo = memoList[key]
             index = self.memoList.InsertItem(self.memoList.GetItemCount(), 1)
-            self.memoList.SetItem(index, 0, memo[2])
-            self.memoList.SetItem(index, 1, memo[0])
+            self.memoList.SetItem(index, 0, memo['index'])
+            self.memoList.SetItem(index, 1, memo['id'])
             if index % 2 == 0:
                 self.memoList.SetItemBackgroundColour(index, "Light blue")
     

@@ -68,7 +68,7 @@ class MemoManager(Observable):
         self.OnNotify(UPDATE_MEMO)
 
     def OnUpdateMemo(self, memo):
-        self.logger.info(memo[2])
+        self.logger.info(memo['index'])
         self.dataManager.OnUpdateMemo(memo)
         self.OnNotify(UPDATE_MEMO)
 

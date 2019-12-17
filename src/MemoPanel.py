@@ -73,7 +73,7 @@ class MemoPanel(wx.Panel):
         self.text.SetForegroundColour(fontColor)
         self.text.Refresh()
 
-    def OnSetMemo(self, title, memo, index, hightlight = []):
+    def OnSetMemo(self, index, title, memo, hightlight = []):
         self.memoIdx = index
         self.title.SetValue(title)
         self.text.SetValue(memo)

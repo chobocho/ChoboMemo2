@@ -18,12 +18,12 @@ class LoadFile:
                 idx = 0
                 for memo in jsonData["data"]:
                     idx += 1
-                    item = []
-                    item.append(memo["id"])
-                    item.append(memo["memo"])
-                    item.append(str(idx))
-                    memoList[item[2]] = item
-            self.logger.info("Success to load " + filename)
+                    item = {}
+                    item['id'] = memo["id"]
+                    item['memo'] = memo["memo"]
+                    item['index'] = str(idx)
+                    memoList[item['index']] = item
+                self.logger.info("Success to load " + filename)
             return memoList
         except:
             self.logger.exception("Loading faile:" + filename)

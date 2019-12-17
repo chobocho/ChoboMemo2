@@ -23,15 +23,15 @@ class DataManager:
             nextKey += 1
         
         strNextKey = str(nextKey)
-        memo.append(strNextKey)
-        self.memoListOrigin[strNextKey] = memo
+        memo['index'] = strNextKey
+        self.memoListOrigin[strNextKey] = memo.copy()
         self.hasUpdated = True
         self.logger.info(strNextKey)
         self.memoList = self.memoListOrigin.copy()
 
     def OnUpdateMemo(self, memo):
-        key = memo[2]
-        self.memoListOrigin[key] = memo
+        key = memo['index']
+        self.memoListOrigin[key] = memo.copy()
         self.hasUpdated = True
         self.logger.info(key)
         self.memoList = self.memoListOrigin.copy()
@@ -55,10 +55,10 @@ class DataManager:
         self.logger.info("length of memoList is " + str(len(self.memoList)))
 
     def OnGetMemo(self, memoIdx, searchKeyword=""):
-        memo = self.memoList[memoIdx][:]
+        memo = self.memoList[memoIdx].copy()
         keywordList = searchKeyword.lower().split('|')
-        highLightPosition = textutil.searchKeyword(memo[1].lower(), keywordList)
-        memo.append(highLightPosition)
+        highLightPosition = textutil.searchKeyword(memo['memo'].lower(), keywordList)
+        memo['highlight'] = highLightPosition[:]
         return memo
 
     def OnSetFilter(self, filter_):
@@ -69,9 +69,9 @@ class DataManager:
 
         self.memoList = {}
         for key in self.memoListOrigin.keys():
-            if filter in self.memoListOrigin[key][0].lower():
+            if filter in self.memoListOrigin[key]['id'].lower():
                 self.memoList[key] = self.memoListOrigin[key]
-            elif filter in self.memoListOrigin[key][1].lower():
+            elif filter in self.memoListOrigin[key]['memo'].lower():
                 self.memoList[key] = self.memoListOrigin[key]
 
 def test():

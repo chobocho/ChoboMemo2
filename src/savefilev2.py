@@ -13,8 +13,8 @@ class SaveFile:
         for key in memoList.keys():
             memo = memoList[key]
             item = {}
-            item["id"] = memo[0]
-            item["memo"] = memo[1]
+            item["id"] = memo['id']
+            item["memo"] = memo['memo']
             itemString = json.dumps(item)
             savedata.append(itemString)
 

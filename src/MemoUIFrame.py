@@ -107,7 +107,7 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def OnUpdateMemo(self, memo):
         self.memoManager.OnUpdateMemo(memo)
-        self.rightPanel.OnSetMemo(memo[0], memo[1], memo[2], memo[3])
+        self.rightPanel.OnSetMemo(memo['index'], memo['id'], memo['memo'], memo['highlight'])
 
     def OnSetMemoManager(self, memoManager):
         self.memoManager = memoManager
@@ -164,7 +164,7 @@ class MemoUIFrame(wx.Frame, Observer):
         self.logger.info(memoIdx)
         searchKeyword = self.rightPanel.OnGetSearchKeyword()
         memo = self.memoManager.OnGetMemo(memoIdx, searchKeyword)
-        self.rightPanel.OnSetMemo(memo[0], memo[1], memo[2], memo[3])
+        self.rightPanel.OnSetMemo(memo['index'], memo['id'], memo['memo'], memo['highlight'])
 
     def OnNotify(self, event = None):
         self.logger.info(event)
