@@ -55,6 +55,13 @@ class DataManager:
         self.logger.info("length of memoList is " + str(len(self.memoList)))
 
     def OnGetMemo(self, memoIdx, searchKeyword=""):
+        if len(self.memoList) == 0:
+            emptyMemo = {}
+            emptyMemo['id'] = ""
+            emptyMemo['memo'] = ""
+            emptyMemo['index'] = str(memoIdx)
+            emptyMemo['highlight'] = []
+            return emptyMemo
         memo = self.memoList[memoIdx].copy()
         keywordList = searchKeyword.lower().split('|')
         highLightPosition = textutil.searchKeyword(memo['memo'].lower(), keywordList)

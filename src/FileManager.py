@@ -3,7 +3,6 @@
 import logging
 import json
 import os
-import wx
 import loadfilev1
 import loadfilev2
 import savefilev2
