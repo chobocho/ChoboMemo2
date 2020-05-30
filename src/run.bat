@@ -1,2 +1,0 @@
-python minim.py
-pause
