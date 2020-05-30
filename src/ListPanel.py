@@ -13,6 +13,8 @@ class ListPanel(wx.Panel):
 
     def _initUI(self):
         self.logger.info('.')
+        font = wx.Font(12, wx.FONTFAMILY_TELETYPE, wx.NORMAL, wx.NORMAL)
+
         sizer = wx.BoxSizer(wx.VERTICAL)
 
         ##
@@ -43,8 +45,9 @@ class ListPanel(wx.Panel):
         sizer.Add(self.memoList, 1, wx.EXPAND)
         self.memoList.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnItemSelected)
         self.memoList.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self._OnUpdateMemo)
-        self.memoList.InsertColumn(0, "No", width=30)
+        self.memoList.InsertColumn(0, "No", width=40)
         self.memoList.InsertColumn(1, "Title", width=270)
+        self.memoList.SetFont(font)
         self.currentItem = -1
 
         ##

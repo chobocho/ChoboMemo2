@@ -18,6 +18,7 @@ class MemoPanel(wx.Panel):
     def _initUi(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
 
+
         titleBox = wx.BoxSizer(wx.HORIZONTAL)
         self.title = wx.TextCtrl(self, style = wx.TE_READONLY,
                                  size=(WINDOW_SIZE,25))
@@ -31,7 +32,7 @@ class MemoPanel(wx.Panel):
                                               wx.TE_RICH2, 
                                 size=(WINDOW_SIZE/2,WINDOW_SIZE))
         self.text.SetValue("")
-        font = wx.Font(14, wx.DEFAULT, wx.NORMAL, wx.NORMAL)
+        font = wx.Font(14, wx.FONTFAMILY_TELETYPE, wx.NORMAL, wx.NORMAL)
         self.text.SetFont(font)
         self.text.SetBackgroundColour((0,51,102))
         self.text.SetForegroundColour(wx.WHITE)

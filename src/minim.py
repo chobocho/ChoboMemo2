@@ -4,12 +4,11 @@ import logging
 import logging.handlers
 from MemoUIFrame import *
 from MemoManager import MemoManager
+from info import *
 '''
 Start  : 2019.12.05
 Update : 2020.01.15
 '''
-
-SW_VERSION = "minim v0.1105TA1"
 
 def initLogger():
     logger = logging.getLogger("chobomemo")
