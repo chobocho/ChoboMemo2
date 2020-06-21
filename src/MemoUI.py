@@ -12,6 +12,8 @@ class MemoDialog(sized_controls.SizedDialog):
 
         self.text = wx.TextCtrl(pane, style = wx.TE_MULTILINE,size=(600,300))
         self.text.SetValue("")
+        font = wx.Font(14, wx.FONTFAMILY_TELETYPE, wx.NORMAL, wx.NORMAL)
+        self.text.SetFont(font)
 
         static_line = wx.StaticLine(pane, style=wx.LI_HORIZONTAL)
         static_line.SetSizerProps(border=(('all', 0)), expand=True)
