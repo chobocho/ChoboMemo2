@@ -1,11 +1,7 @@
 import unittest
-import os
-import FileManager
-import MemoManager
-import DataManager
-import textutil
-import loadfilev1
-import loadfilev2
+from manager import DataManager, FileManager, MemoManager
+from util import textutil
+from store import loadfilev1, loadfilev2
 
 
 class ChoboMemoTest(unittest.TestCase):

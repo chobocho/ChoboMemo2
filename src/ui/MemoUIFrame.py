@@ -1,16 +1,15 @@
 #!/usr/bin/python
 #-*- coding: utf-8 -*-
 
-import wx
 import os
-from MemoPanel import *
-from ListPanel import *
-from memomenu import * 
-from filedrop import *
-import MemoManager
+from ui.MemoPanel import *
+from ui.ListPanel import *
+from ui.memomenu import *
+from ui.filedrop import *
+from manager import MemoManager
 import logging
 
-from Observer import Observer
+from manager.Observer import Observer
 
 WINDOW_SIZE_W = 800
 WINDOW_SIZE_H = 600
@@ -74,7 +73,10 @@ class MemoUIFrame(wx.Frame, Observer):
             self.logger.info(loadFile + "is not CFM file!")
             return
         if self.memoManager != None:
-            self.memoManager.OnLoadFile(loadFile)
+            if ".db" in loadFile.lower():
+                self.memoManager.OnLoadDB()
+            else:
+                self.memoManager.OnLoadFile(loadFile)
             self.SetTitle(self.swVersion + ' : ' + loadFile)
 
     def _OnCreateMemo(self, event):

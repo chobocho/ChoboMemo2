@@ -1,10 +1,7 @@
-import wx
-import os
-import logging
 import logging.handlers
-from MemoUIFrame import *
-from MemoManager import MemoManager
-from info import *
+from ui.MemoUIFrame import *
+from manager.MemoManager import MemoManager
+from buildinfo.info import *
 '''
 Start  : 2019.12.05
 Update : 2020.01.15

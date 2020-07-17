@@ -1,11 +1,9 @@
 #!/usr/bin/python
 #-*- coding: utf-8 -*-
 import logging
-import json
 import os
-import loadfilev1
-import loadfilev2
-import savefilev2
+from store import loadfilev1, loadfilev2, savefilev2
+
 
 class FileManager:
     def __init__(self):

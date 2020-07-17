@@ -1,7 +1,9 @@
 #!/usr/bin/python
 #-*- coding: utf-8 -*-
 import logging
-import textutil
+from util import textutil
+
+
 class DataManager:
     def __init__(self):
         self.logger = logging.getLogger("chobomemo")
@@ -15,30 +17,25 @@ class DataManager:
     def OnGetNeedToSave(self):
         return self.hasUpdated
 
-    def OnCreateMemo(self, memo):
-        nextKey = len(self.memoListOrigin) + 1
-        self.logger.info(nextKey)
-        while (str(nextKey) in self.memoListOrigin) == True:
-            self.logger.info("Exist " + str(nextKey))
-            nextKey += 1
-        
-        strNextKey = str(nextKey)
-        memo['index'] = strNextKey
-        self.memoListOrigin[strNextKey] = memo.copy()
+    def OnCreateMemo(self, memo, dbm):
+        memo['index'] = str(dbm.insert([memo['id'], memo['memo']]))
+        self.memoListOrigin[memo['index']] = memo.copy()
         self.hasUpdated = True
-        self.logger.info(strNextKey)
+        self.logger.info(memo['index'])
         self.memoList = self.memoListOrigin.copy()
 
-    def OnUpdateMemo(self, memo):
+    def OnUpdateMemo(self, memo, dbm):
         key = memo['index']
+        dbm.update((memo['id'], memo['memo'], memo['index']))
         self.memoListOrigin[key] = memo.copy()
         self.hasUpdated = True
         self.logger.info(key)
         self.memoList = self.memoListOrigin.copy()
 
-    def OnDeleteMemo(self, memoIdx):
+    def OnDeleteMemo(self, memoIdx, dbm):
         if (memoIdx in self.memoListOrigin) == False:
-            return 
+            return
+        dbm.delete(memoIdx)
         del self.memoListOrigin[memoIdx]
         self.hasUpdated = True
         self.memoList = self.memoListOrigin.copy()
