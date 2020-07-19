@@ -59,6 +59,11 @@ class FileManager:
         self.logger.info("Success to save at " + self.saveFileName)
         return True
 
+    def saveAsMarkdown(self, memo, filename):
+        with open(filename, 'w') as outfile:
+            outfile.write('# '+ memo['id'] + '  \n\n')
+            outfile.write('```\n' + memo['memo'] + '\n```')
+
 def test():
     fm = FileManager()
     fm.loadDataFile()

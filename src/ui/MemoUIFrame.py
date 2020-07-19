@@ -70,13 +70,13 @@ class MemoUIFrame(wx.Frame, Observer):
         loadFile = filelist[0]
 
         if (".cfm" in loadFile.lower()) == False:
-            self.logger.info(loadFile + "is not CFM file!")
+            self.logger.info(loadFile + " is not CFM file!")
+            return
+        if (".cfm.db" in loadFile.lower()):
+            self.logger.info(loadFile + " is not CFM file!")
             return
         if self.memoManager != None:
-            if ".db" in loadFile.lower():
-                self.memoManager.OnLoadDB()
-            else:
-                self.memoManager.OnLoadFile(loadFile)
+            self.memoManager.OnLoadFile(loadFile)
             self.SetTitle(self.swVersion + ' : ' + loadFile)
 
     def _OnCreateMemo(self, event):
@@ -173,3 +173,17 @@ class MemoUIFrame(wx.Frame, Observer):
         self.logger.info(event)
         if event == MemoManager.UPDATE_MEMO:
             self.OnUpdateMemoList(self.memoManager.OnGetMemoList())
+
+    def OnSaveMD(self, memoIdx):
+        self.logger.info(memoIdx)
+
+        exportFilePath = ""
+        dlg = wx.FileDialog(
+             self, message="Save file as markdown", defaultDir=os.getcwd(),
+             defaultFile="", wildcard="md files (*.md)|*.md", style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT
+        )
+
+        if dlg.ShowModal() == wx.ID_OK:
+            exportFilePath = dlg.GetPath()
+            self.memoManager.OnSaveAsMD(memoIdx, filename=exportFilePath)
+        dlg.Destroy()

@@ -10,7 +10,8 @@ class DataManager:
         self.memoList = {}
         self.memoListOrigin = {}
         self.hasUpdated = False
-    
+        self.enableDB = True
+
     def OnSetNeedToSave(self, flag):
         self.hasUpdated = flag
 

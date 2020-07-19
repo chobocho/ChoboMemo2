@@ -17,13 +17,15 @@ class MemoManager(Observable):
         self.fileManager = FileManager()
         self.dbm = DBManager('20201105.cfm.db')
         self._loadMemo()
+        self.canChange = True
 
     def _loadMemo(self):
         memoData = self.dbm.load()
         self.dataManager.OnSetMemoList(memoData)
         self.OnNotify(UPDATE_MEMO)
-   
+
     def OnLoadFile(self, filename):
+        self.canChange = False
         memoData = self.fileManager.loadDataFile(filename)
         self.dataManager.OnSetMemoList(memoData)
         self.OnNotify(UPDATE_MEMO)
@@ -34,15 +36,21 @@ class MemoManager(Observable):
         self.OnNotify(UPDATE_MEMO)
 
     def OnCreateMemo(self, memo):
+        if not self.canChange:
+            return
         self.dataManager.OnCreateMemo(memo, self.dbm)
         self.OnNotify(UPDATE_MEMO)
 
     def OnDeleteMemo(self, memoIdx):
         self.logger.info(memoIdx)
+        if not self.canChange:
+            return
         self.dataManager.OnDeleteMemo(memoIdx, self.dbm)
         self.OnNotify(UPDATE_MEMO)
 
     def OnUpdateMemo(self, memo):
+        if not self.canChange:
+            return
         self.logger.info(memo['index'])
         self.dataManager.OnUpdateMemo(memo, self.dbm)
         self.OnNotify(UPDATE_MEMO)
@@ -74,6 +82,12 @@ class MemoManager(Observable):
                 self.fileManager.saveDataFile(self.OnGetMemoList())
             else:
                 self.fileManager.saveDataFile(self.OnGetMemoList(), filename)
+
+    def OnSaveAsMD(self, memoIdx=-1, filename=""):
+        if len(filename) == 0:
+            return
+        memo = self.OnGetMemo(memoIdx)
+        self.fileManager.saveAsMarkdown(memo, filename)
 
     def OnSetFilter(self, searchKeyword):
         self.dataManager.OnSetFilter(searchKeyword)

@@ -2,7 +2,7 @@
 #-*- coding: utf-8 -*-
 import wx
 import logging
-from MemoUI import MemoDialog
+from ui.MemoUI import MemoDialog
 
 class ListPanel(wx.Panel):
     def __init__(self, parent, *args, **kw):
@@ -153,11 +153,15 @@ class ListPanel(wx.Panel):
         self.logger.info(str(index) + ':' + chosenItem)
         self.parent.OnGetMemo(chosenItem)
 
-    def OnUpdateList(self, memoList):
+    def OnUpdateList(self, memoData):
         self.logger.info('.')
+        memoList = []
+
+        for k, memo in memoData.items():
+            memoList.insert(0, memo)
+
         self.memoList.DeleteAllItems()
-        for key in memoList.keys():
-            memo = memoList[key]
+        for memo in memoList:
             index = self.memoList.InsertItem(self.memoList.GetItemCount(), 1)
             self.memoList.SetItem(index, 0, memo['index'])
             self.memoList.SetItem(index, 1, memo['id'])
