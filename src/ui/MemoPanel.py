@@ -24,7 +24,7 @@ class MemoPanel(wx.Panel):
                                  size=(WINDOW_SIZE,25))
         self.title.SetValue("")
         titleBox.Add(self.title, 1, wx.ALIGN_CENTER_VERTICAL, 1)
-        sizer.Add(titleBox, 0, wx.ALIGN_CENTER_VERTICAL)
+        sizer.Add(titleBox, 0, wx.ALIGN_CENTER)
 
         self.text = wx.TextCtrl(self, style = wx.TE_PROCESS_ENTER|
                                               wx.TE_MULTILINE|
@@ -62,7 +62,7 @@ class MemoPanel(wx.Panel):
         self.saveAsMDBtn.Bind(wx.EVT_BUTTON, self.OnSaveAsMD)
         btnBox.Add(self.saveAsMDBtn, 1, wx.ALIGN_CENTRE, 5)
 
-        sizer.Add(btnBox, 0, wx.ALIGN_CENTER_VERTICAL, 1)
+        sizer.Add(btnBox, 0, wx.ALIGN_CENTER, 1)
 
         self.SetSizer(sizer)
 

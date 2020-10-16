@@ -33,7 +33,7 @@ class ListPanel(wx.Panel):
         self.searchClearBtn.Bind(wx.EVT_BUTTON, self.OnSearchClear)
         listMngBtnBox.Add(self.searchClearBtn, 1, wx.ALIGN_CENTRE, 5)
 
-        sizer.Add(listMngBtnBox, 0, wx.ALIGN_CENTER_VERTICAL, 1)
+        sizer.Add(listMngBtnBox, 0, wx.ALIGN_CENTER, 1)
 
         ## memoListCtrl
         memoListID = wx.NewId()
@@ -69,7 +69,7 @@ class ListPanel(wx.Panel):
         self.memoDeleteBtn.Bind(wx.EVT_BUTTON, self._OnDeleteMemo)
         memoMngBtnBox.Add(self.memoDeleteBtn, 1, wx.ALIGN_CENTRE, 1)
 
-        sizer.Add(memoMngBtnBox, 0, wx.ALIGN_CENTER_VERTICAL, 1)
+        sizer.Add(memoMngBtnBox, 0, wx.ALIGN_CENTER, 1)
         
         ##
         self.SetSizer(sizer)
