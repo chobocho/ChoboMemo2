@@ -71,13 +71,65 @@ class DataManager:
         if len(filter) == 0:
             self.memoList = self.memoListOrigin.copy()
             return
+        if '|' in filter:
+            splited_filter = filter.split('|')
+            or_filter = [ key for key in splited_filter if len(key.strip()) > 0 ]
+            #print(or_filter)
+            self.__OnFindOrKeywordList(or_filter)
+        elif '&' in filter:
+            splited_filter = filter.split('&')
+            and_filter = [ key for key in splited_filter if len(key.strip()) > 0 ]
+            print(and_filter)
+            self.__OnFindAndKeywordList(and_filter)
+        else:
+            self.__OnFindSimpleKeyword(filter)
 
+    def __OnFindSimpleKeyword(self, filter):
         self.memoList = {}
         for key in self.memoListOrigin.keys():
             if filter in self.memoListOrigin[key]['id'].lower():
                 self.memoList[key] = self.memoListOrigin[key]
             elif filter in self.memoListOrigin[key]['memo'].lower():
                 self.memoList[key] = self.memoListOrigin[key]
+
+    def __OnFindOrKeywordList(self, filters):
+        self.memoList = {}
+
+        if len(filters) == 0:
+            return
+
+        for key in self.memoListOrigin.keys():
+            for filter in filters:
+                if filter in self.memoListOrigin[key]['id'].lower():
+                    self.memoList[key] = self.memoListOrigin[key]
+                    break
+                elif filter in self.memoListOrigin[key]['memo'].lower():
+                    self.memoList[key] = self.memoListOrigin[key]
+                    break
+
+    def __OnFindAndKeywordList(self, filters):
+        self.memoList = {}
+
+        if len(filters) == 0:
+            return
+
+        for key in self.memoListOrigin.keys():
+            is_find = True
+
+            for filter in filters:
+                is_find = False
+
+                if filter in self.memoListOrigin[key]['id'].lower():
+                    is_find = True
+                elif filter in self.memoListOrigin[key]['memo'].lower():
+                    is_find = True
+
+                if not is_find:
+                   break
+
+            if is_find:
+                self.memoList[key] = self.memoListOrigin[key]
+
 
 def test():
     '''Test code for TDD'''
