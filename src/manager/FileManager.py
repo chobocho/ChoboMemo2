@@ -64,6 +64,31 @@ class FileManager:
             outfile.write('# '+ memo['id'] + '  \n\n')
             outfile.write('```\n' + memo['memo'] + '\n```')
 
+    def OnLoadTextFile(self, filename):
+        self.logger.info(filename)
+
+        if os.path.isfile(filename) == False:
+            return []
+
+        lines = []
+        try:
+            file = open(filename, 'rt', encoding="UTF-8", errors="surrogatepass")
+            lines = file.readlines()
+            file.close()
+        except:
+            self.logger.info("Loading fail: " + filename)
+        return lines
+
+    def getFileNameOnly(self, filename):
+        if len(filename) == 0:
+            return ""
+        start_filename = filename.rfind('\\')
+        if start_filename == -1:
+            return filename
+        return filename[start_filename+1:]
+
+
+
 def test():
     fm = FileManager()
     fm.loadDataFile()

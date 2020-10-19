@@ -93,6 +93,14 @@ class MemoManager(Observable):
         self.dataManager.OnSetFilter(searchKeyword)
         self.OnNotify(UPDATE_MEMO)
 
+    def OnAddItemFromTextFile(self, filename):
+        print(filename)
+        memo = {}
+        memo['id'] = self.fileManager.getFileNameOnly(filename)
+        filedata = self.fileManager.OnLoadTextFile(filename)
+        memo['memo'] = ''.join(filedata)
+        print(len(filedata), memo)
+        self.OnCreateMemo(memo)
 
 def test():
     '''Test code for TDD'''

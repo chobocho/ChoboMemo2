@@ -67,17 +67,30 @@ class MemoUIFrame(wx.Frame, Observer):
 
 
     def OnCallback(self, filelist):
-        loadFile = filelist[0]
+        """
+        When drag & drop a file, called this function
+        """
 
-        if (".cfm" in loadFile.lower()) == False:
+        loadFile = filelist[0]
+        loadFile_lower_name = loadFile.lower()
+        print(loadFile_lower_name)
+
+        if self.memoManager == None:
+            return
+
+        if (".txt" in loadFile_lower_name):
+            self.memoManager.OnAddItemFromTextFile(loadFile)
+            return
+
+        if (".cfm" not in loadFile_lower_name):
             self.logger.info(loadFile + " is not CFM file!")
             return
-        if (".cfm.db" in loadFile.lower()):
-            self.logger.info(loadFile + " is not CFM file!")
-            return
-        if self.memoManager != None:
+
+        if ".db" in loadFile.lower():
+            self.memoManager.OnLoadDB()
+        else:
             self.memoManager.OnLoadFile(loadFile)
-            self.SetTitle(self.swVersion + ' : ' + loadFile)
+        self.SetTitle(self.swVersion + ' : ' + loadFile)
 
     def _OnCreateMemo(self, event):
         self.leftPanel.OnCreateMemo()
