@@ -94,7 +94,10 @@ class MemoManager(Observable):
         self.OnNotify(UPDATE_MEMO)
 
     def OnAddItemFromTextFile(self, filename):
-        print(filename)
+        _1MB = 1024 * 1024
+        if self.fileManager.getFileSize(filename) > _1MB:
+            self.logger.info("It is bigger than 1MB: " + filename)
+            return
         memo = {}
         memo['id'] = self.fileManager.getFileNameOnly(filename)
         filedata = self.fileManager.OnLoadTextFile(filename)

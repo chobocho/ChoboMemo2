@@ -78,9 +78,12 @@ class MemoUIFrame(wx.Frame, Observer):
         if self.memoManager == None:
             return
 
-        if (".txt" in loadFile_lower_name):
-            self.memoManager.OnAddItemFromTextFile(loadFile)
-            return
+        allow_file_name = ['.txt', '.py', '.java', '.cpp']
+
+        for name in allow_file_name:
+            if (name in loadFile_lower_name):
+               self.memoManager.OnAddItemFromTextFile(loadFile)
+               return
 
         if (".cfm" not in loadFile_lower_name):
             self.logger.info(loadFile + " is not CFM file!")

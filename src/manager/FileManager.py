@@ -87,7 +87,11 @@ class FileManager:
             return filename
         return filename[start_filename+1:]
 
-
+    def getFileSize(self, filename):
+        if os.path.isfile(filename) == False:
+            return -1
+        st = os.stat(filename)
+        return st.st_size
 
 def test():
     fm = FileManager()
