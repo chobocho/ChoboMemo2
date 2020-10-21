@@ -5,6 +5,9 @@ Simple memo & code snippet management tool
 ![screen shot](https://github.com/chobocho/ChoboMemo2/blob/master/doc/screenshot.png)  
 
 ## Relesae  
+
+### Stable version  
+  
 * [V0.1105.TJ2](src/dist/minim_TJ2.exe)
   * Add by drag & drop txt,java,py file (Only less than 1MB)
   
@@ -14,3 +17,6 @@ Simple memo & code snippet management tool
 * [V0.1105.TE1](https://github.com/chobocho/ChoboMemo2/blob/release/src/dist/minim_TE1.exe)  
 * [V0.1105.SL6](https://github.com/chobocho/ChoboMemo2/blob/release/src/dist/minim_SL6.exe)
 
+### Unstable version  
+* [V0.1105.TJ3](src/dist/minim_TJ3.exe)
+  * Add by drag & drop folder
