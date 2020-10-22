@@ -7,6 +7,9 @@ Simple memo & code snippet management tool
 ## Relesae  
 
 ### Stable version  
+* [V0.1105.TJ3](src/dist/minim_TJ3.exe)
+  * Add by drag & drop folder
+  * Support Ctrl+P, Ctrl+M
   
 * [V0.1105.TJ2](src/dist/minim_TJ2.exe)
   * Add by drag & drop txt,java,py file (Only less than 1MB)
@@ -18,5 +21,4 @@ Simple memo & code snippet management tool
 * [V0.1105.SL6](https://github.com/chobocho/ChoboMemo2/blob/release/src/dist/minim_SL6.exe)
 
 ### Unstable version  
-* [V0.1105.TJ3](src/dist/minim_TJ3.exe)
-  * Add by drag & drop folder
+
