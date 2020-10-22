@@ -1,16 +1,19 @@
 import wx
 from wx.lib import sized_controls
 
+WINDOW_SIZE_W = 800
+WINDOW_SIZE_H = 500
+
 class MemoDialog(sized_controls.SizedDialog):
 
     def __init__(self, *args, **kwargs):
         super(MemoDialog, self).__init__(*args, **kwargs)
         pane = self.GetContentsPane()
 
-        self.topic = wx.TextCtrl(pane, size=(600,30))
+        self.topic = wx.TextCtrl(pane, size=(WINDOW_SIZE_W,30))
         self.topic.SetValue("")
 
-        self.text = wx.TextCtrl(pane, style = wx.TE_MULTILINE,size=(600,300))
+        self.text = wx.TextCtrl(pane, style = wx.TE_MULTILINE,size=(WINDOW_SIZE_W,WINDOW_SIZE_H))
         self.text.SetValue("")
         font = wx.Font(14, wx.FONTFAMILY_TELETYPE, wx.NORMAL, wx.NORMAL)
         self.text.SetFont(font)

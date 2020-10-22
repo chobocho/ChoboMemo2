@@ -93,6 +93,28 @@ class FileManager:
         st = os.stat(filename)
         return st.st_size
 
+    def getFileList(self, folders):
+        logger = logging.getLogger('chobomemo')
+        aResult = []
+
+        print(folders)
+
+        for folder in folders:
+            if os.path.exists(folder):
+                if os.path.isfile(folder):
+                   logger.debug("File : " + folder)
+                   aResult.append(folder)
+                   continue
+
+                for (path, dir, files) in os.walk(folder):
+                    for filename in files:
+                        tf = os.path.join(path, filename)
+                        aResult.append(tf)
+            else:
+                logger.warning("Error:", folder, " is not exist")
+
+        return aResult
+
 def test():
     fm = FileManager()
     fm.loadDataFile()

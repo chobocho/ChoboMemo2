@@ -36,10 +36,13 @@ class MemoManager(Observable):
         self.OnNotify(UPDATE_MEMO)
 
     def OnCreateMemo(self, memo):
+        self.__OnCreateMemo(memo)
+        self.OnNotify(UPDATE_MEMO)
+
+    def __OnCreateMemo(self, memo):
         if not self.canChange:
             return
         self.dataManager.OnCreateMemo(memo, self.dbm)
-        self.OnNotify(UPDATE_MEMO)
 
     def OnDeleteMemo(self, memoIdx):
         self.logger.info(memoIdx)
@@ -94,16 +97,44 @@ class MemoManager(Observable):
         self.OnNotify(UPDATE_MEMO)
 
     def OnAddItemFromTextFile(self, filename):
+        memo = self.__OnAddItemFromTextFile(filename)
+        self.OnCreateMemo(memo)
+
+    def __OnAddItemFromTextFile(self, filename):
         _1MB = 1024 * 1024
-        if self.fileManager.getFileSize(filename) > _1MB:
-            self.logger.info("It is bigger than 1MB: " + filename)
-            return
         memo = {}
         memo['id'] = self.fileManager.getFileNameOnly(filename)
+        memo['memo'] = ''
+
+        if self.fileManager.getFileSize(filename) > _1MB:
+            self.logger.info("It is bigger than 1MB: " + filename)
+            return memo
+
         filedata = self.fileManager.OnLoadTextFile(filename)
         memo['memo'] = ''.join(filedata)
-        print(len(filedata), memo)
-        self.OnCreateMemo(memo)
+        #print(len(filedata), memo)
+        return memo
+
+    def OnAddItemByFiles(self, files):
+        allow_file_name = ['.txt', '.py', '.java', '.cpp']
+
+        file_list = self.fileManager.getFileList(files)
+        for filename in file_list:
+            is_processed = False
+            for name in allow_file_name:
+                if (name in filename):
+                    memo = self.__OnAddItemFromTextFile(filename)
+                    self.__OnCreateMemo(memo)
+                    is_processed = True
+                    break
+
+            if not is_processed:
+                memo = {}
+                memo['id'] = self.fileManager.getFileNameOnly(filename)
+                memo['memo'] = ""
+                self.__OnCreateMemo(memo)
+
+        self.OnNotify(UPDATE_MEMO)
 
 def test():
     '''Test code for TDD'''

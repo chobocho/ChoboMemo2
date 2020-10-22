@@ -7,20 +7,20 @@ from ui.ListPanel import *
 from ui.memomenu import *
 from ui.filedrop import *
 from manager import MemoManager
+from manager import ConfigManager
+from manager import ActionManager
 import logging
 
 from manager.Observer import Observer
-
-WINDOW_SIZE_W = 800
-WINDOW_SIZE_H = 600
 
 class MemoUIFrame(wx.Frame, Observer):
     def __init__(self, *args, swVersion,  **kw):
         super(MemoUIFrame, self).__init__(*args, title = swVersion, **kw)
         self.logger = logging.getLogger("chobomemo")
-
+        self.config = ConfigManager.ConfigManager()
+        self.action = ActionManager.ActionManager()
         self.swVersion = swVersion
-        self.splitter = wx.SplitterWindow(self, -1, wx.Point(0, 0), wx.Size(WINDOW_SIZE_W, WINDOW_SIZE_H), wx.SP_3D | wx.SP_BORDER)
+        self.splitter = wx.SplitterWindow(self, -1, wx.Point(0, 0), wx.Size(self.config.GetValue('WINDOW_SIZE_W'), self.config.GetValue('WINDOW_SIZE_H')), wx.SP_3D | wx.SP_BORDER)
         self.leftPanel = ListPanel(self, self.splitter)
         self.rightPanel = MemoPanel(self, self.splitter)
         self.splitter.SplitVertically(self.leftPanel, self.rightPanel)
@@ -51,18 +51,30 @@ class MemoUIFrame(wx.Frame, Observer):
         self.Bind(wx.EVT_MENU, self.OnFind, id=ctrl_F_Id)
         ctrl_N_Id = wx.NewIdRef()
         self.Bind(wx.EVT_MENU, self._OnCreateMemo, id=ctrl_N_Id)
+
+        ctrl_P_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self._OnPressCtrlP, id=ctrl_P_Id)
+        ctrl_M_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self._OnPressCtrlM, id=ctrl_M_Id)
+
         ctrl_Q_Id = wx.NewIdRef()
         self.Bind(wx.EVT_MENU, self.OnQuit, id=ctrl_Q_Id)
         ctrl_S_Id = wx.NewIdRef()
         self.Bind(wx.EVT_MENU, self._OnSaveMemo, id=ctrl_S_Id)
+
+        ctrl_1_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self._OnFindMemo, id=ctrl_1_Id)
                                     
-        accel_tbl = wx.AcceleratorTable([(wx.ACCEL_CTRL,  ord('D'), ctrl_D_Id ),
-                                         (wx.ACCEL_CTRL,  ord('E'), ctrl_E_Id ),
-                                         (wx.ACCEL_CTRL,  ord('F'), ctrl_F_Id ),
-                                         (wx.ACCEL_CTRL,  ord('N'), ctrl_N_Id ),
-                                         (wx.ACCEL_CTRL,  ord('U'), ctrl_U_Id ),
-                                         (wx.ACCEL_CTRL,  ord('S'), ctrl_S_Id ),
-                                         (wx.ACCEL_CTRL,  ord('Q'), ctrl_Q_Id )])
+        accel_tbl = wx.AcceleratorTable([(wx.ACCEL_CTRL,  ord('1'), ctrl_1_Id),
+                                         (wx.ACCEL_CTRL,  ord('D'), ctrl_D_Id),
+                                         (wx.ACCEL_CTRL,  ord('E'), ctrl_E_Id),
+                                         (wx.ACCEL_CTRL,  ord('F'), ctrl_F_Id),
+                                         (wx.ACCEL_CTRL,  ord('M'), ctrl_M_Id),
+                                         (wx.ACCEL_CTRL,  ord('N'), ctrl_N_Id),
+                                         (wx.ACCEL_CTRL,  ord('P'), ctrl_P_Id),
+                                         (wx.ACCEL_CTRL,  ord('U'), ctrl_U_Id),
+                                         (wx.ACCEL_CTRL,  ord('S'), ctrl_S_Id),
+                                         (wx.ACCEL_CTRL,  ord('Q'), ctrl_Q_Id)])
         self.SetAcceleratorTable(accel_tbl)
 
 
@@ -80,12 +92,13 @@ class MemoUIFrame(wx.Frame, Observer):
 
         allow_file_name = ['.txt', '.py', '.java', '.cpp']
 
-        for name in allow_file_name:
-            if (name in loadFile_lower_name):
-               self.memoManager.OnAddItemFromTextFile(loadFile)
-               return
-
         if (".cfm" not in loadFile_lower_name):
+            for name in allow_file_name:
+                if (name in loadFile_lower_name):
+                    self.memoManager.OnAddItemFromTextFile(loadFile)
+                    return
+
+            self.memoManager.OnAddItemByFiles(filelist)
             self.logger.info(loadFile + " is not CFM file!")
             return
 
@@ -115,6 +128,12 @@ class MemoUIFrame(wx.Frame, Observer):
             keyword = dlg.GetValue()
             self.OnSearchKeyword(keyword)
         dlg.Destroy()
+
+    def _OnFindMemo(self, event):
+        keyword = self.config.GetValue('ctrl_1')
+        if len(keyword) == 0:
+            return
+        self.OnSearchKeyword(keyword)
 
     def OnCreateMemo(self, memo):
         self.memoManager.OnCreateMemo(memo)
@@ -203,3 +222,9 @@ class MemoUIFrame(wx.Frame, Observer):
             exportFilePath = dlg.GetPath()
             self.memoManager.OnSaveAsMD(memoIdx, filename=exportFilePath)
         dlg.Destroy()
+
+    def _OnPressCtrlP(self, event):
+        self.action.OnRunCommand("ctrl_p")
+
+    def _OnPressCtrlM(self, event):
+        self.action.OnRunCommand("ctrl_m")
