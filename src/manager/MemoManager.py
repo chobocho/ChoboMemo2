@@ -6,21 +6,42 @@ from manager.FileManager import FileManager
 from manager.DataManager import DataManager
 from manager.dbmanager import DBManager
 import logging
+import os
 
 UPDATE_MEMO = 1
 
 class MemoManager(Observable):
-    def __init__(self):
+    def __init__(self, callback=None):
         self.logger = logging.getLogger("chobomemo")
         self.dataManager = DataManager()
         self.observer = None
         self.fileManager = FileManager()
         self.dbm = DBManager('20201105.cfm.db')
-        self._loadMemo()
+        self._loadMemo(callback)
         self.canChange = True
 
-    def _loadMemo(self):
+    def _loadMemo(self, callback=None):
         memoData = self.dbm.load()
+        if len(memoData) == 0:
+            filename = '20201105.cfm'
+            if os.path.exists(filename):
+                memoData = self.fileManager.loadDataFile(filename)
+
+                gap = int(len(memoData)/100)
+                tick = 0
+                progress = 0
+
+                for data in memoData:
+                    #print(memoData[data]['id'])
+                    self.dbm.insert([memoData[data]['id'], memoData[data]['memo']])
+                    tick+=1
+                    if tick >= gap:
+                        tick = 0
+                        if (None != callback) and (progress < 99):
+                            progress += 1
+                            callback.Update(progress, str(progress) + "% done!")
+
+
         self.dataManager.OnSetMemoList(memoData)
         self.OnNotify(UPDATE_MEMO)
 

@@ -30,15 +30,23 @@ def printEnd():
     logger = logging.getLogger("chobomemo")
     logger.info('=== END ===')
 
-def main(): 
-    memoManager = MemoManager()
+def main():
     app = wx.App()
+
+    progress_bar = wx.ProgressDialog("Create DB", "Please wait", maximum=100, parent=None,
+                                          style=wx.PD_APP_MODAL | wx.PD_AUTO_HIDE)
+    memoManager = MemoManager(progress_bar)
+    progress_bar.Destroy()
+    progress_bar = None
+
     frm = MemoUIFrame(None, swVersion=SW_VERSION, size=(800,600))
     frm.OnSetMemoManager(memoManager)
     memoManager.OnRegister(frm)
     frm.Show()
     app.MainLoop()
     memoManager.OnSave()
+
+
 
 if __name__ == '__main__':
     initLogger()
