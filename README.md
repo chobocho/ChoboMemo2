@@ -7,6 +7,9 @@ Simple memo & code snippet management tool
 ## Relesae  
 
 ### Stable version  
+* [V0.1105.TK1](src/dist/minim_TK1.exe)
+  * Show progres bar when create DB
+
 * [V0.1105.TJ3](src/dist/minim_TJ3.exe)
   * Add by drag & drop folder
   * Support Ctrl+P, Ctrl+M
