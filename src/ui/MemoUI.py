@@ -1,8 +1,8 @@
 import wx
 from wx.lib import sized_controls
 
-WINDOW_SIZE_W = 800
-WINDOW_SIZE_H = 500
+WINDOW_SIZE_W = 900
+WINDOW_SIZE_H = 600
 
 class MemoDialog(sized_controls.SizedDialog):
 

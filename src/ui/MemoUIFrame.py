@@ -54,6 +54,9 @@ class MemoUIFrame(wx.Frame, Observer):
 
         ctrl_P_Id = wx.NewIdRef()
         self.Bind(wx.EVT_MENU, self._OnPressCtrlP, id=ctrl_P_Id)
+        ctrl_R_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self._OnPressCtrlR, id=ctrl_R_Id)
+
         ctrl_M_Id = wx.NewIdRef()
         self.Bind(wx.EVT_MENU, self._OnPressCtrlM, id=ctrl_M_Id)
 
@@ -72,6 +75,7 @@ class MemoUIFrame(wx.Frame, Observer):
                                          (wx.ACCEL_CTRL,  ord('M'), ctrl_M_Id),
                                          (wx.ACCEL_CTRL,  ord('N'), ctrl_N_Id),
                                          (wx.ACCEL_CTRL,  ord('P'), ctrl_P_Id),
+                                         (wx.ACCEL_CTRL,  ord('R'), ctrl_R_Id),
                                          (wx.ACCEL_CTRL,  ord('U'), ctrl_U_Id),
                                          (wx.ACCEL_CTRL,  ord('S'), ctrl_S_Id),
                                          (wx.ACCEL_CTRL,  ord('Q'), ctrl_Q_Id)])
@@ -244,6 +248,9 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def _OnPressCtrlP(self, event):
         self.action.OnRunCommand("ctrl_p")
+
+    def _OnPressCtrlR(self, event):
+        self.leftPanel.query_recent_used_items()
 
     def _OnPressCtrlM(self, event):
         self.action.OnRunCommand("ctrl_m")

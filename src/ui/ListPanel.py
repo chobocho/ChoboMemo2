@@ -4,6 +4,7 @@ import wx
 import logging
 from ui.MemoUI import MemoDialog
 from util import webutil
+from manager import memo_cache
 
 class ListPanel(wx.Panel):
     def __init__(self, parent, *args, **kw):
@@ -11,6 +12,7 @@ class ListPanel(wx.Panel):
         self.logger = logging.getLogger("chobomemo")
         self.parent = parent
         self.max_list_count = 42
+        self.cache = memo_cache.MemoCache()
         self._initUI()
 
 
@@ -51,25 +53,31 @@ class ListPanel(wx.Panel):
         self.memoList.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._open_uri)
         self.memoList.InsertColumn(0, "No", width=40)
         self.memoList.InsertColumn(1, "Title", width=270)
+        self.memoList.InsertColumn(2, "Memo", width=200)
         self.memoList.SetFont(font)
         self.currentItem = -1
 
         ##
         memoMngBtnBox = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.editMemoBtn = wx.Button(self, 10, "Edit", size=(70,30))
+        recentUsedBtn_id = wx.NewId()
+        self.recentUsedBtn = wx.Button(self, recentUsedBtn_id, "RUI", size=(60,30))
+        self.recentUsedBtn.Bind(wx.EVT_BUTTON, self._query_recent_used_items)
+        memoMngBtnBox.Add(self.recentUsedBtn, 1, wx.ALIGN_CENTRE, 1)
+
+        self.editMemoBtn = wx.Button(self, 10, "Edit", size=(60,30))
         self.editMemoBtn.Bind(wx.EVT_BUTTON, self._OnUpdateMemo)
         memoMngBtnBox.Add(self.editMemoBtn, 1, wx.ALIGN_CENTRE, 1)
 
-        self.createMemoBtn = wx.Button(self, 10, "New", size=(70,30))
+        self.createMemoBtn = wx.Button(self, 10, "New", size=(60,30))
         self.createMemoBtn.Bind(wx.EVT_BUTTON, self._OnCreateMemo)
         memoMngBtnBox.Add(self.createMemoBtn, 1, wx.ALIGN_CENTRE, 1)
 
-        self.memoSaveBtn = wx.Button(self, 10, "Save", size=(70,30))
+        self.memoSaveBtn = wx.Button(self, 10, "Save", size=(60,30))
         self.memoSaveBtn.Bind(wx.EVT_BUTTON, self._OnSaveMemo)
         memoMngBtnBox.Add(self.memoSaveBtn, 1, wx.ALIGN_CENTRE, 1)
 
-        self.memoDeleteBtn = wx.Button(self, 10, "Delete", size=(70,30))
+        self.memoDeleteBtn = wx.Button(self, 10, "Delete", size=(60,30))
         self.memoDeleteBtn.Bind(wx.EVT_BUTTON, self._OnDeleteMemo)
         memoMngBtnBox.Add(self.memoDeleteBtn, 1, wx.ALIGN_CENTRE, 1)
 
@@ -93,6 +101,10 @@ class ListPanel(wx.Panel):
             self.parent.OnCreateMemo(memo)
         dlg.Destroy()
 
+        title = memo['id']
+        self._on_set_search_keyword(title)
+        self.cache.add(title)
+
 
     def _OnUpdateMemo(self, event):
         self.OnUpdateMemo()
@@ -115,6 +127,10 @@ class ListPanel(wx.Panel):
             memo['memo'] = dlg.GetValue()
             self.parent.OnUpdateMemo(memo)
         dlg.Destroy()
+
+        title = memo['id']
+        self._on_set_search_keyword(title)
+        self.cache.add(title)
 
 
     def _OnDeleteMemo(self, event):
@@ -149,8 +165,25 @@ class ListPanel(wx.Panel):
         self._OnSearchKeyword(searchKeyword)
 
 
+    def _on_set_search_keyword(self, keyword):
+        self.searchText.SetValue(keyword)
+
+
     def _OnSearchKeyword(self, searchKeyword):
         self.parent.OnSearchKeyword(searchKeyword)
+
+
+    def _query_recent_used_items(self, event):
+        self.query_recent_used_items()
+
+
+    def query_recent_used_items(self):
+        query = self.cache.query()
+        if len(query) == 0:
+            return
+
+        self.searchText.SetValue(query)
+        self._OnSearchKeyword(query)
 
 
     def OnItemSelected(self, event):
@@ -179,6 +212,9 @@ class ListPanel(wx.Panel):
 
         chosenItem = self.memoList.GetItem(self.currentItem, 0).GetText()
         uri = self.memoList.GetItem(self.currentItem, 1).GetText()
+
+        self._on_set_search_keyword(uri)
+        self.cache.add(uri)
 
         if (len(uri) <= 3) or ("http" not in uri.lower()):
             memo = self.parent.OnGetMemoItem(chosenItem)
@@ -223,6 +259,11 @@ class ListPanel(wx.Panel):
             index = self.memoList.InsertItem(self.memoList.GetItemCount(), 1)
             self.memoList.SetItem(index, 0, memo['index'])
             self.memoList.SetItem(index, 1, memo['id'])
+
+            summary = memo['id']
+            if len(summary) > 10:
+                summary = memo['id'][:10]
+            self.memoList.SetItem(index, 2, summary)
             if index % 2 == 0:
                 self.memoList.SetItemBackgroundColour(index, "Light blue")
 
