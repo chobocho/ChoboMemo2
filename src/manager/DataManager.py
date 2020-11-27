@@ -66,6 +66,7 @@ class DataManager:
         memo['highlight'] = highLightPosition[:]
         return memo
 
+
     def OnSetFilter(self, filter_):
         filter = filter_.strip().lower()
         if len(filter) == 0:
@@ -84,6 +85,7 @@ class DataManager:
         else:
             self.__OnFindSimpleKeyword(filter)
 
+
     def __OnFindSimpleKeyword(self, filter):
         self.memoList = {}
         for key in self.memoListOrigin.keys():
@@ -91,6 +93,7 @@ class DataManager:
                 self.memoList[key] = self.memoListOrigin[key]
             elif filter in self.memoListOrigin[key]['memo'].lower():
                 self.memoList[key] = self.memoListOrigin[key]
+
 
     def __OnFindOrKeywordList(self, filters):
         self.memoList = {}
@@ -106,6 +109,7 @@ class DataManager:
                 elif filter in self.memoListOrigin[key]['memo'].lower():
                     self.memoList[key] = self.memoListOrigin[key]
                     break
+
 
     def __OnFindAndKeywordList(self, filters):
         self.memoList = {}

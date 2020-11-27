@@ -3,13 +3,16 @@
 import wx
 import logging
 from ui.MemoUI import MemoDialog
+from util import webutil
 
 class ListPanel(wx.Panel):
     def __init__(self, parent, *args, **kw):
         super(ListPanel, self).__init__(*args, **kw)
         self.logger = logging.getLogger("chobomemo")
         self.parent = parent
+        self.max_list_count = 42
         self._initUI()
+
 
     def _initUI(self):
         self.logger.info('.')
@@ -45,6 +48,7 @@ class ListPanel(wx.Panel):
         sizer.Add(self.memoList, 1, wx.EXPAND)
         self.memoList.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnItemSelected)
         self.memoList.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self._OnUpdateMemo)
+        self.memoList.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._open_uri)
         self.memoList.InsertColumn(0, "No", width=40)
         self.memoList.InsertColumn(1, "Title", width=270)
         self.memoList.SetFont(font)
@@ -75,8 +79,10 @@ class ListPanel(wx.Panel):
         self.SetSizer(sizer)
         self.SetAutoLayout(True)
 
+
     def _OnCreateMemo(self, event):
         self.OnCreateMemo()
+
 
     def OnCreateMemo(self):
         dlg = MemoDialog(None, title='Create new memo')
@@ -87,8 +93,10 @@ class ListPanel(wx.Panel):
             self.parent.OnCreateMemo(memo)
         dlg.Destroy()
 
+
     def _OnUpdateMemo(self, event):
         self.OnUpdateMemo()
+
 
     def OnUpdateMemo(self):
         if self.currentItem < 0:
@@ -108,8 +116,10 @@ class ListPanel(wx.Panel):
             self.parent.OnUpdateMemo(memo)
         dlg.Destroy()
 
+
     def _OnDeleteMemo(self, event):
         self.OnDeleteMemo()
+
 
     def OnDeleteMemo(self):
         self.logger.info(self.currentItem)
@@ -126,22 +136,27 @@ class ListPanel(wx.Panel):
            self.parent.OnDeleteMemo(chosenItem)
            self.logger.info(msg)
         askDeleteDialog.Destroy()
-    
+
+
     def OnSearchClear(self, event):
         self.searchText.SetValue("")
         self._OnSearchKeyword("")
+
 
     def OnSearchKeyword(self, event):
         searchKeyword = self.searchText.GetValue()
         self.logger.info(searchKeyword)
         self._OnSearchKeyword(searchKeyword)
 
+
     def _OnSearchKeyword(self, searchKeyword):
         self.parent.OnSearchKeyword(searchKeyword)
+
 
     def OnItemSelected(self, event):
         self.currentItem = event.Index
         self._OnItemSelected(self.currentItem)
+
 
     def _OnItemSelected(self, index):
         if self.memoList.GetItemCount() == 0:
@@ -153,6 +168,44 @@ class ListPanel(wx.Panel):
         self.logger.info(str(index) + ':' + chosenItem)
         self.parent.OnGetMemo(chosenItem)
 
+
+    def _open_uri(self, evnet):
+        if self.memoList.GetItemCount() == 0:
+            self.logger.info("List is empty!")
+            return
+        index = self.currentItem
+        if index < 0:
+            index = 0
+
+        chosenItem = self.memoList.GetItem(self.currentItem, 0).GetText()
+        uri = self.memoList.GetItem(self.currentItem, 1).GetText()
+
+        if (len(uri) <= 3) or ("http" not in uri.lower()):
+            memo = self.parent.OnGetMemoItem(chosenItem)
+            self.open_uri(raw_data = memo['memo'])
+            return
+
+        webutil.open_uri(uri)
+
+
+    def open_uri(self, raw_data):
+        if len(raw_data) == 0:
+            return
+
+        idx = raw_data.find('\n')
+        if idx == -1:
+            return
+
+        filename = raw_data[:idx]
+
+        if ':\\' in filename:
+            webutil.open_uri(filename)
+        elif 'http' in filename:
+            webutil.open_uri(filename)
+        else:
+            print("Not exist")
+
+
     def OnUpdateList(self, memoData):
         self.logger.info('.')
         memoList = []
@@ -161,16 +214,31 @@ class ListPanel(wx.Panel):
             memoList.insert(0, memo)
 
         self.memoList.DeleteAllItems()
+
+        count = 0
         for memo in memoList:
+            count += 1
+            if count > self.max_list_count:
+                break
             index = self.memoList.InsertItem(self.memoList.GetItemCount(), 1)
             self.memoList.SetItem(index, 0, memo['index'])
             self.memoList.SetItem(index, 1, memo['id'])
             if index % 2 == 0:
                 self.memoList.SetItemBackgroundColour(index, "Light blue")
-    
+
+
     def _OnSaveMemo(self, event):
         self.OnSaveMemo()
+
 
     def OnSaveMemo(self):
         self.logger.info('.')
         self.parent.OnSaveMemo()
+
+
+    def set_max_list_count(self, count):
+        self.max_list_count = count
+
+
+    def get_max_list_count(self):
+        return self.max_list_count

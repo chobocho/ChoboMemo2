@@ -11,6 +11,10 @@ class MemoMenu():
         ##
         fileMenu = wx.Menu()
 
+        set_max_view_count_id = wx.NewId()
+        set_max_view_count = fileMenu.Append(set_max_view_count_id, 'Set max view count', 'Set max view count')
+        self.parent.Bind(wx.EVT_MENU, self.parent.on_set_max_list, set_max_view_count)
+
         saveFilteredItemsId = wx.NewId()
         saveFilteredItems = fileMenu.Append(saveFilteredItemsId, 'Save filtered items', 'Save filtered items')
         self.parent.Bind(wx.EVT_MENU, self.parent.OnSaveFilteredItems, saveFilteredItems)

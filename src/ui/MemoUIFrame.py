@@ -120,6 +120,25 @@ class MemoUIFrame(wx.Frame, Observer):
     def _OnSaveMemo(self, event):
         self.OnSaveMemo()
 
+    def on_set_max_list(self, event):
+        dlg = wx.TextEntryDialog(None, 'Set max display list count','Count')
+        dlg.SetValue("")
+
+        maxCount = self.leftPanel.get_max_list_count()
+        if dlg.ShowModal() == wx.ID_OK:
+            count = dlg.GetValue()
+            count = count.strip()
+            if len(count) > 0:
+                try:
+                    maxCount = int(count)
+                    if maxCount < 0 or maxCount > 20000:
+                        maxCount = 42
+                except:
+                    maxCount = 42
+        dlg.Destroy()
+        self.logger.info(maxCount)
+        self.leftPanel.set_max_list_count(maxCount)
+
     def OnFind(self, event):
         dlg = wx.TextEntryDialog(None, 'Input keyword','Find')
         dlg.SetValue("")
@@ -187,7 +206,7 @@ class MemoUIFrame(wx.Frame, Observer):
     def OnSearchKeyword(self, searchKeyword):
         self.logger.info(searchKeyword)
         self.memoManager.OnSetFilter(searchKeyword)
-        self.rightPanel.OnSetSearchKeyword(searchKeyword)
+        #self.rightPanel.OnSetSearchKeyword(searchKeyword)
         self.leftPanel._OnItemSelected(0)
 
     def OnUpdateMemoList(self, memoList):
