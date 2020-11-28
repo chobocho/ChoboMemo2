@@ -28,8 +28,8 @@ class MemoDialog(sized_controls.SizedDialog):
         button_ok = wx.Button(pane_btns, wx.ID_OK, label='OK')
         button_ok.Bind(wx.EVT_BUTTON, self.on_button)
 
-        button_ok = wx.Button(pane_btns, wx.ID_CANCEL, label='Cancel')
-        button_ok.Bind(wx.EVT_BUTTON, self.on_button)
+        button_cancel = wx.Button(pane_btns, wx.ID_CANCEL, label='Cancel')
+        button_cancel.Bind(wx.EVT_BUTTON, self.on_button)
 
         self.Fit()
 

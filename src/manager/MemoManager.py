@@ -152,7 +152,7 @@ class MemoManager(Observable):
             if not is_processed:
                 memo = {}
                 memo['id'] = self.fileManager.getFileNameOnly(filename)
-                memo['memo'] = filename
+                memo['memo'] = filename + "\n\n"
                 self.__OnCreateMemo(memo)
 
         self.OnNotify(UPDATE_MEMO)
