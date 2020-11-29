@@ -257,9 +257,9 @@ class ListPanel(wx.Panel):
             self.memoList.SetItem(index, 0, memo['index'])
             self.memoList.SetItem(index, 1, memo['id'])
 
-            summary = memo['id']
-            if len(summary) > 10:
-                summary = memo['id'][:10]
+            summary = memo['memo']
+            if len(summary) > 20:
+                summary = memo['memo'][:20]
             self.memoList.SetItem(index, 2, summary)
             if index % 2 == 0:
                 self.memoList.SetItemBackgroundColour(index, "Light blue")
