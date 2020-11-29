@@ -7,6 +7,9 @@ Simple memo & code snippet management tool
 ## Relesae  
 
 ### Stable version  
+* [V0.1105.TK3](src/dist/minim_TK3.exe)
+  * If title or first line of memo, open that url with double click
+
 * [V0.1105.TK1](src/dist/minim_TK1.exe)
   * Show progres bar when create DB
 
