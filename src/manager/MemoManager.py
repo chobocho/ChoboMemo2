@@ -139,7 +139,9 @@ class MemoManager(Observable):
     def OnAddItemByFiles(self, files):
         allow_file_name = ['.txt', '.py', '.java', '.cpp']
 
-        file_list = self.fileManager.getFileList(files)
+        #file_list = self.fileManager.getFileList(files)
+        file_list = files
+        
         for filename in file_list:
             is_processed = False
             for name in allow_file_name:
@@ -152,7 +154,7 @@ class MemoManager(Observable):
             if not is_processed:
                 memo = {}
                 memo['id'] = self.fileManager.getFileNameOnly(filename)
-                memo['memo'] = filename + "\n\n"
+                memo['memo'] = filename + "\n\n---[Memo]---\n"
                 self.__OnCreateMemo(memo)
 
         self.OnNotify(UPDATE_MEMO)

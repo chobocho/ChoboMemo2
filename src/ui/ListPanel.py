@@ -206,6 +206,7 @@ class ListPanel(wx.Panel):
         if self.memoList.GetItemCount() == 0:
             self.logger.info("List is empty!")
             return
+
         index = self.currentItem
         if index < 0:
             index = 0
@@ -217,29 +218,25 @@ class ListPanel(wx.Panel):
         self.cache.add(uri)
 
         if (len(uri) <= 3) or ("http" not in uri.lower()):
+            if webutil.is_special_uri(uri):
+                webutil.open_uri(uri)
+                return
+
             memo = self.parent.OnGetMemoItem(chosenItem)
-            self.open_uri(raw_data = memo['memo'])
-            return
+            uri = self._get_uri_from_data(memo['memo'])
 
-        webutil.open_uri(uri)
+        if len(uri) > 3:
+            webutil.open_uri(uri)
 
 
-    def open_uri(self, raw_data):
+    def _get_uri_from_data(self, raw_data):
         if len(raw_data) == 0:
             return
 
         idx = raw_data.find('\n')
         if idx == -1:
-            return
-
-        filename = raw_data[:idx]
-
-        if ':\\' in filename:
-            webutil.open_uri(filename)
-        elif 'http' in filename:
-            webutil.open_uri(filename)
-        else:
-            print("Not exist")
+            return ""
+        return raw_data[:idx]
 
 
     def OnUpdateList(self, memoData):
