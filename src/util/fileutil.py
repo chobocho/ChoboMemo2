@@ -13,6 +13,6 @@ def load_config(filename):
         return {}
 
     config_data = {}
-    with open(filename) as json_file:
+    with open(filename, encoding="UTF-8") as json_file:
         config_data = json.load(json_file)
     return config_data
