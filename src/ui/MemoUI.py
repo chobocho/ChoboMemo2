@@ -19,7 +19,7 @@ class MemoDialog(sized_controls.SizedDialog):
         self.text.SetFont(font)
 
         static_line = wx.StaticLine(pane, style=wx.LI_HORIZONTAL)
-        static_line.SetSizerProps(border=(('all', 0)), expand=True)
+        static_line.SetSizerProps(border=('all', 0), expand=True)
 
         pane_btns = sized_controls.SizedPanel(pane)
         pane_btns.SetSizerType('horizontal')

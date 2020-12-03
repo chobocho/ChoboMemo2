@@ -38,7 +38,7 @@ class MemoUIFrame(wx.Frame, Observer):
         self.memoManager = None
 
     def _addMenubar(self):
-        self.menu = MemoMenu(self)
+        self.menu = MemoMenu(self, self.config)
  
     def _addShortKey(self):
         ctrl_D_Id = wx.NewIdRef()
@@ -67,18 +67,46 @@ class MemoUIFrame(wx.Frame, Observer):
 
         ctrl_1_Id = wx.NewIdRef()
         self.Bind(wx.EVT_MENU, self._OnFindMemo, id=ctrl_1_Id)
+
+        ctrl_2_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.on_ctrl_2, id=ctrl_2_Id)
+        ctrl_3_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.on_ctrl_3, id=ctrl_3_Id)
+        ctrl_4_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.on_ctrl_4, id=ctrl_4_Id)
+        ctrl_5_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.on_ctrl_5, id=ctrl_5_Id)
+        ctrl_6_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.on_ctrl_6, id=ctrl_6_Id)
+        ctrl_7_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.on_ctrl_7, id=ctrl_7_Id)
+        ctrl_8_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.on_ctrl_8, id=ctrl_8_Id)
+        ctrl_9_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.on_ctrl_9, id=ctrl_9_Id)
+        ctrl_0_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.on_ctrl_0, id=ctrl_0_Id)
                                     
-        accel_tbl = wx.AcceleratorTable([(wx.ACCEL_CTRL,  ord('1'), ctrl_1_Id),
-                                         (wx.ACCEL_CTRL,  ord('D'), ctrl_D_Id),
-                                         (wx.ACCEL_CTRL,  ord('E'), ctrl_E_Id),
-                                         (wx.ACCEL_CTRL,  ord('F'), ctrl_F_Id),
-                                         (wx.ACCEL_CTRL,  ord('M'), ctrl_M_Id),
-                                         (wx.ACCEL_CTRL,  ord('N'), ctrl_N_Id),
-                                         (wx.ACCEL_CTRL,  ord('P'), ctrl_P_Id),
-                                         (wx.ACCEL_CTRL,  ord('R'), ctrl_R_Id),
-                                         (wx.ACCEL_CTRL,  ord('U'), ctrl_U_Id),
-                                         (wx.ACCEL_CTRL,  ord('S'), ctrl_S_Id),
-                                         (wx.ACCEL_CTRL,  ord('Q'), ctrl_Q_Id)])
+        accel_tbl = wx.AcceleratorTable([(wx.ACCEL_CTRL, ord('1'), ctrl_1_Id),
+                                         (wx.ACCEL_CTRL, ord('2'), ctrl_2_Id),
+                                         (wx.ACCEL_CTRL, ord('3'), ctrl_3_Id),
+                                         (wx.ACCEL_CTRL, ord('4'), ctrl_4_Id),
+                                         (wx.ACCEL_CTRL, ord('5'), ctrl_5_Id),
+                                         (wx.ACCEL_CTRL, ord('6'), ctrl_6_Id),
+                                         (wx.ACCEL_CTRL, ord('7'), ctrl_7_Id),
+                                         (wx.ACCEL_CTRL, ord('8'), ctrl_8_Id),
+                                         (wx.ACCEL_CTRL, ord('9'), ctrl_9_Id),
+                                         (wx.ACCEL_CTRL, ord('0'), ctrl_0_Id),
+                                         (wx.ACCEL_CTRL, ord('D'), ctrl_D_Id),
+                                         (wx.ACCEL_CTRL, ord('E'), ctrl_E_Id),
+                                         (wx.ACCEL_CTRL, ord('F'), ctrl_F_Id),
+                                         (wx.ACCEL_CTRL, ord('M'), ctrl_M_Id),
+                                         (wx.ACCEL_CTRL, ord('N'), ctrl_N_Id),
+                                         (wx.ACCEL_CTRL, ord('P'), ctrl_P_Id),
+                                         (wx.ACCEL_CTRL, ord('R'), ctrl_R_Id),
+                                         (wx.ACCEL_CTRL, ord('U'), ctrl_U_Id),
+                                         (wx.ACCEL_CTRL, ord('S'), ctrl_S_Id),
+                                         (wx.ACCEL_CTRL, ord('Q'), ctrl_Q_Id)])
         self.SetAcceleratorTable(accel_tbl)
 
 
@@ -96,9 +124,9 @@ class MemoUIFrame(wx.Frame, Observer):
 
         allow_file_name = ['.txt', '.py', '.java', '.cpp']
 
-        if (".cfm" not in loadFile_lower_name):
+        if ".cfm" not in loadFile_lower_name:
             for name in allow_file_name:
-                if (name in loadFile_lower_name):
+                if name in loadFile_lower_name:
                     self.memoManager.OnAddItemFromTextFile(loadFile)
                     return
 
@@ -156,7 +184,52 @@ class MemoUIFrame(wx.Frame, Observer):
         keyword = self.config.GetValue('ctrl_1')
         if len(keyword) == 0:
             return
-        self.OnSearchKeyword(keyword)
+        self.__OnFindMemo(keyword)
+
+    def __OnFindMemo(self, value):
+        if len(value) == 0:
+            return
+        self.OnSearchKeyword(value)
+
+    def on_ctrl_1(self, event):
+        keyword = self.config.GetValue('ctrl_1')
+        self.__OnFindMemo(keyword)
+
+    def on_ctrl_2(self, event):
+        keyword = self.config.GetValue('ctrl_2')
+        self.__OnFindMemo(keyword)
+
+    def on_ctrl_3(self, event):
+        keyword = self.config.GetValue('ctrl_3')
+        self.__OnFindMemo(keyword)
+
+    def on_ctrl_4(self, event):
+        keyword = self.config.GetValue('ctrl_4')
+        self.__OnFindMemo(keyword)
+
+    def on_ctrl_5(self, event):
+        keyword = self.config.GetValue('ctrl_5')
+        self.__OnFindMemo(keyword)
+
+    def on_ctrl_6(self, event):
+        keyword = self.config.GetValue('ctrl_6')
+        self.__OnFindMemo(keyword)
+
+    def on_ctrl_7(self, event):
+        keyword = self.config.GetValue('ctrl_7')
+        self.__OnFindMemo(keyword)
+
+    def on_ctrl_8(self, event):
+        keyword = self.config.GetValue('ctrl_8')
+        self.__OnFindMemo(keyword)
+
+    def on_ctrl_9(self, event):
+        keyword = self.config.GetValue('ctrl_9')
+        self.__OnFindMemo(keyword)
+
+    def on_ctrl_0(self, event):
+        keyword = self.config.GetValue('ctrl_0')
+        self.__OnFindMemo(keyword)
 
     def OnCreateMemo(self, memo):
         self.memoManager.OnCreateMemo(memo)
@@ -189,15 +262,19 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def OnSetBlackColorBg(self, event):
         self.rightPanel.OnSetBGColor(wx.BLACK, wx.WHITE)
+        self.menu.on_toggle_view_menu("BLACK")
 
     def OnSetBlueColorBg(self, event):
         self.rightPanel.OnSetBGColor((0,51,102), wx.WHITE)
+        self.menu.on_toggle_view_menu("BLUE")
 
     def OnSetYellowColorBg(self, event):
         self.rightPanel.OnSetBGColor((255, 255, 204), wx.BLACK)
+        self.menu.on_toggle_view_menu("YELLOW")
 
     def OnSetWhiteColorBg(self, event):
         self.rightPanel.OnSetBGColor(wx.WHITE, wx.BLACK)
+        self.menu.on_toggle_view_menu("WHITE")
 
     def OnAbout(self, event):
         msg = self.swVersion + '\nhttp://chobocho.com'
@@ -212,6 +289,7 @@ class MemoUIFrame(wx.Frame, Observer):
         self.memoManager.OnSetFilter(searchKeyword)
         #self.rightPanel.OnSetSearchKeyword(searchKeyword)
         self.leftPanel._OnItemSelected(0)
+        self.leftPanel.on_set_filter_keyword(searchKeyword)
 
     def OnUpdateMemoList(self, memoList):
         self.logger.info('.')

@@ -18,7 +18,6 @@ class MemoPanel(wx.Panel):
     def _initUi(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-
         titleBox = wx.BoxSizer(wx.HORIZONTAL)
         self.title = wx.TextCtrl(self, style = wx.TE_READONLY,
                                  size=(WINDOW_SIZE,25))

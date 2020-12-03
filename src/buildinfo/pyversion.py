@@ -4,28 +4,32 @@ import traceback
 import copy
 import datetime
 
-class VersionInfo():
+class VersionInfo:
     def __init__(self):
         self.versionDataFile = "version.json"
         self.versionInfo = {}
         self.initVersionInfo()
 
+
     def getVersionInfo(self):
         result = copy.deepcopy(self.versionInfo)
         return result
 
-    def updateVersionInfo(self, filename = ""):
+
+    def updateVersionInfo(self, filename=""):
         if len(filename) > 1:
             self.versionDataFile = filename
         self._readVersionInfo()
         self._makeVersionInfoFile(self._makeNewVersion(), self.versionInfo['filename'])
         self._saveVersionInfo()
-        
+
+
     def _makeVersionInfoFile(self, data, filename):
         f = open(filename, 'w', encoding="UTF-8")
         f.write(data)
         f.close()
-        
+
+
     def _makeNewVersion(self):
         separator = self.versionInfo['separator']
                
@@ -42,14 +46,16 @@ class VersionInfo():
         new_version += self.versionInfo['tail']
         
         return new_version
-        
+
+
     def _readVersionInfo(self):
         if (os.path.isfile(self.versionDataFile)):
             if self._readJsonFile() == False:
                 self._makeVersionFile()
         else:
             self._makeVersionFile()
-        
+
+
     def _saveVersionInfo(self):  
         #print("_saveVersionInfo")
         jsonData = {}

@@ -73,13 +73,13 @@ class DataManager:
             self.memoList = self.memoListOrigin.copy()
             return
         if '|' in filter:
-            splited_filter = filter.split('|')
-            or_filter = [ key for key in splited_filter if len(key.strip()) > 0 ]
+            split_filter = filter.split('|')
+            or_filter = [ key for key in split_filter if len(key.strip()) > 0 ]
             #print(or_filter)
             self.__OnFindOrKeywordList(or_filter)
         elif '&' in filter:
-            splited_filter = filter.split('&')
-            and_filter = [ key for key in splited_filter if len(key.strip()) > 0 ]
+            split_filter = filter.split('&')
+            and_filter = [ key for key in split_filter if len(key.strip()) > 0 ]
             print(and_filter)
             self.__OnFindAndKeywordList(and_filter)
         else:

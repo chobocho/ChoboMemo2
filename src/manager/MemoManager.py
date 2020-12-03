@@ -131,8 +131,8 @@ class MemoManager(Observable):
             self.logger.info("It is bigger than 1MB: " + filename)
             return memo
 
-        filedata = self.fileManager.OnLoadTextFile(filename)
-        memo['memo'] = filename + '\n\n' + ''.join(filedata)
+        file_data = self.fileManager.OnLoadTextFile(filename)
+        memo['memo'] = filename + '\n\n' + ''.join(file_data)
         #print(len(filedata), memo)
         return memo
 
@@ -145,7 +145,7 @@ class MemoManager(Observable):
         for filename in file_list:
             is_processed = False
             for name in allow_file_name:
-                if (name in filename):
+                if name in filename:
                     memo = self.__OnAddItemFromTextFile(filename)
                     self.__OnCreateMemo(memo)
                     is_processed = True

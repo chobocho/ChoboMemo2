@@ -3,11 +3,12 @@ import sys
 import json
 from manager import dbmanager
 
+
 def loadJson(filename):
     print("loadJson: " + filename)
     memoList = []
     try:
-        if (os.path.isfile(filename)):
+        if os.path.isfile(filename):
             file = open(filename, 'r', encoding="UTF-8")
             lines = file.readlines()
             file.close()
@@ -24,22 +25,25 @@ def loadJson(filename):
             print("Success to load " + filename)
         return memoList
     except:
-        print("Loading faile:" + filename)
+        print("Loading failed:" + filename)
 
     return []
 
-def save2DB(datas, db_name):
+
+def save2DB(data, db_name):
     db = dbmanager.DBManager(db_name)
-    print(len(datas))
-    #for item in datas:
+    print(len(data))
+    # for item in data:
     #    db.insert([item['id'], item['memo']])
-    #db.printDB()
+    # db.printDB()
+
 
 def main(filenames):
     json_file = filenames[0]
     db_file = filenames[1]
     data = loadJson(json_file)
     save2DB(data, db_file)
+
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:

@@ -112,7 +112,7 @@ class ListPanel(wx.Panel):
 
     def OnUpdateMemo(self):
         if self.currentItem < 0:
-            self.logger.info("Not choosen item to update")
+            self.logger.info("Not chosen item to update")
             return
    
         chosenItem = self.memoList.GetItem(self.currentItem, 0).GetText()
@@ -140,7 +140,7 @@ class ListPanel(wx.Panel):
     def OnDeleteMemo(self):
         self.logger.info(self.currentItem)
         if self.currentItem < 0:
-            self.logger.info("Not choosen item to delete")
+            self.logger.info("Not chosen item to delete")
             return
         
         chosenItem = self.memoList.GetItem(self.currentItem, 0).GetText()
@@ -163,6 +163,9 @@ class ListPanel(wx.Panel):
         searchKeyword = self.searchText.GetValue()
         self.logger.info(searchKeyword)
         self._OnSearchKeyword(searchKeyword)
+
+    def on_set_filter_keyword(self, keyword):
+        self._on_set_search_keyword(keyword)
 
 
     def _on_set_search_keyword(self, keyword):
@@ -202,7 +205,7 @@ class ListPanel(wx.Panel):
         self.parent.OnGetMemo(chosenItem)
 
 
-    def _open_uri(self, evnet):
+    def _open_uri(self, event):
         if self.memoList.GetItemCount() == 0:
             self.logger.info("List is empty!")
             return

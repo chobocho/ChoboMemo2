@@ -19,22 +19,22 @@ class DBManager:
 
     def create_db_table(self):
         print("create_table")
-        create_memno_table_sql = '''CREATE TABLE IF NOT EXISTS minim (
+        create_memo_table_sql = '''CREATE TABLE IF NOT EXISTS minim (
                                         id integer PRIMARY KEY,
                                         title text NOT NULL,
                                         memo text
                                     );'''
         try:
             c = self.db_conn.cursor()
-            c.execute(create_memno_table_sql)
+            c.execute(create_memo_table_sql)
         except sqlite3.Error as e:
             print(e)
 
     def insert(self, data):
-        intert_memno_sql = '''INSERT INTO minim(title, memo) VALUES(?, ?);'''
+        insert_memo_sql = '''INSERT INTO minim(title, memo) VALUES(?, ?);'''
         try:
             cur = self.db_conn.cursor()
-            cur.execute(intert_memno_sql, (data[0], data[1]))
+            cur.execute(insert_memo_sql, (data[0], data[1]))
             self.db_conn.commit()
             print(cur.lastrowid)
             return cur.lastrowid
@@ -43,19 +43,19 @@ class DBManager:
         return -1
 
     def update(self, data):
-        update_memno_sql = '''UPDATE minim SET title=?, memo=? WHERE id=?;'''
+        update_memo_sql = '''UPDATE minim SET title=?, memo=? WHERE id=?;'''
         try:
             cur = self.db_conn.cursor()
-            cur.execute(update_memno_sql, (data[0], data[1], data[2]))
+            cur.execute(update_memo_sql, (data[0], data[1], data[2]))
             self.db_conn.commit()
         except sqlite3.Error as e:
             print(e)
 
     def delete(self, index):
-        update_memno_sql = '''DELETE FROM minim WHERE id=?;'''
+        update_memo_sql = '''DELETE FROM minim WHERE id=?;'''
         try:
             cur = self.db_conn.cursor()
-            cur.execute(update_memno_sql, (index,))
+            cur.execute(update_memo_sql, (index,))
             self.db_conn.commit()
         except sqlite3.Error as e:
             print(e)
