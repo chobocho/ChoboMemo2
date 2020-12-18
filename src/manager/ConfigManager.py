@@ -22,13 +22,17 @@ class ConfigManager:
         self.config['ctrl_0'] = ""
         self.config['WINDOW_SIZE_W'] = 800
         self.config['WINDOW_SIZE_H'] = 600
+        self.config['AND'] = '&'
+        self.config['OR'] = '|'
 
         cfg_data = fileutil.load_config('./minim.cfg')
         for key, item in self.config.items():
             self.config[key] = cfg_data.get(key, item)
 
+
     def GetValue(self, key):
         return self.config.get(key, [])
+
 
     def get_all_config(self):
         return self.config.copy()

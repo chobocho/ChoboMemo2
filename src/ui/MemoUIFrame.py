@@ -244,6 +244,7 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def OnSetMemoManager(self, memoManager):
         self.memoManager = memoManager
+        self.memoManager.set_split_op(self.config.GetValue("AND"), self.config.GetValue("OR"))
 
     def OnSaveFilteredItems(self, event):
         exportFilePath = ""

@@ -19,6 +19,8 @@ class MemoManager(Observable):
         self.dbm = DBManager('20201105.cfm.db')
         self._loadMemo(callback)
         self.canChange = True
+        self.and_op = '&'
+        self.or_op = '|'
 
     def _loadMemo(self, callback=None):
         memoData = self.dbm.load()
@@ -44,6 +46,13 @@ class MemoManager(Observable):
 
         self.dataManager.OnSetMemoList(memoData)
         self.OnNotify(UPDATE_MEMO)
+
+
+    def set_split_op(self, and_op, or_op):
+       self.and_op = and_op
+       self.or_op = or_op
+       self.dataManager.set_split_op(self.and_op, self.or_op)
+
 
     def OnLoadFile(self, filename):
         self.canChange = False

@@ -5,12 +5,18 @@ from util import textutil
 
 
 class DataManager:
-    def __init__(self):
+    def __init__(self, and_op='&', or_op='|'):
         self.logger = logging.getLogger("chobomemo")
         self.memoList = {}
         self.memoListOrigin = {}
         self.hasUpdated = False
         self.enableDB = True
+        self.and_op = and_op
+        self.or_op = or_op
+
+    def set_split_op(self, and_op, or_op):
+       self.and_op = and_op
+       self.or_op = or_op
 
     def OnSetNeedToSave(self, flag):
         self.hasUpdated = flag
@@ -52,6 +58,7 @@ class DataManager:
         self.memoList =  list.copy()
         self.logger.info("length of memoList is " + str(len(self.memoList)))
 
+
     def OnGetMemo(self, memoIdx, searchKeyword=""):
         if len(self.memoList) == 0:
             emptyMemo = {}
@@ -72,13 +79,13 @@ class DataManager:
         if len(filter) == 0:
             self.memoList = self.memoListOrigin.copy()
             return
-        if '|' in filter:
-            split_filter = filter.split('|')
+        if self.or_op in filter:
+            split_filter = filter.split(self.or_op)
             or_filter = [ key for key in split_filter if len(key.strip()) > 0 ]
             #print(or_filter)
             self.__OnFindOrKeywordList(or_filter)
-        elif '&' in filter:
-            split_filter = filter.split('&')
+        elif self.and_op in filter:
+            split_filter = filter.split(self.and_op)
             and_filter = [ key for key in split_filter if len(key.strip()) > 0 ]
             print(and_filter)
             self.__OnFindAndKeywordList(and_filter)
