@@ -1,11 +1,9 @@
 #!/usr/bin/python
 #-*- coding: utf-8 -*-
 import logging
-import json
 import os
-import loadfilev1
-import loadfilev2
-import savefilev2
+from store import loadfilev1, loadfilev2, savefilev2
+
 
 class FileManager:
     def __init__(self):
@@ -60,6 +58,62 @@ class FileManager:
 
         self.logger.info("Success to save at " + self.saveFileName)
         return True
+
+    def saveAsMarkdown(self, memo, filename):
+        with open(filename, 'w') as outfile:
+            outfile.write('# '+ memo['id'] + '  \n\n')
+            outfile.write('```\n' + memo['memo'] + '\n```')
+
+    def OnLoadTextFile(self, filename):
+        self.logger.info(filename)
+
+        if os.path.isfile(filename) == False:
+            return []
+
+        lines = []
+        try:
+            file = open(filename, 'rt', encoding="UTF-8", errors="surrogatepass")
+            lines = file.readlines()
+            file.close()
+        except:
+            self.logger.info("Loading fail: " + filename)
+        return lines
+
+    def getFileNameOnly(self, filename):
+        if len(filename) == 0:
+            return ""
+        start_filename = filename.rfind('\\')
+        if start_filename == -1:
+            return filename
+        return filename[start_filename+1:]
+
+    def getFileSize(self, filename):
+        if os.path.isfile(filename) == False:
+            return -1
+        st = os.stat(filename)
+        return st.st_size
+
+    def getFileList(self, folders):
+        logger = logging.getLogger('chobomemo')
+        aResult = []
+
+        print(folders)
+
+        for folder in folders:
+            if os.path.exists(folder):
+                if os.path.isfile(folder):
+                   logger.debug("File : " + folder)
+                   aResult.append(folder)
+                   continue
+
+                for (path, dir, files) in os.walk(folder):
+                    for filename in files:
+                        tf = os.path.join(path, filename)
+                        aResult.append(tf)
+            else:
+                logger.warning("Error:", folder, " is not exist")
+
+        return aResult
 
 def test():
     fm = FileManager()

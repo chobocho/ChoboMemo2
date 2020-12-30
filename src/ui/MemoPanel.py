@@ -18,13 +18,12 @@ class MemoPanel(wx.Panel):
     def _initUi(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-
         titleBox = wx.BoxSizer(wx.HORIZONTAL)
         self.title = wx.TextCtrl(self, style = wx.TE_READONLY,
                                  size=(WINDOW_SIZE,25))
         self.title.SetValue("")
         titleBox.Add(self.title, 1, wx.ALIGN_CENTER_VERTICAL, 1)
-        sizer.Add(titleBox, 0, wx.ALIGN_CENTER_VERTICAL)
+        sizer.Add(titleBox, 0, wx.ALIGN_LEFT)
 
         self.text = wx.TextCtrl(self, style = wx.TE_PROCESS_ENTER|
                                               wx.TE_MULTILINE|
@@ -58,7 +57,11 @@ class MemoPanel(wx.Panel):
         self.searchClearBtn.Bind(wx.EVT_BUTTON, self.OnSearchClear)
         btnBox.Add(self.searchClearBtn, 1, wx.ALIGN_CENTRE, 5)
 
-        sizer.Add(btnBox, 0, wx.ALIGN_CENTER_VERTICAL, 1)
+        self.saveAsMDBtn = wx.Button(self, 10, "Save", size=(50,30))
+        self.saveAsMDBtn.Bind(wx.EVT_BUTTON, self.OnSaveAsMD)
+        btnBox.Add(self.saveAsMDBtn, 1, wx.ALIGN_CENTRE, 5)
+
+        sizer.Add(btnBox, 0, wx.ALIGN_LEFT, 1)
 
         self.SetSizer(sizer)
 
@@ -101,3 +104,8 @@ class MemoPanel(wx.Panel):
         self.logger.info(highLightPosition)
         for pos in highLightPosition:
             self.text.SetStyle(pos[0], pos[1], wx.TextAttr(wx.BLACK,"Light blue"))
+
+    def OnSaveAsMD(self, evnet):
+        if len(self.memoIdx) == 0:
+            return
+        self.parent.OnSaveMD(self.memoIdx)

@@ -11,7 +11,7 @@ class LoadFile:
     def loadfile(self, filename):
         memoList = {}
         try:
-            if (os.path.isfile(filename)):
+            if os.path.isfile(filename):
                 file = open(filename, 'r', encoding="UTF-8")
                 lines = file.readlines()
                 file.close()
@@ -28,7 +28,7 @@ class LoadFile:
                 self.logger.info("Success to load " + filename)
             return memoList
         except:
-            self.logger.exception("Loading faile:" + filename)
+            self.logger.exception("Loading failed:" + filename)
             return {}
         return {}
 
