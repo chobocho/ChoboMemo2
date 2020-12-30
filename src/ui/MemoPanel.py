@@ -14,6 +14,8 @@ class MemoPanel(wx.Panel):
         self._initUi()
         self.SetAutoLayout(True)
         self.memoIdx = ""
+        self.high_light_keyword_pos = []
+        self.current_pos = 0;
 
     def _initUi(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -52,6 +54,14 @@ class MemoPanel(wx.Panel):
         self.searchBtn = wx.Button(self, 10, "Find", size=(50,30))
         self.searchBtn.Bind(wx.EVT_BUTTON, self.OnSearchKeyword)
         btnBox.Add(self.searchBtn, 0, wx.ALIGN_CENTRE, 5)        
+
+        self.searchBtn = wx.Button(self, 10, "<", size=(30,30))
+        self.searchBtn.Bind(wx.EVT_BUTTON, self._on_move_prev_keyword)
+        btnBox.Add(self.searchBtn, 0, wx.ALIGN_CENTRE, 5)
+
+        self.searchBtn = wx.Button(self, 10, ">", size=(30,30))
+        self.searchBtn.Bind(wx.EVT_BUTTON, self._on_move_next_keyword)
+        btnBox.Add(self.searchBtn, 0, wx.ALIGN_CENTRE, 5)
 
         self.searchClearBtn = wx.Button(self, 10, "Clear", size=(50,30))
         self.searchClearBtn.Bind(wx.EVT_BUTTON, self.OnSearchClear)
@@ -102,8 +112,30 @@ class MemoPanel(wx.Panel):
 
     def OnShowHighLight(self, highLightPosition):
         self.logger.info(highLightPosition)
+        self.high_light_keyword_pos = [0]
+        self.current_pos = 0
         for pos in highLightPosition:
             self.text.SetStyle(pos[0], pos[1], wx.TextAttr(wx.BLACK,"Light blue"))
+            self.high_light_keyword_pos.append(pos[0])
+
+    def _on_move_next_keyword(self, evnet):
+        print("NEXT ", self.current_pos)
+        if len(self.high_light_keyword_pos) == 0:
+            return
+        max_pos = len(self.high_light_keyword_pos)
+        self.current_pos = (self.current_pos + 1) % max_pos
+        self.text.SetInsertionPoint(self.high_light_keyword_pos[self.current_pos])
+        self.text.SetFocus()
+
+    def _on_move_prev_keyword(self, evnet):
+        print("PREV: ", self.current_pos)
+        if len(self.high_light_keyword_pos) == 0:
+            return
+        max_pos = len(self.high_light_keyword_pos)
+        self.current_pos = (self.current_pos - 1 + max_pos) % max_pos
+        print(self.current_pos)
+        self.text.SetInsertionPoint(self.high_light_keyword_pos[self.current_pos])
+        self.text.SetFocus()
 
     def OnSaveAsMD(self, evnet):
         if len(self.memoIdx) == 0:

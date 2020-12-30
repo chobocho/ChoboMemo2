@@ -61,17 +61,25 @@ class DataManager:
 
     def OnGetMemo(self, memoIdx, searchKeyword=""):
         if len(self.memoList) == 0:
-            emptyMemo = {}
-            emptyMemo['id'] = ""
-            emptyMemo['memo'] = ""
-            emptyMemo['index'] = str(memoIdx)
-            emptyMemo['highlight'] = []
-            return emptyMemo
+            return self.__get_emptyMemo(memoIdx)
+
+        if len(memoIdx) == 0:
+            return self.__get_emptyMemo(memoIdx)
+
         memo = self.memoList[memoIdx].copy()
         keywordList = searchKeyword.lower().split('|')
         highLightPosition = textutil.searchKeyword(memo['memo'].lower(), keywordList)
         memo['highlight'] = highLightPosition[:]
         return memo
+
+
+    def __get_emptyMemo(self, memoIdx):
+        emptyMemo = {}
+        emptyMemo['id'] = ""
+        emptyMemo['memo'] = ""
+        emptyMemo['index'] = str(memoIdx)
+        emptyMemo['highlight'] = []
+        return emptyMemo
 
 
     def OnSetFilter(self, filter_):
