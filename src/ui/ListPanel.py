@@ -206,13 +206,19 @@ class ListPanel(wx.Panel):
 
 
     def _open_uri(self, event):
+        self.open_uri()
+
+
+    def open_uri(self):
         if self.memoList.GetItemCount() == 0:
             self.logger.info("List is empty!")
             return
 
-        index = self.currentItem
-        if index < 0:
-            index = 0
+        if self.currentItem < 0:
+            self.currentItem = 0
+
+        if self.currentItem >= self.memoList.GetItemCount():
+            self.currentItem = 0
 
         chosenItem = self.memoList.GetItem(self.currentItem, 0).GetText()
         uri = self.memoList.GetItem(self.currentItem, 1).GetText()

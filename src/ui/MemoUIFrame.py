@@ -49,6 +49,8 @@ class MemoUIFrame(wx.Frame, Observer):
         self.Bind(wx.EVT_MENU, self._OnUpdateMemo, id=ctrl_U_Id)
         ctrl_F_Id = wx.NewIdRef()
         self.Bind(wx.EVT_MENU, self.OnFind, id=ctrl_F_Id)
+        ctrl_G_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self._on_open_uri, id=ctrl_G_Id)
         ctrl_N_Id = wx.NewIdRef()
         self.Bind(wx.EVT_MENU, self._OnCreateMemo, id=ctrl_N_Id)
 
@@ -100,6 +102,7 @@ class MemoUIFrame(wx.Frame, Observer):
                                          (wx.ACCEL_CTRL, ord('D'), ctrl_D_Id),
                                          (wx.ACCEL_CTRL, ord('E'), ctrl_E_Id),
                                          (wx.ACCEL_CTRL, ord('F'), ctrl_F_Id),
+                                         (wx.ACCEL_CTRL, ord('G'), ctrl_G_Id),
                                          (wx.ACCEL_CTRL, ord('M'), ctrl_M_Id),
                                          (wx.ACCEL_CTRL, ord('N'), ctrl_N_Id),
                                          (wx.ACCEL_CTRL, ord('P'), ctrl_P_Id),
@@ -190,6 +193,9 @@ class MemoUIFrame(wx.Frame, Observer):
         if len(value) == 0:
             return
         self.OnSearchKeyword(value)
+
+    def _on_open_uri(self, event):
+        self.leftPanel.open_uri()
 
     def on_ctrl_1(self, event):
         keyword = self.config.GetValue('ctrl_1')
