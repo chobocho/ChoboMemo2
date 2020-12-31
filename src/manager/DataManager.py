@@ -66,6 +66,9 @@ class DataManager:
         if len(memoIdx) == 0:
             return self.__get_emptyMemo(memoIdx)
 
+        if len(self.memoList.get(memoIdx, "")) == 0:
+            return self.__get_emptyMemo(memoIdx)
+
         memo = self.memoList[memoIdx].copy()
         keywordList = searchKeyword.lower().split('|')
         highLightPosition = textutil.searchKeyword(memo['memo'].lower(), keywordList)

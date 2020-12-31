@@ -103,6 +103,7 @@ class ListPanel(wx.Panel):
 
         title = memo['id']
         self._on_set_search_keyword(title)
+        self._OnSearchKeyword(title)
         self.cache.add(title)
 
 
@@ -130,6 +131,7 @@ class ListPanel(wx.Panel):
 
         title = memo['id']
         self._on_set_search_keyword(title)
+        self._OnSearchKeyword(title)
         self.cache.add(title)
 
 

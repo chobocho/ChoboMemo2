@@ -19,19 +19,20 @@ class VersionInfo:
 
     def updateVersionInfoForRelease(self, filename=""):
         self._updateVersionInfo_preprocess(filename)
-        self._saveVersionInfo(1)
+        self._makeVersionInfoFile(self._makeNewVersion(1), self.versionInfo['filename'])
+        self._saveVersionInfo()
 
 
     def updateVersionInfoForBuild(self, filename=""):
         self._updateVersionInfo_preprocess(filename)
-        self._saveVersionInfo(0)
+        self._makeVersionInfoFile(self._makeNewVersion(0), self.versionInfo['filename'])
+        self._saveVersionInfo()
 
 
     def _updateVersionInfo_preprocess(self, filename=""):
         if len(filename) > 1:
             self.versionDataFile = filename
         self._readVersionInfo()
-        self._makeVersionInfoFile(self._makeNewVersion(), self.versionInfo['filename'])
 
 
     def _makeVersionInfoFile(self, data, filename):
@@ -40,7 +41,7 @@ class VersionInfo:
         f.close()
 
 
-    def _makeNewVersion(self):
+    def _makeNewVersion(self, inc_release_count=0):
         separator = self.versionInfo['separator']
                
         today = datetime.datetime.now()
@@ -50,7 +51,11 @@ class VersionInfo:
             self.versionInfo['month_release_count'] = 1
             self.versionInfo['build_count'] = 1
             self.versionInfo['date'] = yearMonth
-            
+        else:
+            self.versionInfo['month_release_count'] += inc_release_count
+
+        self.versionInfo['build_count'] += 1
+
         new_version = self.versionInfo['header'] + separator
         hexTable = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         new_version += yearMonth + hexTable[int(self.versionInfo['month_release_count'])]
@@ -68,7 +73,7 @@ class VersionInfo:
             self._makeVersionFile()
 
 
-    def _saveVersionInfo(self, inc_release_count=0):
+    def _saveVersionInfo(self):
         #print("_saveVersionInfo")
         jsonData = {}
         jsonData['filename'] = self.versionInfo['filename']
@@ -79,17 +84,13 @@ class VersionInfo:
         jsonData['build_count'] = self.versionInfo['build_count']
         jsonData['tail'] = self.versionInfo['tail']
 
+        print(jsonData['month_release_count'], jsonData['build_count'])
+
         aBakFile = open(self.versionDataFile + ".bak" ,'w', encoding="UTF-8")
         aBakFile.write(json.dumps(jsonData))
         aBakFile.close()
       
         f = open(self.versionDataFile,'w', encoding="UTF-8")
-        jsonData['month_release_count'] += inc_release_count
-        jsonData['build_count'] += 1
-
-        #print(jsonData['month_release_count'])
-        #print(jsonData['build_count'])
-
         f.write(json.dumps(jsonData))
         f.close()
       
