@@ -156,10 +156,12 @@ class MemoUIFrame(wx.Frame, Observer):
         self.OnSaveMemo()
 
     def on_set_max_list(self, event):
-        dlg = wx.TextEntryDialog(None, 'Set max display list count','Count')
-        dlg.SetValue("")
-
         maxCount = self.leftPanel.get_max_list_count()
+    
+        dlg = wx.TextEntryDialog(None, 'Set max display list count','Count')
+        dlg.SetValue(str(maxCount))
+
+
         if dlg.ShowModal() == wx.ID_OK:
             count = dlg.GetValue()
             count = count.strip()

@@ -11,7 +11,7 @@ class ListPanel(wx.Panel):
         super(ListPanel, self).__init__(*args, **kw)
         self.logger = logging.getLogger("chobomemo")
         self.parent = parent
-        self.max_list_count = 42
+        self.max_list_count = 99
         self.cache = memo_cache.MemoCache()
         self._initUI()
 
