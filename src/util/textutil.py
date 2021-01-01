@@ -1,6 +1,6 @@
-'''
+"""
 Text util for chobomemo
-'''
+"""
 import re
 
 def searchKeyword(text, keywordList):

@@ -2,7 +2,6 @@
 #-*- coding: utf-8 -*-
 import logging
 import json
-import os
 
 class SaveFile:
     def __init__(self):
@@ -30,6 +29,5 @@ class SaveFile:
 
 def test():
     fm = SaveFile()
-    fm.savefile()
     '''For unittest'''
 

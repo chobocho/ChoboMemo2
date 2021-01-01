@@ -66,8 +66,8 @@ class VersionInfo:
 
 
     def _readVersionInfo(self):
-        if (os.path.isfile(self.versionDataFile)):
-            if self._readJsonFile() == False:
+        if os.path.isfile(self.versionDataFile):
+            if not self._readJsonFile():
                 self._makeVersionFile()
         else:
             self._makeVersionFile()

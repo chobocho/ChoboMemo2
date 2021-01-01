@@ -27,12 +27,12 @@ class LoadFile:
             return memoList
         except:
             self.logger.exception("Loading failed:" + filename)
-            return {}
+
         return {}
 
 
 def test():
-    '''For unittest'''
+    """For unittest"""
     fm = LoadFile()
     assert fm.loadfile("") == {}
     fm.loadfile("v1_test05.cfm")

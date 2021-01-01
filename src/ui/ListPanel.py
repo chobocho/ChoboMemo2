@@ -13,6 +13,7 @@ class ListPanel(wx.Panel):
         self.parent = parent
         self.max_list_count = 99
         self.cache = memo_cache.MemoCache()
+        self.currentItem = -1
         self._initUI()
 
 
@@ -48,7 +49,7 @@ class ListPanel(wx.Panel):
                                  | wx.LC_EDIT_LABELS
                                  )
         sizer.Add(self.memoList, 1, wx.EXPAND)
-        self.memoList.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnItemSelected)
+        self.memoList.Bind(wx.EVT_LIST_ITEM_SELECTED, self._OnItemSelected)
         self.memoList.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self._OnUpdateMemo)
         self.memoList.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._open_uri)
         self.memoList.InsertColumn(0, "No", width=40)
@@ -93,6 +94,9 @@ class ListPanel(wx.Panel):
 
 
     def OnCreateMemo(self):
+        memo = {}
+        memo['id'] = ''
+
         dlg = MemoDialog(None, title='Create new memo')
         if dlg.ShowModal() == wx.ID_OK:
             memo = {}
@@ -191,12 +195,12 @@ class ListPanel(wx.Panel):
         self._OnSearchKeyword(query)
 
 
-    def OnItemSelected(self, event):
+    def _OnItemSelected(self, event):
         self.currentItem = event.Index
-        self._OnItemSelected(self.currentItem)
+        self.OnItemSelected(self.currentItem)
 
 
-    def _OnItemSelected(self, index):
+    def OnItemSelected(self, index):
         if self.memoList.GetItemCount() == 0:
             self.logger.info("List is empty!")
             return

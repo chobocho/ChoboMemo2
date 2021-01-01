@@ -12,6 +12,7 @@ UPDATE_MEMO = 1
 
 class MemoManager(Observable):
     def __init__(self, callback=None):
+        super().__init__()
         self.logger = logging.getLogger("chobomemo")
         self.dataManager = DataManager()
         self.observer = None
@@ -95,7 +96,7 @@ class MemoManager(Observable):
         return self.dataManager.OnGetFilteredMemoList()
 
     def OnNotify(self, evt):
-        if self.observer == None:
+        if self.observer is None:
             return
         self.observer.OnNotify(evt)
 
@@ -105,7 +106,7 @@ class MemoManager(Observable):
 
     def OnSave(self, filter="", filename=""):
         if len(filter) == 0:
-            if self.dataManager.OnGetNeedToSave() == False:
+            if not self.dataManager.OnGetNeedToSave():
                 self.logger.info("No need to save!")
                 return
             if self.fileManager.saveDataFile(self.dataManager.OnGetMemoList()):
@@ -169,5 +170,5 @@ class MemoManager(Observable):
         self.OnNotify(UPDATE_MEMO)
 
 def test():
-    '''Test code for TDD'''
+    """Test code for TDD"""
     mm = MemoManager()

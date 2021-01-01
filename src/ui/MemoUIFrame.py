@@ -122,7 +122,7 @@ class MemoUIFrame(wx.Frame, Observer):
         loadFile_lower_name = loadFile.lower()
         print(loadFile_lower_name)
 
-        if self.memoManager == None:
+        if self.memoManager is None:
             return
 
         allow_file_name = ['.txt', '.py', '.java', '.cpp']
@@ -297,7 +297,7 @@ class MemoUIFrame(wx.Frame, Observer):
         self.logger.info(searchKeyword)
         self.memoManager.OnSetFilter(searchKeyword)
         #self.rightPanel.OnSetSearchKeyword(searchKeyword)
-        self.leftPanel._OnItemSelected(0)
+        self.leftPanel.OnItemSelected(0)
         self.leftPanel.on_set_filter_keyword(searchKeyword)
 
     def OnUpdateMemoList(self, memoList):
