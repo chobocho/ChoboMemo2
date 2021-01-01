@@ -122,7 +122,7 @@ class MemoUIFrame(wx.Frame, Observer):
         loadFile_lower_name = loadFile.lower()
         print(loadFile_lower_name)
 
-        if self.memoManager == None:
+        if self.memoManager is None:
             return
 
         allow_file_name = ['.txt', '.py', '.java', '.cpp']
@@ -156,10 +156,12 @@ class MemoUIFrame(wx.Frame, Observer):
         self.OnSaveMemo()
 
     def on_set_max_list(self, event):
-        dlg = wx.TextEntryDialog(None, 'Set max display list count','Count')
-        dlg.SetValue("")
-
         maxCount = self.leftPanel.get_max_list_count()
+    
+        dlg = wx.TextEntryDialog(None, 'Set max display list count','Count')
+        dlg.SetValue(str(maxCount))
+
+
         if dlg.ShowModal() == wx.ID_OK:
             count = dlg.GetValue()
             count = count.strip()
@@ -295,7 +297,7 @@ class MemoUIFrame(wx.Frame, Observer):
         self.logger.info(searchKeyword)
         self.memoManager.OnSetFilter(searchKeyword)
         #self.rightPanel.OnSetSearchKeyword(searchKeyword)
-        self.leftPanel._OnItemSelected(0)
+        self.leftPanel.OnItemSelected(0)
         self.leftPanel.on_set_filter_keyword(searchKeyword)
 
     def OnUpdateMemoList(self, memoList):

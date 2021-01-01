@@ -15,7 +15,7 @@ class MemoPanel(wx.Panel):
         self.SetAutoLayout(True)
         self.memoIdx = ""
         self.high_light_keyword_pos = []
-        self.current_pos = 0;
+        self.current_pos = 0
 
     def _initUi(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -87,7 +87,9 @@ class MemoPanel(wx.Panel):
         self.text.SetForegroundColour(fontColor)
         self.text.Refresh()
 
-    def OnSetMemo(self, index, title, memo, hightlight = []):
+    def OnSetMemo(self, index, title, memo, hightlight=None):
+        if hightlight is None:
+            hightlight = []
         self.memoIdx = index
         self.title.SetValue(title)
         self.text.SetValue(memo)

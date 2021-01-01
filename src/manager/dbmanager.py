@@ -6,12 +6,12 @@ class DBManager:
         print(db_filename)
         self.db_file = db_filename
         isExistDB = os.path.exists(self.db_file)
+        self.db_conn = None
         self.create_db_connection()
         if not isExistDB:
             self.create_db_table()
 
     def create_db_connection(self):
-        self.db_conn = None
         try:
             self.db_conn = sqlite3.connect(self.db_file)
         except sqlite3.Error as e:

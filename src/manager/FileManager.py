@@ -17,14 +17,14 @@ class FileManager:
         if len(fileName) > 0:
             self.logger.info(fileName)
             dataFile = fileName
-        if os.path.isfile(dataFile) == False:
+        if not os.path.isfile(dataFile):
             self.logger.warning("File not exist " + dataFile)
             dataFile = self.saveFileName
-        if os.path.isfile(dataFile) == False:
+        if not os.path.isfile(dataFile):
             self.logger.warning("File not exist " + dataFile)
             dataFile = self.alternativeDataFileName
 
-        if (os.path.isfile(dataFile)) == False:
+        if not (os.path.isfile(dataFile)):
             return {}
 
         version = ""
@@ -67,7 +67,7 @@ class FileManager:
     def OnLoadTextFile(self, filename):
         self.logger.info(filename)
 
-        if os.path.isfile(filename) == False:
+        if not os.path.isfile(filename):
             return []
 
         lines = []
@@ -88,7 +88,7 @@ class FileManager:
         return filename[start_filename+1:]
 
     def getFileSize(self, filename):
-        if os.path.isfile(filename) == False:
+        if not os.path.isfile(filename):
             return -1
         st = os.stat(filename)
         return st.st_size

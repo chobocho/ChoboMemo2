@@ -40,7 +40,7 @@ class DataManager:
         self.memoList = self.memoListOrigin.copy()
 
     def OnDeleteMemo(self, memoIdx, dbm):
-        if (memoIdx in self.memoListOrigin) == False:
+        if not (memoIdx in self.memoListOrigin):
             return
         dbm.delete(memoIdx)
         del self.memoListOrigin[memoIdx]
@@ -64,6 +64,9 @@ class DataManager:
             return self.__get_emptyMemo(memoIdx)
 
         if len(memoIdx) == 0:
+            return self.__get_emptyMemo(memoIdx)
+
+        if len(self.memoList.get(memoIdx, "")) == 0:
             return self.__get_emptyMemo(memoIdx)
 
         memo = self.memoList[memoIdx].copy()
@@ -151,5 +154,5 @@ class DataManager:
 
 
 def test():
-    '''Test code for TDD'''
+    """Test code for TDD"""
     dm = DataManager()
