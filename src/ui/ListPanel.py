@@ -52,9 +52,9 @@ class ListPanel(wx.Panel):
         self.memoList.Bind(wx.EVT_LIST_ITEM_SELECTED, self._OnItemSelected)
         self.memoList.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self._OnUpdateMemo)
         self.memoList.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._open_uri)
-        self.memoList.InsertColumn(0, "No", width=40)
-        self.memoList.InsertColumn(1, "Title", width=270)
-        self.memoList.InsertColumn(2, "Memo", width=200)
+        self.memoList.InsertColumn(0, "No", width=60)
+        self.memoList.InsertColumn(1, "Title", width=220)
+        #self.memoList.InsertColumn(2, "Memo", width=200)
         self.memoList.SetFont(font)
         self.currentItem = -1
 
@@ -272,10 +272,10 @@ class ListPanel(wx.Panel):
             self.memoList.SetItem(index, 0, memo['index'])
             self.memoList.SetItem(index, 1, memo['id'])
 
-            summary = memo['memo']
-            if len(summary) > 20:
-                summary = memo['memo'][:20]
-            self.memoList.SetItem(index, 2, summary)
+            #summary = memo['memo']
+            #if len(summary) > 20:
+            #    summary = memo['memo'][:20]
+            #self.memoList.SetItem(index, 2, summary)
             if index % 2 == 0:
                 self.memoList.SetItemBackgroundColour(index, "Light blue")
 
