@@ -13,7 +13,6 @@ def open_uri(uri):
         webbrowser.open_new(uri)
         return
 
-
     if not os.path.exists(uri):
         print("Not exist ", uri)
         return

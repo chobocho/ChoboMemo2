@@ -12,6 +12,8 @@ from manager import ActionManager
 import logging
 
 from manager.Observer import Observer
+from util.clipboardutil import on_get_uri_from_clipboard
+
 
 class MemoUIFrame(wx.Frame, Observer):
     def __init__(self, *args, swVersion,  **kw):
@@ -88,8 +90,12 @@ class MemoUIFrame(wx.Frame, Observer):
         self.Bind(wx.EVT_MENU, self.on_ctrl_9, id=ctrl_9_Id)
         ctrl_0_Id = wx.NewIdRef()
         self.Bind(wx.EVT_MENU, self.on_ctrl_0, id=ctrl_0_Id)
+
+        alt_p_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.__on_open_uri_from_clipboard, id=alt_p_Id)
                                     
-        accel_tbl = wx.AcceleratorTable([(wx.ACCEL_CTRL, ord('1'), ctrl_1_Id),
+        accel_tbl = wx.AcceleratorTable([(wx.ACCEL_ALT, ord('P'), alt_p_Id),
+                                         (wx.ACCEL_CTRL, ord('1'), ctrl_1_Id),
                                          (wx.ACCEL_CTRL, ord('2'), ctrl_2_Id),
                                          (wx.ACCEL_CTRL, ord('3'), ctrl_3_Id),
                                          (wx.ACCEL_CTRL, ord('4'), ctrl_4_Id),
@@ -333,11 +339,30 @@ class MemoUIFrame(wx.Frame, Observer):
             self.memoManager.OnSaveAsMD(memoIdx, filename=exportFilePath)
         dlg.Destroy()
 
+
     def _OnPressCtrlP(self, event):
         self.action.OnRunCommand("ctrl_p")
+
 
     def _OnPressCtrlR(self, event):
         self.leftPanel.query_recent_used_items()
 
+
     def _OnPressCtrlM(self, event):
         self.action.OnRunCommand("ctrl_m")
+
+
+    def __on_open_uri_from_clipboard(self, event):
+        uri = on_get_uri_from_clipboard()
+        #print(uri)
+
+        if len(uri) == 0:
+            return
+
+        if (len(uri) <= 3) or ("http" not in uri.lower()):
+            if webutil.is_special_uri(uri):
+                webutil.open_uri(uri)
+                return
+
+        if len(uri) > 3:
+            webutil.open_uri(uri)
