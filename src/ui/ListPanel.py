@@ -244,6 +244,24 @@ class ListPanel(wx.Panel):
             webutil.open_uri(uri)
 
 
+    def on_copy_title(self):
+        if self.memoList.GetItemCount() == 0:
+            self.logger.info("List is empty!")
+            return
+
+        if self.currentItem < 0:
+            self.currentItem = 0
+
+        if self.currentItem >= self.memoList.GetItemCount():
+            self.currentItem = 0
+
+        chosenItem = self.memoList.GetItem(self.currentItem, 1).GetText()
+
+        if wx.TheClipboard.Open():
+            wx.TheClipboard.SetData(wx.TextDataObject(chosenItem))
+            wx.TheClipboard.Close()
+
+
     def _get_uri_from_data(self, raw_data):
         if len(raw_data) == 0:
             return

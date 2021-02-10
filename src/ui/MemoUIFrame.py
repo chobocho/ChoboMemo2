@@ -43,6 +43,9 @@ class MemoUIFrame(wx.Frame, Observer):
         self.menu = MemoMenu(self, self.config)
  
     def _addShortKey(self):
+
+        ctrl_C_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self._OnCopyTitle, id=ctrl_C_Id)
         ctrl_D_Id = wx.NewIdRef()
         self.Bind(wx.EVT_MENU, self._OnDeleteMemo, id=ctrl_D_Id)
         ctrl_E_Id = wx.NewIdRef()
@@ -105,6 +108,7 @@ class MemoUIFrame(wx.Frame, Observer):
                                          (wx.ACCEL_CTRL, ord('8'), ctrl_8_Id),
                                          (wx.ACCEL_CTRL, ord('9'), ctrl_9_Id),
                                          (wx.ACCEL_CTRL, ord('0'), ctrl_0_Id),
+                                         (wx.ACCEL_CTRL, ord('C'), ctrl_C_Id),
                                          (wx.ACCEL_CTRL, ord('D'), ctrl_D_Id),
                                          (wx.ACCEL_CTRL, ord('E'), ctrl_E_Id),
                                          (wx.ACCEL_CTRL, ord('F'), ctrl_F_Id),
@@ -148,6 +152,10 @@ class MemoUIFrame(wx.Frame, Observer):
         else:
             self.memoManager.OnLoadFile(loadFile)
         self.SetTitle(self.swVersion + ' : ' + loadFile)
+
+
+    def _OnCopyTitle(self, event):
+        self.leftPanel.on_copy_title()
 
     def _OnCreateMemo(self, event):
         self.leftPanel.OnCreateMemo()
