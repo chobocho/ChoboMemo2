@@ -374,3 +374,11 @@ class MemoUIFrame(wx.Frame, Observer):
 
         if len(uri) > 3:
             webutil.open_uri(uri)
+
+
+    def on_clone_memo(self, event):
+        self.leftPanel.on_clone_memo()
+
+
+    def OnCloneMemo(self, memoIdx):
+        self.memoManager.OnCloneMemo(memoIdx)

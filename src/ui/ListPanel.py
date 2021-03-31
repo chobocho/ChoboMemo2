@@ -313,3 +313,19 @@ class ListPanel(wx.Panel):
 
     def get_max_list_count(self):
         return self.max_list_count
+
+
+    def on_clone_memo(self):
+        if self.memoList.GetItemCount() == 0:
+            self.logger.info("List is empty!")
+            return
+
+        if self.currentItem < 0:
+            self.currentItem = 0
+
+        if self.currentItem >= self.memoList.GetItemCount():
+            self.currentItem = 0
+
+        chosenItem = self.memoList.GetItem(self.currentItem, 0).GetText()
+        self.parent.OnCloneMemo(chosenItem)
+

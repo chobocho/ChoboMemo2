@@ -10,6 +10,7 @@ class MemoMenu:
         menubar = wx.MenuBar()
 
         self._add_file_menu(menubar)
+        self._add_edit_menu(menubar)
         self._add_find_menu(menubar)
         self._add_view_menu(menubar)
         self._add_help_menu(menubar)
@@ -30,6 +31,16 @@ class MemoMenu:
         fileItem = fileMenu.Append(wx.ID_EXIT, 'Quit', 'Quit App')
         self.parent.Bind(wx.EVT_MENU, self.parent.OnQuit, fileItem)
         menubar.Append(fileMenu, '&File')
+
+    def _add_edit_menu(self, menubar):
+        edit_menu = wx.Menu()
+
+        clone_memo_id = wx.NewId()
+        clone_memo = edit_menu.Append(clone_memo_id, 'Clone meno', 'Clone memo')
+        self.parent.Bind(wx.EVT_MENU, self.parent.on_clone_memo, clone_memo)
+
+        menubar.Append(edit_menu, '&Edit')
+
 
     def _add_find_menu(self, menubar):
         find_menu = wx.Menu()
