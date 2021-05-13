@@ -149,3 +149,7 @@ class MemoPanel(wx.Panel):
         if len(self.memoIdx) == 0:
             return
         self.parent.OnSaveMD(self.memoIdx)
+
+    def OnSetFontSize(self, font_size):
+        font = wx.Font(font_size, wx.FONTFAMILY_TELETYPE, wx.NORMAL, wx.NORMAL)
+        self.text.SetFont(font)

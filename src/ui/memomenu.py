@@ -97,6 +97,23 @@ class MemoMenu:
 
     def _add_view_menu(self, menubar):
         viewMenu = wx.Menu()
+
+        showMainSearchBoxId = wx.NewId()
+        self.showMainSearchBox = viewMenu.Append(showMainSearchBoxId, 'Toggle main search box', 'Toggle main search box')
+        self.parent.Bind(wx.EVT_MENU, self.parent.showMainSearchBoxToggle, self.showMainSearchBox)
+
+        FontSize14Id = wx.NewId()
+        self.FontSize14 = viewMenu.Append(FontSize14Id, 'Font size 14', 'Set Font size 14')
+        self.parent.Bind(wx.EVT_MENU, self.parent.OnSetFontSize14, self.FontSize14)
+
+        FontSize10Id = wx.NewId()
+        self.FontSize10 = viewMenu.Append(FontSize10Id, 'Font size 10', 'Set Font size 10')
+        self.parent.Bind(wx.EVT_MENU, self.parent.OnSetFontSize10, self.FontSize10)
+
+        FontSize8Id = wx.NewId()
+        self.FontSize8 = viewMenu.Append(FontSize8Id, 'Font size 8', 'Set Font size 8')
+        self.parent.Bind(wx.EVT_MENU, self.parent.OnSetFontSize8, self.FontSize8)
+
         bgBlackColorItemsId = wx.NewId()
         self.bgBlackColorItems = viewMenu.AppendCheckItem(bgBlackColorItemsId, 'Set Black', 'Set backgourd as Black')
         self.parent.Bind(wx.EVT_MENU, self.parent.OnSetBlackColorBg, self.bgBlackColorItems)

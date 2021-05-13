@@ -24,22 +24,7 @@ class ListPanel(wx.Panel):
         sizer = wx.BoxSizer(wx.VERTICAL)
 
         ##
-        listMngBtnBox = wx.BoxSizer(wx.HORIZONTAL)
-
-        self.searchText = wx.TextCtrl(self, style = wx.TE_PROCESS_ENTER,size=(200,25))
-        self.searchText.Bind(wx.EVT_TEXT_ENTER, self.OnSearchKeyword)
-        self.searchText.SetValue("")
-        listMngBtnBox.Add(self.searchText, 0, wx.ALIGN_CENTRE, 5)
-
-        self.searchBtn = wx.Button(self, 10, "Find", size=(50,30))
-        self.searchBtn.Bind(wx.EVT_BUTTON, self.OnSearchKeyword)
-        listMngBtnBox.Add(self.searchBtn, 0, wx.ALIGN_CENTRE, 5)        
-
-        self.searchClearBtn = wx.Button(self, 10, "Clear", size=(50,30))
-        self.searchClearBtn.Bind(wx.EVT_BUTTON, self.OnSearchClear)
-        listMngBtnBox.Add(self.searchClearBtn, 1, wx.ALIGN_CENTRE, 5)
-
-        sizer.Add(listMngBtnBox, 0, wx.ALIGN_LEFT, 1)
+        self.__init_main_search_ui(sizer)
 
         ## memoListCtrl
         memoListID = wx.NewId()
@@ -86,8 +71,39 @@ class ListPanel(wx.Panel):
         
         ##
         self.SetSizer(sizer)
-        self.SetAutoLayout(True)
+        self.SetSizerAndFit(sizer, True)
 
+    def __init_main_search_ui(self, sizer):
+        main_search_box = wx.BoxSizer(wx.VERTICAL)
+
+        self.mainSearchBtnBox = wx.BoxSizer(wx.HORIZONTAL)
+        self.searchMainText = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER, size=(250, 25))
+        self.searchMainText.Bind(wx.EVT_TEXT_ENTER, self.OnSearchKeyword)
+        self.searchMainText.SetValue("")
+        self.mainSearchBtnBox.Add(self.searchMainText, 0, wx.ALIGN_LEFT, 1)
+
+        self.mainSearchClearBtn = wx.Button(self, 10, "Clear", size=(50, 25))
+        self.mainSearchClearBtn.Bind(wx.EVT_BUTTON, self.OnMainSearchClear)
+        self.mainSearchBtnBox.Add(self.mainSearchClearBtn, 1, wx.ALIGN_CENTRE, 1)
+
+        main_search_box.Add(self.mainSearchBtnBox, 0, wx.ALIGN_LEFT, 1)
+        self.on_toggle_main_search_box()
+
+        ##
+        listMngBtnBox = wx.BoxSizer(wx.HORIZONTAL)
+        self.searchText = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER, size=(200, 25))
+        self.searchText.Bind(wx.EVT_TEXT_ENTER, self.OnSearchKeyword)
+        self.searchText.SetValue("")
+        listMngBtnBox.Add(self.searchText, 0, wx.ALIGN_CENTRE, 1)
+        self.searchBtn = wx.Button(self, 10, "Find", size=(50, 25))
+        self.searchBtn.Bind(wx.EVT_BUTTON, self.OnSearchKeyword)
+        listMngBtnBox.Add(self.searchBtn, 0, wx.ALIGN_CENTRE, 1)
+        self.searchClearBtn = wx.Button(self, 10, "Clear", size=(50, 25))
+        self.searchClearBtn.Bind(wx.EVT_BUTTON, self.OnSearchClear)
+        listMngBtnBox.Add(self.searchClearBtn, 1, wx.ALIGN_CENTRE, 1)
+
+        main_search_box.Add(listMngBtnBox, 0, wx.ALIGN_LEFT, 1)
+        sizer.Add(main_search_box, 0, wx.ALIGN_LEFT, 1)
 
     def _OnCreateMemo(self, event):
         self.OnCreateMemo()
@@ -159,28 +175,27 @@ class ListPanel(wx.Panel):
            self.logger.info(msg)
         askDeleteDialog.Destroy()
 
+    def OnMainSearchClear(self, event):
+        self.searchMainText.SetValue("")
 
     def OnSearchClear(self, event):
         self.searchText.SetValue("")
         self._OnSearchKeyword("")
 
-
     def OnSearchKeyword(self, event):
+        searchMainKeyword = self.searchMainText.GetValue()
         searchKeyword = self.searchText.GetValue()
-        self.logger.info(searchKeyword)
-        self._OnSearchKeyword(searchKeyword)
+        self.logger.info(searchMainKeyword + '|' + searchKeyword)
+        self._OnSearchKeyword(searchKeyword, searchMainKeyword)
 
     def on_set_filter_keyword(self, keyword):
         self._on_set_search_keyword(keyword)
 
-
     def _on_set_search_keyword(self, keyword):
         self.searchText.SetValue(keyword)
 
-
-    def _OnSearchKeyword(self, searchKeyword):
-        self.parent.OnSearchKeyword(searchKeyword)
-
+    def _OnSearchKeyword(self, searchKeyword, searchMainKeyword=""):
+        self.parent.OnSearchKeyword(searchKeyword, searchMainKeyword)
 
     def _query_recent_used_items(self, event):
         self.query_recent_used_items()
@@ -329,3 +344,11 @@ class ListPanel(wx.Panel):
         chosenItem = self.memoList.GetItem(self.currentItem, 0).GetText()
         self.parent.OnCloneMemo(chosenItem)
 
+
+    def on_toggle_main_search_box(self):
+        if self.searchMainText.IsShown():
+            self.searchMainText.Hide()
+            self.mainSearchClearBtn.Hide()
+        else:
+            self.searchMainText.Show()
+            self.mainSearchClearBtn.Show()

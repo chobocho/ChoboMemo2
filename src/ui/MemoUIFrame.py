@@ -288,6 +288,9 @@ class MemoUIFrame(wx.Frame, Observer):
         self.menu.on_toggle_view_menu("BLACK")
 
     def OnSetBlueColorBg(self, event):
+        self.__OnSetBlueColorBg()
+
+    def __OnSetBlueColorBg(self):
         self.rightPanel.OnSetBGColor((0,51,102), wx.WHITE)
         self.menu.on_toggle_view_menu("BLUE")
 
@@ -296,6 +299,9 @@ class MemoUIFrame(wx.Frame, Observer):
         self.menu.on_toggle_view_menu("YELLOW")
 
     def OnSetWhiteColorBg(self, event):
+        self.__OnSetWhiteColorBg()
+
+    def __OnSetWhiteColorBg(self):
         self.rightPanel.OnSetBGColor(wx.WHITE, wx.BLACK)
         self.menu.on_toggle_view_menu("WHITE")
 
@@ -307,9 +313,13 @@ class MemoUIFrame(wx.Frame, Observer):
     def OnSaveMemo(self):
         self.memoManager.OnSave()
 
-    def OnSearchKeyword(self, searchKeyword):
-        self.logger.info(searchKeyword)
-        self.memoManager.OnSetFilter(searchKeyword)
+    def OnSearchKeyword(self, searchKeyword, searchMainKeyword=""):
+        searchKeywordList = searchKeyword
+        if len(searchMainKeyword) > 0:
+           searchKeywordList = searchKeyword + '|' +  searchMainKeyword
+
+        self.logger.info(searchKeywordList)
+        self.memoManager.OnSetFilter(searchKeywordList)
         #self.rightPanel.OnSetSearchKeyword(searchKeyword)
         self.leftPanel.OnItemSelected(0)
         self.leftPanel.on_set_filter_keyword(searchKeyword)
@@ -382,3 +392,27 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def OnCloneMemo(self, memoIdx):
         self.memoManager.OnCloneMemo(memoIdx)
+
+
+    def OnSetFontSize14(self, event):
+        self.__OnSetFontSize(14)
+
+
+    def OnSetFontSize10(self, event):
+        self.__OnSetFontSize(10)
+
+
+    def OnSetFontSize8(self, event):
+        self.__OnSetFontSize(8)
+
+
+    def __OnSetFontSize(self, font_size):
+        self.rightPanel.OnSetFontSize(font_size)
+        self.__OnSetWhiteColorBg()
+        self.__OnSetBlueColorBg()
+
+
+    def showMainSearchBoxToggle(self, event):
+        self.leftPanel.on_toggle_main_search_box()
+        self.leftPanel.Layout()
+
