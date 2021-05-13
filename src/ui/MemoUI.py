@@ -31,6 +31,10 @@ class MemoDialog(sized_controls.SizedDialog):
         button_cancel = wx.Button(pane_btns, wx.ID_CANCEL, label='Cancel')
         button_cancel.Bind(wx.EVT_BUTTON, self.on_button)
 
+        add_info_btn_id = wx.NewId()
+        add_info_btn = wx.Button(pane_btns, add_info_btn_id, label='Add Info')
+        add_info_btn.Bind(wx.EVT_BUTTON, self.add_info)
+
         self.Fit()
 
 
@@ -40,14 +44,23 @@ class MemoDialog(sized_controls.SizedDialog):
         else:
             self.Close()
 
+
+    def add_info(self, event):
+        text = self.text.GetValue() + "\n\n---[Memo]---\n"
+        self.text.SetValue(text)
+
+
     def GetValue(self):
         return self.text.GetValue()
+
 
     def SetValue(self, memo):
         return self.text.SetValue(memo)
 
+
     def GetTopic(self):
         return self.topic.GetValue()
+
 
     def SetTopic(self, topic):
         return self.topic.SetValue(topic)

@@ -12,6 +12,8 @@ from manager import ActionManager
 import logging
 
 from manager.Observer import Observer
+from util.clipboardutil import on_get_uri_from_clipboard
+
 
 class MemoUIFrame(wx.Frame, Observer):
     def __init__(self, *args, swVersion,  **kw):
@@ -41,6 +43,9 @@ class MemoUIFrame(wx.Frame, Observer):
         self.menu = MemoMenu(self, self.config)
  
     def _addShortKey(self):
+
+        ctrl_C_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self._OnCopyTitle, id=ctrl_C_Id)
         ctrl_D_Id = wx.NewIdRef()
         self.Bind(wx.EVT_MENU, self._OnDeleteMemo, id=ctrl_D_Id)
         ctrl_E_Id = wx.NewIdRef()
@@ -88,8 +93,12 @@ class MemoUIFrame(wx.Frame, Observer):
         self.Bind(wx.EVT_MENU, self.on_ctrl_9, id=ctrl_9_Id)
         ctrl_0_Id = wx.NewIdRef()
         self.Bind(wx.EVT_MENU, self.on_ctrl_0, id=ctrl_0_Id)
+
+        alt_p_Id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.__on_open_uri_from_clipboard, id=alt_p_Id)
                                     
-        accel_tbl = wx.AcceleratorTable([(wx.ACCEL_CTRL, ord('1'), ctrl_1_Id),
+        accel_tbl = wx.AcceleratorTable([(wx.ACCEL_ALT, ord('P'), alt_p_Id),
+                                         (wx.ACCEL_CTRL, ord('1'), ctrl_1_Id),
                                          (wx.ACCEL_CTRL, ord('2'), ctrl_2_Id),
                                          (wx.ACCEL_CTRL, ord('3'), ctrl_3_Id),
                                          (wx.ACCEL_CTRL, ord('4'), ctrl_4_Id),
@@ -99,6 +108,7 @@ class MemoUIFrame(wx.Frame, Observer):
                                          (wx.ACCEL_CTRL, ord('8'), ctrl_8_Id),
                                          (wx.ACCEL_CTRL, ord('9'), ctrl_9_Id),
                                          (wx.ACCEL_CTRL, ord('0'), ctrl_0_Id),
+                                         (wx.ACCEL_CTRL, ord('C'), ctrl_C_Id),
                                          (wx.ACCEL_CTRL, ord('D'), ctrl_D_Id),
                                          (wx.ACCEL_CTRL, ord('E'), ctrl_E_Id),
                                          (wx.ACCEL_CTRL, ord('F'), ctrl_F_Id),
@@ -142,6 +152,10 @@ class MemoUIFrame(wx.Frame, Observer):
         else:
             self.memoManager.OnLoadFile(loadFile)
         self.SetTitle(self.swVersion + ' : ' + loadFile)
+
+
+    def _OnCopyTitle(self, event):
+        self.leftPanel.on_copy_title()
 
     def _OnCreateMemo(self, event):
         self.leftPanel.OnCreateMemo()
@@ -274,6 +288,9 @@ class MemoUIFrame(wx.Frame, Observer):
         self.menu.on_toggle_view_menu("BLACK")
 
     def OnSetBlueColorBg(self, event):
+        self.__OnSetBlueColorBg()
+
+    def __OnSetBlueColorBg(self):
         self.rightPanel.OnSetBGColor((0,51,102), wx.WHITE)
         self.menu.on_toggle_view_menu("BLUE")
 
@@ -282,6 +299,9 @@ class MemoUIFrame(wx.Frame, Observer):
         self.menu.on_toggle_view_menu("YELLOW")
 
     def OnSetWhiteColorBg(self, event):
+        self.__OnSetWhiteColorBg()
+
+    def __OnSetWhiteColorBg(self):
         self.rightPanel.OnSetBGColor(wx.WHITE, wx.BLACK)
         self.menu.on_toggle_view_menu("WHITE")
 
@@ -293,9 +313,13 @@ class MemoUIFrame(wx.Frame, Observer):
     def OnSaveMemo(self):
         self.memoManager.OnSave()
 
-    def OnSearchKeyword(self, searchKeyword):
-        self.logger.info(searchKeyword)
-        self.memoManager.OnSetFilter(searchKeyword)
+    def OnSearchKeyword(self, searchKeyword, searchMainKeyword=""):
+        searchKeywordList = searchKeyword
+        if len(searchMainKeyword) > 0:
+           searchKeywordList = searchKeyword + '|' +  searchMainKeyword
+
+        self.logger.info(searchKeywordList)
+        self.memoManager.OnSetFilter(searchKeywordList)
         #self.rightPanel.OnSetSearchKeyword(searchKeyword)
         self.leftPanel.OnItemSelected(0)
         self.leftPanel.on_set_filter_keyword(searchKeyword)
@@ -333,11 +357,62 @@ class MemoUIFrame(wx.Frame, Observer):
             self.memoManager.OnSaveAsMD(memoIdx, filename=exportFilePath)
         dlg.Destroy()
 
+
     def _OnPressCtrlP(self, event):
         self.action.OnRunCommand("ctrl_p")
+
 
     def _OnPressCtrlR(self, event):
         self.leftPanel.query_recent_used_items()
 
+
     def _OnPressCtrlM(self, event):
         self.action.OnRunCommand("ctrl_m")
+
+
+    def __on_open_uri_from_clipboard(self, event):
+        uri = on_get_uri_from_clipboard()
+        #print(uri)
+
+        if len(uri) == 0:
+            return
+
+        if (len(uri) <= 3) or ("http" not in uri.lower()):
+            if webutil.is_special_uri(uri):
+                webutil.open_uri(uri)
+                return
+
+        if len(uri) > 3:
+            webutil.open_uri(uri)
+
+
+    def on_clone_memo(self, event):
+        self.leftPanel.on_clone_memo()
+
+
+    def OnCloneMemo(self, memoIdx):
+        self.memoManager.OnCloneMemo(memoIdx)
+
+
+    def OnSetFontSize14(self, event):
+        self.__OnSetFontSize(14)
+
+
+    def OnSetFontSize10(self, event):
+        self.__OnSetFontSize(10)
+
+
+    def OnSetFontSize8(self, event):
+        self.__OnSetFontSize(8)
+
+
+    def __OnSetFontSize(self, font_size):
+        self.rightPanel.OnSetFontSize(font_size)
+        self.__OnSetWhiteColorBg()
+        self.__OnSetBlueColorBg()
+
+
+    def showMainSearchBoxToggle(self, event):
+        self.leftPanel.on_toggle_main_search_box()
+        self.leftPanel.Layout()
+

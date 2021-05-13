@@ -120,14 +120,22 @@ class MemoPanel(wx.Panel):
             self.text.SetStyle(pos[0], pos[1], wx.TextAttr(wx.BLACK,"Light blue"))
             self.high_light_keyword_pos.append(pos[0])
 
+        if (len(self.high_light_keyword_pos) > 1):
+            self.current_pos = 1
+
+        self.__set_focus()
+
+    def __set_focus(self):
+        self.text.SetInsertionPoint(self.high_light_keyword_pos[self.current_pos])
+        self.text.SetFocus()
+
     def _on_move_next_keyword(self, evnet):
         print("NEXT ", self.current_pos)
         if len(self.high_light_keyword_pos) == 0:
             return
         max_pos = len(self.high_light_keyword_pos)
         self.current_pos = (self.current_pos + 1) % max_pos
-        self.text.SetInsertionPoint(self.high_light_keyword_pos[self.current_pos])
-        self.text.SetFocus()
+        self.__set_focus()
 
     def _on_move_prev_keyword(self, evnet):
         print("PREV: ", self.current_pos)
@@ -135,11 +143,13 @@ class MemoPanel(wx.Panel):
             return
         max_pos = len(self.high_light_keyword_pos)
         self.current_pos = (self.current_pos - 1 + max_pos) % max_pos
-        print(self.current_pos)
-        self.text.SetInsertionPoint(self.high_light_keyword_pos[self.current_pos])
-        self.text.SetFocus()
+        self.__set_focus()
 
     def OnSaveAsMD(self, evnet):
         if len(self.memoIdx) == 0:
             return
         self.parent.OnSaveMD(self.memoIdx)
+
+    def OnSetFontSize(self, font_size):
+        font = wx.Font(font_size, wx.FONTFAMILY_TELETYPE, wx.NORMAL, wx.NORMAL)
+        self.text.SetFont(font)

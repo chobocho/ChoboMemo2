@@ -169,6 +169,11 @@ class MemoManager(Observable):
 
         self.OnNotify(UPDATE_MEMO)
 
+
+    def OnCloneMemo(self, memoIdx):
+        memo = self.OnGetMemo(memoIdx)
+        self.OnCreateMemo(memo)
+
 def test():
     """Test code for TDD"""
     mm = MemoManager()

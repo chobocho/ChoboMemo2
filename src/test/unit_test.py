@@ -3,6 +3,7 @@ from manager import DataManager, FileManager, MemoManager
 from util import textutil
 from store import loadfilev1, loadfilev2
 from manager import memo_cache
+from util.clipboardutil import on_get_uri_from_clipboard
 
 
 class ChoboMemoTest(unittest.TestCase):
@@ -14,6 +15,7 @@ class ChoboMemoTest(unittest.TestCase):
         lru.add("Hi")
         self.assertEqual(lru.get_values()[0], 'Hello')
         self.assertEqual(lru.query(), 'Hello|Hi')
+
 
 if __name__ == '__main__':
     unittest.main()
