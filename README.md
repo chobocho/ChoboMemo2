@@ -4,11 +4,10 @@ Simple memo & code snippet management tool
 
 ![screen shot](doc/screenshot.png)
 
-# Release
-
-[Download](https://github.com/chobocho/ChoboMemo2/tree/release/src/dist)
 
 # How to use
+
+## Shortcut keys
 ~~~
     Ctrl+N : Create memo
     Ctrl+E : Edit memo  
@@ -24,5 +23,16 @@ Simple memo & code snippet management tool
     Alt +P : Open URL in clipboard
 ~~~
 
+## Search (Ctrl+F)
+* t: [Keyword] 
+  - Find keyword in title only
+
+* A and B
+  - A, B
+  
+* A or B
+  - A | B
+  
+  
 # License
 MIT license
