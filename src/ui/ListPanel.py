@@ -132,10 +132,9 @@ class ListPanel(wx.Panel):
 
 
     def OnUpdateMemo(self):
-        if self.currentItem < 0:
-            self.logger.info("Not chosen item to update")
+        if not self.__HasItem():
             return
-   
+
         chosenItem = self.memoList.GetItem(self.currentItem, 0).GetText()
         self.logger.info(str(self.currentItem) + ':' + chosenItem)
         memo = self.parent.OnGetMemoItem(chosenItem)
@@ -151,7 +150,7 @@ class ListPanel(wx.Panel):
 
         title = memo['id']
         self._on_set_search_keyword(title)
-        self._OnSearchKeyword(title)
+        self._OnSearchKeywordInTitle(title)
         self.cache.add(title)
 
 
@@ -161,10 +160,10 @@ class ListPanel(wx.Panel):
 
     def OnDeleteMemo(self):
         self.logger.info(self.currentItem)
-        if self.currentItem < 0:
-            self.logger.info("Not chosen item to delete")
+
+        if not self.__HasItem():
             return
-        
+
         chosenItem = self.memoList.GetItem(self.currentItem, 0).GetText()
         title = self.memoList.GetItem(self.currentItem, 1).GetText()
         msg = 'Do you want to delete [' + chosenItem +'] ' + title
@@ -196,6 +195,9 @@ class ListPanel(wx.Panel):
 
     def _OnSearchKeyword(self, searchKeyword, searchMainKeyword=""):
         self.parent.OnSearchKeyword(searchKeyword, searchMainKeyword)
+
+    def _OnSearchKeywordInTitle(self, searchKeyword):
+        self.parent.OnSearchKeywordInTitle(searchKeyword)
 
     def _query_recent_used_items(self, event):
         self.query_recent_used_items()
@@ -231,15 +233,8 @@ class ListPanel(wx.Panel):
 
 
     def open_uri(self):
-        if self.memoList.GetItemCount() == 0:
-            self.logger.info("List is empty!")
+        if not self.__HasItem():
             return
-
-        if self.currentItem < 0:
-            self.currentItem = 0
-
-        if self.currentItem >= self.memoList.GetItemCount():
-            self.currentItem = 0
 
         chosenItem = self.memoList.GetItem(self.currentItem, 0).GetText()
         uri = self.memoList.GetItem(self.currentItem, 1).GetText()
@@ -260,15 +255,8 @@ class ListPanel(wx.Panel):
 
 
     def on_copy_title(self):
-        if self.memoList.GetItemCount() == 0:
-            self.logger.info("List is empty!")
+        if not self.__HasItem():
             return
-
-        if self.currentItem < 0:
-            self.currentItem = 0
-
-        if self.currentItem >= self.memoList.GetItemCount():
-            self.currentItem = 0
 
         chosenItem = self.memoList.GetItem(self.currentItem, 1).GetText()
 
@@ -330,16 +318,23 @@ class ListPanel(wx.Panel):
         return self.max_list_count
 
 
-    def on_clone_memo(self):
+    def __HasItem(self) -> bool:
         if self.memoList.GetItemCount() == 0:
             self.logger.info("List is empty!")
-            return
+            return False
 
         if self.currentItem < 0:
             self.currentItem = 0
 
         if self.currentItem >= self.memoList.GetItemCount():
             self.currentItem = 0
+
+        return True
+
+
+    def on_clone_memo(self):
+        if not self.__HasItem():
+            return
 
         chosenItem = self.memoList.GetItem(self.currentItem, 0).GetText()
         self.parent.OnCloneMemo(chosenItem)

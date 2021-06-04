@@ -127,6 +127,10 @@ class MemoManager(Observable):
         self.dataManager.OnSetFilter(searchKeyword)
         self.OnNotify(UPDATE_MEMO)
 
+    def OnSetFilterInTitle(self, searchKeyword):
+        self.dataManager.OnSetFilterInTitle(searchKeyword)
+        self.OnNotify(UPDATE_MEMO)
+
     def OnAddItemFromTextFile(self, filename):
         memo = self.__OnAddItemFromTextFile(filename)
         self.OnCreateMemo(memo)

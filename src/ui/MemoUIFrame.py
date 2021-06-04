@@ -306,7 +306,23 @@ class MemoUIFrame(wx.Frame, Observer):
         self.menu.on_toggle_view_menu("WHITE")
 
     def OnAbout(self, event):
-        msg = self.swVersion + '\nhttp://chobocho.com'
+        help = """
+    Ctrl+N : Create memo
+    Ctrl+E : Edit memo  
+    Ctrl+U : Edit memo  
+    Ctrl+D : Delete memo
+    Ctrl+F : Find
+    Ctrl+S : Save
+    Ctrl+Q : Quit
+
+    Ctrl+M : Notepad
+    Ctrl+P : MsPaint
+
+    Alt +P : Open URL in clipboard
+    -------------------------------------
+    http://www.chobocho.com
+    """
+        msg = "Minim" + '\n\n' + help + '\n\n    ' + self.swVersion
         title = 'About'
         wx.MessageBox(msg, title, wx.OK | wx.ICON_INFORMATION)
 
@@ -315,12 +331,29 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def OnSearchKeyword(self, searchKeyword, searchMainKeyword=""):
         searchKeywordList = searchKeyword
+
         if len(searchMainKeyword) > 0:
            searchKeywordList = searchKeyword + '|' +  searchMainKeyword
+        elif (len(searchKeyword) > 1) and (searchKeyword[-1] == '.'):
+            self.OnSearchKeywordInTitle(searchKeyword[:-1])
+            return
+        elif (len(searchKeyword) > 2) and (searchKeyword[:2].lower() == 't:'):
+            self.OnSearchKeywordInTitle(searchKeyword[2:])
+            print(searchKeyword[2:])
+            return
 
         self.logger.info(searchKeywordList)
         self.memoManager.OnSetFilter(searchKeywordList)
         #self.rightPanel.OnSetSearchKeyword(searchKeyword)
+        self.leftPanel.OnItemSelected(0)
+        self.leftPanel.on_set_filter_keyword(searchKeyword)
+
+    def OnSearchKeywordInTitle(self, searchKeyword):
+        searchKeywordList = searchKeyword
+
+        self.logger.info(searchKeywordList)
+        self.memoManager.OnSetFilterInTitle(searchKeywordList)
+        # self.rightPanel.OnSetSearchKeyword(searchKeyword)
         self.leftPanel.OnItemSelected(0)
         self.leftPanel.on_set_filter_keyword(searchKeyword)
 

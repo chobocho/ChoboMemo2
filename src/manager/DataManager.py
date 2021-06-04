@@ -104,6 +104,21 @@ class DataManager:
             self.__OnFindSimpleKeyword(filter)
 
 
+    def OnSetFilterInTitle(self, filter_):
+        filter = filter_.strip().lower()
+        if len(filter) == 0:
+            self.memoList = self.memoListOrigin.copy()
+            return
+        self.__OnFindSimpleKeywordInTitle(filter)
+
+
+    def __OnFindSimpleKeywordInTitle(self, filter):
+        self.memoList = {}
+        for key in self.memoListOrigin.keys():
+            if filter in self.memoListOrigin[key]['id'].lower():
+                self.memoList[key] = self.memoListOrigin[key]
+
+
     def __OnFindSimpleKeyword(self, filter):
         self.memoList = {}
         for key in self.memoListOrigin.keys():
