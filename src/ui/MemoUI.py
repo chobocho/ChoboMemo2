@@ -1,6 +1,8 @@
 import wx
 from wx.lib import sized_controls
 
+from util.clipboardutil import on_get_uri_from_clipboard
+
 WINDOW_SIZE_W = 900
 WINDOW_SIZE_H = 500
 
@@ -35,6 +37,14 @@ class MemoDialog(sized_controls.SizedDialog):
         add_info_btn = wx.Button(pane_btns, add_info_btn_id, label='Add Info')
         add_info_btn.Bind(wx.EVT_BUTTON, self.add_info)
 
+        append_btn_id = wx.NewId()
+        append_btn = wx.Button(pane_btns, append_btn_id, label='Append')
+        append_btn.Bind(wx.EVT_BUTTON, self.append_from_clipboard)
+
+        remove_space_btn_id = wx.NewId()
+        remove_space_btn = wx.Button(pane_btns, remove_space_btn_id, label='Trim')
+        remove_space_btn.Bind(wx.EVT_BUTTON, self.remove_space)
+
         self.Fit()
 
 
@@ -48,6 +58,30 @@ class MemoDialog(sized_controls.SizedDialog):
     def add_info(self, event):
         text = self.text.GetValue() + "\n\n---[Memo]---\n"
         self.text.SetValue(text)
+
+
+    def append_from_clipboard(self, event):
+        text = self.text.GetValue() + "\n"
+        text += on_get_uri_from_clipboard()
+        self.text.SetValue(text)
+        self.text.SetInsertionPoint(len(text))
+        self.text.SetFocus()
+
+    def remove_space(self, evnet):
+        text = self.text.GetValue()
+        if len(text) == 0:
+            return
+
+        text = text.strip()
+        lines = text.split('\n')
+
+        result = []
+        for line in lines:
+            tmpLine = line.strip()
+            if len(tmpLine) > 0:
+                result.append(tmpLine)
+
+        self.text.SetValue('\n'.join(result))
 
 
     def GetValue(self):
