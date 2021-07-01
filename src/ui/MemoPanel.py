@@ -5,6 +5,7 @@ import wx
 import logging
 
 WINDOW_SIZE = 480
+MAX_HIGHLIGHT_POS = 128
 
 class MemoPanel(wx.Panel):
     def __init__(self, parent, *args, **kw):
@@ -116,6 +117,11 @@ class MemoPanel(wx.Panel):
         self.logger.info(highLightPosition)
         self.high_light_keyword_pos = [0]
         self.current_pos = 0
+
+        if len(highLightPosition) >= MAX_HIGHLIGHT_POS:
+            self.logger.info('{0} is too many. Reudce to {1}'.format(len(highLightPosition), MAX_HIGHLIGHT_POS))
+            highLightPosition = highLightPosition[:MAX_HIGHLIGHT_POS]
+
         for pos in highLightPosition:
             self.text.SetStyle(pos[0], pos[1], wx.TextAttr(wx.BLACK,"Light blue"))
             self.high_light_keyword_pos.append(pos[0])

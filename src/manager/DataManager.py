@@ -5,7 +5,7 @@ from util import textutil
 
 
 class DataManager:
-    def __init__(self, and_op='&', or_op='|'):
+    def __init__(self, and_op=',', or_op='|'):
         self.logger = logging.getLogger("chobomemo")
         self.memoList = {}
         self.memoListOrigin = {}
@@ -120,11 +120,32 @@ class DataManager:
 
 
     def __OnFindSimpleKeyword(self, filter):
+        if filter[0] == '!' or filter[0] == '~':
+            self._FindHasNotFilterList(filter[1:])
+        else:
+            self._FindHasFilterList(filter)
+
+
+    def _FindHasFilterList(self, filter):
         self.memoList = {}
         for key in self.memoListOrigin.keys():
             if filter in self.memoListOrigin[key]['id'].lower():
                 self.memoList[key] = self.memoListOrigin[key]
             elif filter in self.memoListOrigin[key]['memo'].lower():
+                self.memoList[key] = self.memoListOrigin[key]
+
+
+    def _FindHasNotFilterList(self, filter):
+        self.memoList = {}
+        for key in self.memoListOrigin.keys():
+            hasKeyword = False
+
+            if filter in self.memoListOrigin[key]['id'].lower():
+                hasKeyword = True
+            if filter in self.memoListOrigin[key]['memo'].lower():
+                hasKeyword = True
+
+            if not hasKeyword:
                 self.memoList[key] = self.memoListOrigin[key]
 
 
@@ -151,15 +172,25 @@ class DataManager:
             return
 
         for key in self.memoListOrigin.keys():
-            is_find = True
+            is_find = False
 
             for filter in filters:
-                is_find = False
+                if filter[0] == '!' or filter[0] == '~':
+                    keyword = filter[1:]
+                    is_find = True
 
-                if filter in self.memoListOrigin[key]['id'].lower():
-                    is_find = True
-                elif filter in self.memoListOrigin[key]['memo'].lower():
-                    is_find = True
+                    if keyword in self.memoListOrigin[key]['id'].lower():
+                        is_find = False
+                    if keyword in self.memoListOrigin[key]['memo'].lower():
+                        is_find = False
+
+                else:
+                    is_find = False
+
+                    if filter in self.memoListOrigin[key]['id'].lower():
+                        is_find = True
+                    elif filter in self.memoListOrigin[key]['memo'].lower():
+                        is_find = True
 
                 if not is_find:
                    break

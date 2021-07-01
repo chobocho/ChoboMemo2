@@ -20,7 +20,7 @@ class MemoManager(Observable):
         self.dbm = DBManager('20201105.cfm.db')
         self._loadMemo(callback)
         self.canChange = True
-        self.and_op = '&'
+        self.and_op = ','
         self.or_op = '|'
 
     def _loadMemo(self, callback=None):
