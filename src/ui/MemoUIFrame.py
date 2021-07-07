@@ -51,7 +51,7 @@ class MemoUIFrame(wx.Frame, Observer):
         ctrl_E_Id = wx.NewIdRef()
         self.Bind(wx.EVT_MENU, self._OnUpdateMemo, id=ctrl_E_Id)
         ctrl_U_Id = wx.NewIdRef()
-        self.Bind(wx.EVT_MENU, self._OnUpdateMemo, id=ctrl_U_Id)
+        self.Bind(wx.EVT_MENU, self._OnUpdateMemoAndOpen, id=ctrl_U_Id)
         ctrl_F_Id = wx.NewIdRef()
         self.Bind(wx.EVT_MENU, self.OnFind, id=ctrl_F_Id)
         ctrl_G_Id = wx.NewIdRef()
@@ -161,6 +161,10 @@ class MemoUIFrame(wx.Frame, Observer):
         self.leftPanel.OnCreateMemo()
 
     def _OnUpdateMemo(self, event):
+        self.leftPanel.OnUpdateMemo()
+
+    def _OnUpdateMemoAndOpen(self, event):
+        self.leftPanel.open_uri()
         self.leftPanel.OnUpdateMemo()
 
     def _OnDeleteMemo(self, event):

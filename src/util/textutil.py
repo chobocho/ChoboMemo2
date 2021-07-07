@@ -16,7 +16,8 @@ def searchKeyword(text, keywordList):
         return []
 
     searchKeyword = '|'.join(searchKeywordList)
-    pattern = re.compile(searchKeyword)
+    processed_search_keyword = searchKeyword.replace('[', '\[')
+    pattern = re.compile(processed_search_keyword)
     findPositionList = pattern.finditer(textLower)
     for match in findPositionList:
         searchResult.append(match.span())
