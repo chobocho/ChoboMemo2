@@ -114,10 +114,14 @@ class DataManager:
 
     def __OnFindSimpleKeywordInTitle(self, filter):
         self.memoList = {}
-        for key in self.memoListOrigin.keys():
-            if filter in self.memoListOrigin[key]['id'].lower():
-                self.memoList[key] = self.memoListOrigin[key]
 
+        filter_list = filter.split('|')
+
+        for key in self.memoListOrigin.keys():
+            for searchKey in filter_list:
+                if searchKey.lower() in self.memoListOrigin[key]['id'].lower():
+                    self.memoList[key] = self.memoListOrigin[key]
+                    break
 
     def __OnFindSimpleKeyword(self, filter):
         if filter[0] == '!' or filter[0] == '~':

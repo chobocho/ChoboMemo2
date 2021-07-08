@@ -187,17 +187,22 @@ class ListPanel(wx.Panel):
         self.logger.info(searchMainKeyword + '|' + searchKeyword)
         self._OnSearchKeyword(searchKeyword, searchMainKeyword)
 
+
     def on_set_filter_keyword(self, keyword):
         self._on_set_search_keyword(keyword)
+
 
     def _on_set_search_keyword(self, keyword):
         self.searchText.SetValue(keyword)
 
+
     def _OnSearchKeyword(self, searchKeyword, searchMainKeyword=""):
         self.parent.OnSearchKeyword(searchKeyword, searchMainKeyword)
 
+
     def _OnSearchKeywordInTitle(self, searchKeyword):
         self.parent.OnSearchKeywordInTitle(searchKeyword)
+
 
     def _query_recent_used_items(self, event):
         self.query_recent_used_items()
@@ -208,6 +213,7 @@ class ListPanel(wx.Panel):
         if len(query) == 0:
             return
 
+        query = 't:' + query
         self.searchText.SetValue(query)
         self._OnSearchKeyword(query)
 
