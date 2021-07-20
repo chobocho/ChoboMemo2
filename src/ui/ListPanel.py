@@ -264,10 +264,16 @@ class ListPanel(wx.Panel):
         if not self.__HasItem():
             return
 
-        chosenItem = self.memoList.GetItem(self.currentItem, 1).GetText()
+        chosenItemCount = self.memoList.GetSelectedItemCount()
+        nextItem = self.memoList.GetFirstSelected()
+
+        selectedItemList = []
+        for _ in range(chosenItemCount):
+            selectedItemList.append(self.memoList.GetItem(nextItem, 1).GetText())
+            nextItem = self.memoList.GetNextItem(nextItem)
 
         if wx.TheClipboard.Open():
-            wx.TheClipboard.SetData(wx.TextDataObject(chosenItem))
+            wx.TheClipboard.SetData(wx.TextDataObject('\n'.join(selectedItemList)))
             wx.TheClipboard.Close()
 
 

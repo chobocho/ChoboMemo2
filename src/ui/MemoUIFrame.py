@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import os
 from ui.MemoPanel import *
@@ -16,13 +16,15 @@ from util.clipboardutil import on_get_uri_from_clipboard
 
 
 class MemoUIFrame(wx.Frame, Observer):
-    def __init__(self, *args, swVersion,  **kw):
-        super(MemoUIFrame, self).__init__(*args, title = swVersion, **kw)
+    def __init__(self, *args, swVersion, **kw):
+        super(MemoUIFrame, self).__init__(*args, title=swVersion, **kw)
         self.logger = logging.getLogger("chobomemo")
         self.config = ConfigManager.ConfigManager()
         self.action = ActionManager.ActionManager()
         self.swVersion = swVersion
-        self.splitter = wx.SplitterWindow(self, -1, wx.Point(0, 0), wx.Size(self.config.GetValue('WINDOW_SIZE_W'), self.config.GetValue('WINDOW_SIZE_H')), wx.SP_3D | wx.SP_BORDER)
+        self.splitter = wx.SplitterWindow(self, -1, wx.Point(0, 0), wx.Size(self.config.GetValue('WINDOW_SIZE_W'),
+                                                                            self.config.GetValue('WINDOW_SIZE_H')),
+                                          wx.SP_3D | wx.SP_BORDER)
         self.leftPanel = ListPanel(self, self.splitter)
         self.rightPanel = MemoPanel(self, self.splitter)
         self.splitter.SplitVertically(self.leftPanel, self.rightPanel)
@@ -41,7 +43,7 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def _addMenubar(self):
         self.menu = MemoMenu(self, self.config)
- 
+
     def _addShortKey(self):
 
         ctrl_C_Id = wx.NewIdRef()
@@ -96,32 +98,49 @@ class MemoUIFrame(wx.Frame, Observer):
 
         alt_p_Id = wx.NewIdRef()
         self.Bind(wx.EVT_MENU, self.__on_open_uri_from_clipboard, id=alt_p_Id)
-                                    
-        accel_tbl = wx.AcceleratorTable([(wx.ACCEL_ALT, ord('P'), alt_p_Id),
-                                         (wx.ACCEL_CTRL, ord('1'), ctrl_1_Id),
-                                         (wx.ACCEL_CTRL, ord('2'), ctrl_2_Id),
-                                         (wx.ACCEL_CTRL, ord('3'), ctrl_3_Id),
-                                         (wx.ACCEL_CTRL, ord('4'), ctrl_4_Id),
-                                         (wx.ACCEL_CTRL, ord('5'), ctrl_5_Id),
-                                         (wx.ACCEL_CTRL, ord('6'), ctrl_6_Id),
-                                         (wx.ACCEL_CTRL, ord('7'), ctrl_7_Id),
-                                         (wx.ACCEL_CTRL, ord('8'), ctrl_8_Id),
-                                         (wx.ACCEL_CTRL, ord('9'), ctrl_9_Id),
-                                         (wx.ACCEL_CTRL, ord('0'), ctrl_0_Id),
-                                         (wx.ACCEL_CTRL, ord('C'), ctrl_C_Id),
-                                         (wx.ACCEL_CTRL, ord('D'), ctrl_D_Id),
-                                         (wx.ACCEL_CTRL, ord('E'), ctrl_E_Id),
-                                         (wx.ACCEL_CTRL, ord('F'), ctrl_F_Id),
-                                         (wx.ACCEL_CTRL, ord('G'), ctrl_G_Id),
-                                         (wx.ACCEL_CTRL, ord('M'), ctrl_M_Id),
-                                         (wx.ACCEL_CTRL, ord('N'), ctrl_N_Id),
-                                         (wx.ACCEL_CTRL, ord('P'), ctrl_P_Id),
-                                         (wx.ACCEL_CTRL, ord('R'), ctrl_R_Id),
-                                         (wx.ACCEL_CTRL, ord('U'), ctrl_U_Id),
-                                         (wx.ACCEL_CTRL, ord('S'), ctrl_S_Id),
-                                         (wx.ACCEL_CTRL, ord('Q'), ctrl_Q_Id)])
-        self.SetAcceleratorTable(accel_tbl)
 
+        move_home_id = wx.NewId()
+        self.Bind(wx.EVT_MENU, self.move_home, id=move_home_id)
+
+        move_end_id = wx.NewId()
+        self.Bind(wx.EVT_MENU, self.move_end, id=move_end_id)
+
+        move_forward_id = wx.NewId()
+        self.Bind(wx.EVT_MENU, self.move_forward, id=move_forward_id)
+
+        move_backward_id = wx.NewId()
+        self.Bind(wx.EVT_MENU, self.move_backward, id=move_backward_id)
+
+        accel_tbl = wx.AcceleratorTable([
+            (wx.ACCEL_ALT, ord('B'), move_backward_id),
+            (wx.ACCEL_ALT, ord('E'), move_end_id),
+            (wx.ACCEL_ALT, ord('F'), move_forward_id),
+            (wx.ACCEL_ALT, ord('H'), move_home_id),
+            (wx.ACCEL_ALT, ord('P'), alt_p_Id),
+            (wx.ACCEL_CTRL, ord('1'), ctrl_1_Id),
+            (wx.ACCEL_CTRL, ord('2'), ctrl_2_Id),
+            (wx.ACCEL_CTRL, ord('3'), ctrl_3_Id),
+            (wx.ACCEL_CTRL, ord('4'), ctrl_4_Id),
+            (wx.ACCEL_CTRL, ord('5'), ctrl_5_Id),
+            (wx.ACCEL_CTRL, ord('6'), ctrl_6_Id),
+            (wx.ACCEL_CTRL, ord('7'), ctrl_7_Id),
+            (wx.ACCEL_CTRL, ord('8'), ctrl_8_Id),
+            (wx.ACCEL_CTRL, ord('9'), ctrl_9_Id),
+            (wx.ACCEL_CTRL, ord('0'), ctrl_0_Id),
+            (wx.ACCEL_CTRL, ord('C'), ctrl_C_Id),
+            (wx.ACCEL_CTRL, ord('D'), ctrl_D_Id),
+            (wx.ACCEL_CTRL, ord('E'), ctrl_E_Id),
+            (wx.ACCEL_CTRL, ord('F'), ctrl_F_Id),
+            (wx.ACCEL_CTRL, ord('G'), ctrl_G_Id),
+            (wx.ACCEL_CTRL, ord('M'), ctrl_M_Id),
+            (wx.ACCEL_CTRL, ord('N'), ctrl_N_Id),
+            (wx.ACCEL_CTRL, ord('P'), ctrl_P_Id),
+            (wx.ACCEL_CTRL, ord('R'), ctrl_R_Id),
+            (wx.ACCEL_CTRL, ord('U'), ctrl_U_Id),
+            (wx.ACCEL_CTRL, ord('S'), ctrl_S_Id),
+            (wx.ACCEL_CTRL, ord('Q'), ctrl_Q_Id)])
+
+        self.SetAcceleratorTable(accel_tbl)
 
     def OnCallback(self, filelist):
         """
@@ -153,7 +172,6 @@ class MemoUIFrame(wx.Frame, Observer):
             self.memoManager.OnLoadFile(loadFile)
         self.SetTitle(self.swVersion + ' : ' + loadFile)
 
-
     def _OnCopyTitle(self, event):
         self.leftPanel.on_copy_title()
 
@@ -175,10 +193,9 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def on_set_max_list(self, event):
         maxCount = self.leftPanel.get_max_list_count()
-    
-        dlg = wx.TextEntryDialog(None, 'Set max display list count','Count')
-        dlg.SetValue(str(maxCount))
 
+        dlg = wx.TextEntryDialog(None, 'Set max display list count', 'Count')
+        dlg.SetValue(str(maxCount))
 
         if dlg.ShowModal() == wx.ID_OK:
             count = dlg.GetValue()
@@ -195,7 +212,7 @@ class MemoUIFrame(wx.Frame, Observer):
         self.leftPanel.set_max_list_count(maxCount)
 
     def OnFind(self, event):
-        dlg = wx.TextEntryDialog(None, 'Input keyword','Find')
+        dlg = wx.TextEntryDialog(None, 'Input keyword', 'Find')
         dlg.SetValue("")
 
         if dlg.ShowModal() == wx.ID_OK:
@@ -275,8 +292,8 @@ class MemoUIFrame(wx.Frame, Observer):
     def OnSaveFilteredItems(self, event):
         exportFilePath = ""
         dlg = wx.FileDialog(
-             self, message="Save file as ...", defaultDir=os.getcwd(),
-             defaultFile="", wildcard="Cfm files (*.cfm)|*.cfm", style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT
+            self, message="Save file as ...", defaultDir=os.getcwd(),
+            defaultFile="", wildcard="Cfm files (*.cfm)|*.cfm", style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT
         )
 
         if dlg.ShowModal() == wx.ID_OK:
@@ -295,7 +312,7 @@ class MemoUIFrame(wx.Frame, Observer):
         self.__OnSetBlueColorBg()
 
     def __OnSetBlueColorBg(self):
-        self.rightPanel.OnSetBGColor((0,51,102), wx.WHITE)
+        self.rightPanel.OnSetBGColor((0, 51, 102), wx.WHITE)
         self.menu.on_toggle_view_menu("BLUE")
 
     def OnSetYellowColorBg(self, event):
@@ -337,7 +354,7 @@ class MemoUIFrame(wx.Frame, Observer):
         searchKeywordList = searchKeyword
 
         if len(searchMainKeyword) > 0:
-           searchKeywordList = searchKeyword + '|' +  searchMainKeyword
+            searchKeywordList = searchKeyword + '|' + searchMainKeyword
         elif (len(searchKeyword) > 1) and (searchKeyword[-1] == '.'):
             self.OnSearchKeywordInTitle(searchKeyword[:-1])
             return
@@ -348,7 +365,7 @@ class MemoUIFrame(wx.Frame, Observer):
 
         self.logger.info(searchKeywordList)
         self.memoManager.OnSetFilter(searchKeywordList)
-        #self.rightPanel.OnSetSearchKeyword(searchKeyword)
+        # self.rightPanel.OnSetSearchKeyword(searchKeyword)
         self.leftPanel.OnItemSelected(0)
         self.leftPanel.on_set_filter_keyword(searchKeyword)
 
@@ -365,7 +382,7 @@ class MemoUIFrame(wx.Frame, Observer):
         self.logger.info('.')
         self.leftPanel.OnUpdateList(memoList)
 
-    def OnGetMemoItem(self, memoIdx, searchKeyword = ""):
+    def OnGetMemoItem(self, memoIdx, searchKeyword=""):
         self.logger.info(memoIdx + ":" + searchKeyword)
         return self.memoManager.OnGetMemo(memoIdx, searchKeyword)
 
@@ -375,7 +392,7 @@ class MemoUIFrame(wx.Frame, Observer):
         memo = self.memoManager.OnGetMemo(memoIdx, searchKeyword)
         self.rightPanel.OnSetMemo(memo['index'], memo['id'], memo['memo'], memo['highlight'])
 
-    def OnNotify(self, event = None):
+    def OnNotify(self, event=None):
         self.logger.info(event)
         if event == MemoManager.UPDATE_MEMO:
             self.OnUpdateMemoList(self.memoManager.OnGetMemoList())
@@ -385,8 +402,8 @@ class MemoUIFrame(wx.Frame, Observer):
 
         exportFilePath = ""
         dlg = wx.FileDialog(
-             self, message="Save file as markdown", defaultDir=os.getcwd(),
-             defaultFile="", wildcard="md files (*.md)|*.md", style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT
+            self, message="Save file as markdown", defaultDir=os.getcwd(),
+            defaultFile="", wildcard="md files (*.md)|*.md", style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT
         )
 
         if dlg.ShowModal() == wx.ID_OK:
@@ -394,22 +411,18 @@ class MemoUIFrame(wx.Frame, Observer):
             self.memoManager.OnSaveAsMD(memoIdx, filename=exportFilePath)
         dlg.Destroy()
 
-
     def _OnPressCtrlP(self, event):
         self.action.OnRunCommand("ctrl_p")
-
 
     def _OnPressCtrlR(self, event):
         self.leftPanel.query_recent_used_items()
 
-
     def _OnPressCtrlM(self, event):
         self.action.OnRunCommand("ctrl_m")
 
-
     def __on_open_uri_from_clipboard(self, event):
         uri = on_get_uri_from_clipboard()
-        #print(uri)
+        # print(uri)
 
         if len(uri) == 0:
             return
@@ -422,34 +435,38 @@ class MemoUIFrame(wx.Frame, Observer):
         if len(uri) > 3:
             webutil.open_uri(uri)
 
-
     def on_clone_memo(self, event):
         self.leftPanel.on_clone_memo()
-
 
     def OnCloneMemo(self, memoIdx):
         self.memoManager.OnCloneMemo(memoIdx)
 
-
     def OnSetFontSize14(self, event):
         self.__OnSetFontSize(14)
-
 
     def OnSetFontSize10(self, event):
         self.__OnSetFontSize(10)
 
-
     def OnSetFontSize8(self, event):
         self.__OnSetFontSize(8)
-
 
     def __OnSetFontSize(self, font_size):
         self.rightPanel.OnSetFontSize(font_size)
         self.__OnSetWhiteColorBg()
         self.__OnSetBlueColorBg()
 
-
     def showMainSearchBoxToggle(self, event):
         self.leftPanel.on_toggle_main_search_box()
         self.leftPanel.Layout()
 
+    def move_home(self, event):
+        self.rightPanel.move_home()
+
+    def move_end(self, event):
+        self.rightPanel.move_end()
+
+    def move_forward(self, event):
+        self.rightPanel.move_forward()
+
+    def move_backward(self, event):
+        self.rightPanel.move_backward()

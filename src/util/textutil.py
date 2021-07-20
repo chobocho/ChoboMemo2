@@ -3,6 +3,25 @@ Text util for chobomemo
 """
 import re
 
+def getEnterPos(text):
+    enter_list = text.split('\n')
+    hoplist = []
+
+    pos = 0
+    hoplist.append(pos)
+    for line in enter_list:
+        if len(line) < 80:
+            pos = pos + len(line) + 1
+            hoplist.append(pos)
+        else:
+            pos = pos + 80 + 1
+            hoplist.append(pos)
+            for _ in range(80, len(line)):
+                pos = pos + 80 + 1
+                hoplist.append(pos)
+
+    return hoplist
+
 def searchKeyword(text, keywordList):
     searchResult = []
 
