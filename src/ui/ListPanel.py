@@ -82,7 +82,7 @@ class ListPanel(wx.Panel):
         self.searchMainText.SetValue("")
         self.mainSearchBtnBox.Add(self.searchMainText, 0, wx.ALIGN_LEFT, 1)
 
-        self.mainSearchClearBtn = wx.Button(self, 10, "Clear", size=(50, 25))
+        self.mainSearchClearBtn = wx.Button(self, 10, "&Clear", size=(50, 25))
         self.mainSearchClearBtn.Bind(wx.EVT_BUTTON, self.OnMainSearchClear)
         self.mainSearchBtnBox.Add(self.mainSearchClearBtn, 1, wx.ALIGN_CENTRE, 1)
 
@@ -178,8 +178,14 @@ class ListPanel(wx.Panel):
         self.searchMainText.SetValue("")
 
     def OnSearchClear(self, event):
+        self.on_clear_filter()
+
+    def on_clear_filter(self):
         self.searchText.SetValue("")
         self._OnSearchKeyword("")
+
+    def on_focus_filter(self):
+        self.searchText.SetFocus()
 
     def OnSearchKeyword(self, event):
         searchMainKeyword = self.searchMainText.GetValue()

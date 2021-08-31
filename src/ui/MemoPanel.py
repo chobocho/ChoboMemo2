@@ -21,7 +21,7 @@ class MemoPanel(wx.Panel):
         self.high_light_keyword_pos = []
         self.current_pos = 0
         self.pos = 0
-        self.move_hop = []
+        self.move_hop = [0]
 
     def _initUi(self):
         sizer = wx.BoxSizer(wx.VERTICAL)

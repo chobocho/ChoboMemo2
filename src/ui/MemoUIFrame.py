@@ -96,6 +96,12 @@ class MemoUIFrame(wx.Frame, Observer):
         ctrl_0_Id = wx.NewIdRef()
         self.Bind(wx.EVT_MENU, self.on_ctrl_0, id=ctrl_0_Id)
 
+        clear_filter_id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.__on_clear_filter, id=clear_filter_id)
+
+        focus_filter_id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.__on_focus_filter, id=focus_filter_id)
+
         alt_p_Id = wx.NewIdRef()
         self.Bind(wx.EVT_MENU, self.__on_open_uri_from_clipboard, id=alt_p_Id)
 
@@ -113,6 +119,8 @@ class MemoUIFrame(wx.Frame, Observer):
 
         accel_tbl = wx.AcceleratorTable([
             (wx.ACCEL_ALT, ord('B'), move_backward_id),
+            (wx.ACCEL_ALT, ord('C'), clear_filter_id),
+            (wx.ACCEL_ALT, ord('D'), focus_filter_id),
             (wx.ACCEL_ALT, ord('E'), move_end_id),
             (wx.ACCEL_ALT, ord('F'), move_forward_id),
             (wx.ACCEL_ALT, ord('H'), move_home_id),
@@ -434,6 +442,12 @@ class MemoUIFrame(wx.Frame, Observer):
 
         if len(uri) > 3:
             webutil.open_uri(uri)
+
+    def __on_clear_filter(self, event):
+        self.leftPanel.on_clear_filter()
+
+    def __on_focus_filter(self, event):
+        self.leftPanel.on_focus_filter()
 
     def on_clone_memo(self, event):
         self.leftPanel.on_clone_memo()
