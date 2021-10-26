@@ -22,6 +22,7 @@ class MemoManager(Observable):
         self.canChange = True
         self.and_op = ','
         self.or_op = '|'
+        self.saveCompressed = False
 
     def _loadMemo(self, callback=None):
         memoData = self.dbm.load()
@@ -53,6 +54,10 @@ class MemoManager(Observable):
        self.and_op = and_op
        self.or_op = or_op
        self.dataManager.set_split_op(self.and_op, self.or_op)
+
+
+    def set_save_mode(self, save_mode:bool):
+       self.saveCompressed = save_mode
 
 
     def OnLoadFile(self, filename):
@@ -90,7 +95,7 @@ class MemoManager(Observable):
         self.OnNotify(UPDATE_MEMO)
 
     def OnGetMemo(self, memoIdx, searchKeyword = ""):
-        return self.dataManager.OnGetMemo(memoIdx, searchKeyword)
+        return self.dataManager.OnGetMemo(self.dbm, memoIdx, searchKeyword)
 
     def OnGetMemoList(self):
         return self.dataManager.OnGetFilteredMemoList()
@@ -109,13 +114,13 @@ class MemoManager(Observable):
             if not self.dataManager.OnGetNeedToSave():
                 self.logger.info("No need to save!")
                 return
-            if self.fileManager.saveDataFile(self.dataManager.OnGetMemoList()):
+            if self.fileManager.saveDataFile(self.dataManager.OnGetMemoList(), needCompress=self.saveCompressed):
                 self.dataManager.OnSetNeedToSave(False)
         else:
             if len(filename) == 0:
-                self.fileManager.saveDataFile(self.OnGetMemoList())
+                self.fileManager.saveDataFile(self.OnGetMemoList(), needCompress=self.saveCompressed)
             else:
-                self.fileManager.saveDataFile(self.OnGetMemoList(), filename)
+                self.fileManager.saveDataFile(self.OnGetMemoList(), filename, needCompress=self.saveCompressed)
 
     def OnSaveAsMD(self, memoIdx=-1, filename=""):
         if len(filename) == 0:

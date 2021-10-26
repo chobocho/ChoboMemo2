@@ -224,7 +224,8 @@ class MemoUIFrame(wx.Frame, Observer):
         dlg.SetValue("")
 
         if dlg.ShowModal() == wx.ID_OK:
-            keyword = dlg.GetValue()
+            input_keyword = dlg.GetValue()
+            keyword = input_keyword.strip()
             self.OnSearchKeyword(keyword)
         dlg.Destroy()
 
@@ -296,6 +297,7 @@ class MemoUIFrame(wx.Frame, Observer):
     def OnSetMemoManager(self, memoManager):
         self.memoManager = memoManager
         self.memoManager.set_split_op(self.config.GetValue("AND"), self.config.GetValue("OR"))
+        self.memoManager.set_save_mode(self.config.GetValue("compressedSave") == "true")
 
     def OnSaveFilteredItems(self, event):
         exportFilePath = ""
@@ -365,6 +367,9 @@ class MemoUIFrame(wx.Frame, Observer):
             searchKeywordList = searchKeyword + '|' + searchMainKeyword
         elif (len(searchKeyword) > 1) and (searchKeyword[-1] == '.'):
             self.OnSearchKeywordInTitle(searchKeyword[:-1])
+            return
+        elif (len(searchKeyword) > 1) and (searchKeyword[0] == '`'):
+            self.OnSearchKeywordInTitle(searchKeyword[1:])
             return
         elif (len(searchKeyword) > 2) and (searchKeyword[:2].lower() == 't:'):
             self.OnSearchKeywordInTitle(searchKeyword[2:])

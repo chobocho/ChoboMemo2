@@ -58,8 +58,7 @@ class DataManager:
         self.memoList =  list.copy()
         self.logger.info("length of memoList is " + str(len(self.memoList)))
 
-
-    def OnGetMemo(self, memoIdx, searchKeyword=""):
+    def OnGetMemo(self, dbm, memoIdx, searchKeyword=""):
         if len(self.memoList) == 0:
             return self.__get_emptyMemo(memoIdx)
 
@@ -69,12 +68,21 @@ class DataManager:
         if len(self.memoList.get(memoIdx, "")) == 0:
             return self.__get_emptyMemo(memoIdx)
 
+        memo_from_db = dbm.read(memoIdx)
+        if len(memo_from_db) == 0:
+            self.OnDeleteMemo(memoIdx, dbm)
+            memo = self.__get_emptyMemo(memoIdx)
+            memo['memo'] = "\n It is removed memo.\n\n Please press Clear button."
+            return memo
+        else:
+            self.memoList[memoIdx]['title'] = memo_from_db['title']
+            self.memoList[memoIdx]['memo'] = memo_from_db['memo']
+            self.logger.info("DB updated: " + memoIdx)
         memo = self.memoList[memoIdx].copy()
         keywordList = searchKeyword.lower().split('|')
         highLightPosition = textutil.searchKeyword(memo['memo'].lower(), keywordList)
         memo['highlight'] = highLightPosition[:]
         return memo
-
 
     def __get_emptyMemo(self, memoIdx):
         emptyMemo = {}
@@ -84,38 +92,35 @@ class DataManager:
         emptyMemo['highlight'] = []
         return emptyMemo
 
-
-    def OnSetFilter(self, filter_):
-        filter = filter_.strip().lower()
-        if len(filter) == 0:
+    def OnSetFilter(self, filter_keyword):
+        filter_keyword = filter_keyword.strip().lower()
+        if len(filter_keyword) == 0:
             self.memoList = self.memoListOrigin.copy()
             return
-        if self.or_op in filter:
-            split_filter = filter.split(self.or_op)
+        if self.or_op in filter_keyword:
+            split_filter = filter_keyword.split(self.or_op)
             or_filter = [ key for key in split_filter if len(key.strip()) > 0 ]
             #print(or_filter)
             self.__OnFindOrKeywordList(or_filter)
-        elif self.and_op in filter:
-            split_filter = filter.split(self.and_op)
+        elif self.and_op in filter_keyword:
+            split_filter = filter_keyword.split(self.and_op)
             and_filter = [ key for key in split_filter if len(key.strip()) > 0 ]
             print(and_filter)
             self.__OnFindAndKeywordList(and_filter)
         else:
-            self.__OnFindSimpleKeyword(filter)
+            self.__OnFindSimpleKeyword(filter_keyword)
 
-
-    def OnSetFilterInTitle(self, filter_):
-        filter = filter_.strip().lower()
-        if len(filter) == 0:
+    def OnSetFilterInTitle(self, filter_keyword):
+        filter_keyword = filter_keyword.strip().lower()
+        if len(filter_keyword) == 0:
             self.memoList = self.memoListOrigin.copy()
             return
-        self.__OnFindSimpleKeywordInTitle(filter)
+        self.__OnFindSimpleKeywordInTitle(filter_keyword)
 
-
-    def __OnFindSimpleKeywordInTitle(self, filter):
+    def __OnFindSimpleKeywordInTitle(self, filter_keyword):
         self.memoList = {}
 
-        filter_list = filter.split('|')
+        filter_list = filter_keyword.split('|')
 
         for key in self.memoListOrigin.keys():
             for searchKey in filter_list:
@@ -123,44 +128,44 @@ class DataManager:
                     self.memoList[key] = self.memoListOrigin[key]
                     break
 
-    def __OnFindSimpleKeyword(self, filter):
-        if filter[0] == '!' or filter[0] == '~':
-            self._FindHasNotFilterList(filter[1:])
+    def __OnFindSimpleKeyword(self, filter_keyword):
+        if filter_keyword[0] == '!' or filter_keyword[0] == '~':
+            self._FindHasNotFilterList(filter_keyword[1:])
         else:
-            self._FindHasFilterList(filter)
+            self._FindHasFilterList(filter_keyword)
 
 
-    def _FindHasFilterList(self, filter):
+    def _FindHasFilterList(self, filter_keyword):
         self.memoList = {}
         for key in self.memoListOrigin.keys():
-            if filter in self.memoListOrigin[key]['id'].lower():
+            if filter_keyword in self.memoListOrigin[key]['id'].lower():
                 self.memoList[key] = self.memoListOrigin[key]
-            elif filter in self.memoListOrigin[key]['memo'].lower():
+            elif filter_keyword in self.memoListOrigin[key]['memo'].lower():
                 self.memoList[key] = self.memoListOrigin[key]
 
 
-    def _FindHasNotFilterList(self, filter):
+    def _FindHasNotFilterList(self, filter_keyword):
         self.memoList = {}
         for key in self.memoListOrigin.keys():
             hasKeyword = False
 
-            if filter in self.memoListOrigin[key]['id'].lower():
+            if filter_keyword in self.memoListOrigin[key]['id'].lower():
                 hasKeyword = True
-            if filter in self.memoListOrigin[key]['memo'].lower():
+            if filter_keyword in self.memoListOrigin[key]['memo'].lower():
                 hasKeyword = True
 
             if not hasKeyword:
                 self.memoList[key] = self.memoListOrigin[key]
 
 
-    def __OnFindOrKeywordList(self, filters):
+    def __OnFindOrKeywordList(self, filter_keyword):
         self.memoList = {}
 
-        if len(filters) == 0:
+        if len(filter_keyword) == 0:
             return
 
         for key in self.memoListOrigin.keys():
-            for filter in filters:
+            for filter in filter_keyword:
                 if filter in self.memoListOrigin[key]['id'].lower():
                     self.memoList[key] = self.memoListOrigin[key]
                     break
@@ -169,16 +174,16 @@ class DataManager:
                     break
 
 
-    def __OnFindAndKeywordList(self, filters):
+    def __OnFindAndKeywordList(self, filter_keyword):
         self.memoList = {}
 
-        if len(filters) == 0:
+        if len(filter_keyword) == 0:
             return
 
         for key in self.memoListOrigin.keys():
             is_find = False
 
-            for filter in filters:
+            for filter in filter_keyword:
                 if filter[0] == '!' or filter[0] == '~':
                     keyword = filter[1:]
                     is_find = True

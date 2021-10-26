@@ -24,6 +24,7 @@ class ConfigManager:
         self.config['WINDOW_SIZE_H'] = 600
         self.config['AND'] = '&'
         self.config['OR'] = '|'
+        self.config['compressedSave'] = False
 
         cfg_data = fileutil.load_config('./minim.cfg')
         for key, item in self.config.items():

@@ -189,7 +189,8 @@ class ListPanel(wx.Panel):
 
     def OnSearchKeyword(self, event):
         searchMainKeyword = self.searchMainText.GetValue()
-        searchKeyword = self.searchText.GetValue()
+        input_searchKeyword = self.searchText.GetValue()
+        searchKeyword = input_searchKeyword.strip()
         self.logger.info(searchMainKeyword + '|' + searchKeyword)
         self._OnSearchKeyword(searchKeyword, searchMainKeyword)
 

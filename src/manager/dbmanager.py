@@ -60,6 +60,23 @@ class DBManager:
         except sqlite3.Error as e:
             print(e)
 
+    def read(self, index):
+        print("Read DB " + index)
+        item = {}
+        try:
+            cur = self.db_conn.cursor()
+            cur.execute("SELECT title, memo FROM minim WHERE id=?;", (index,))
+            rows = cur.fetchone()
+
+            if rows is not None:
+                item['index'] = str(index)
+                item['title'] = rows[0]
+                item['memo'] = rows[1]
+
+        except sqlite3.Error as e:
+            print(e)
+        return item
+
     def load(self):
         print("Load DB")
         rows = []
