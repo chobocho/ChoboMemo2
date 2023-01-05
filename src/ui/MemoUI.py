@@ -16,9 +16,11 @@ class MemoDialog(sized_controls.SizedDialog):
 
         self.topic = wx.TextCtrl(pane, size=(WINDOW_SIZE_W,30))
         self.topic.SetValue("")
+        self.saved_topic = ""
 
         self.text = wx.TextCtrl(pane, style = wx.TE_MULTILINE,size=(WINDOW_SIZE_W,WINDOW_SIZE_H))
         self.text.SetValue("")
+        self.saved_text = ""
         font = wx.Font(14, wx.FONTFAMILY_TELETYPE, wx.NORMAL, wx.NORMAL)
         self.text.SetFont(font)
 
@@ -47,6 +49,13 @@ class MemoDialog(sized_controls.SizedDialog):
         remove_space_btn = wx.Button(pane_btns, remove_space_btn_id, label='&Trim')
         remove_space_btn.Bind(wx.EVT_BUTTON, self.remove_space)
 
+        undo_btn_id = wx.NewId()
+        undo_btn = wx.Button(pane_btns, undo_btn_id, label='&Undo')
+        undo_btn.Bind(wx.EVT_BUTTON, self.undo)
+
+        save_text_id = wx.NewId()
+        self.Bind(wx.EVT_MENU, self.save_text, id=save_text_id)
+
         move_home_id = wx.NewId()
         self.Bind(wx.EVT_MENU, self.move_home, id=move_home_id)
 
@@ -68,7 +77,9 @@ class MemoDialog(sized_controls.SizedDialog):
             (wx.ACCEL_ALT, ord('L'), wx.ID_CANCEL),
             (wx.ACCEL_ALT, ord('O'), wx.ID_OK),
             (wx.ACCEL_ALT, ord('P'), append_btn_id),
+            (wx.ACCEL_ALT, ord('S'), save_text_id),
             (wx.ACCEL_ALT, ord('T'), remove_space_btn_id),
+            (wx.ACCEL_ALT, ord('U'), undo_btn_id)
         ])
         self.SetAcceleratorTable(accel_tbl)
 
@@ -81,11 +92,9 @@ class MemoDialog(sized_controls.SizedDialog):
         else:
             self.Close()
 
-
     def add_info(self, event):
         text = self.text.GetValue() + "\n\n---[Memo]---\n"
         self.text.SetValue(text)
-
 
     def append_from_clipboard(self, event):
         text = self.text.GetValue() + "\n"
@@ -93,6 +102,17 @@ class MemoDialog(sized_controls.SizedDialog):
         self.text.SetValue(text)
         self.text.SetInsertionPoint(len(text))
         self.text.SetFocus()
+
+    def undo(self, event):
+        self._undo()
+
+    def _undo(self):
+        self.topic.SetValue(self.saved_topic)
+        self.text.SetValue(self.saved_text)
+
+    def save_text(self, event):
+        self.saved_topic = self.topic.GetValue()
+        self.saved_text = self.text.GetValue()
 
     def remove_space(self, evnet):
         text = self.text.GetValue()
@@ -110,17 +130,14 @@ class MemoDialog(sized_controls.SizedDialog):
 
         self.text.SetValue('\n'.join(result))
 
-
     def move_home(self, event):
         self.text.SetInsertionPoint(0)
         self.text.SetFocus()
-
 
     def move_end(self, event):
         text = self.text.GetValue()
         self.text.SetInsertionPoint(len(text))
         self.text.SetFocus()
-
 
     def move_forward(self, event):
         endpos = len(self.text.GetValue())
@@ -130,7 +147,6 @@ class MemoDialog(sized_controls.SizedDialog):
         self.text.SetInsertionPoint(self.pos)
         self.text.SetFocus()
 
-
     def move_backward(self, event):
         self.pos = self.pos - NEXT_STEP
         self.pos = self.pos if self.pos >= 0 else 0
@@ -138,18 +154,16 @@ class MemoDialog(sized_controls.SizedDialog):
         self.text.SetInsertionPoint(self.pos)
         self.text.SetFocus()
 
-
     def GetValue(self):
         return self.text.GetValue()
 
-
     def SetValue(self, memo):
+        self.saved_text = memo
         return self.text.SetValue(memo)
-
 
     def GetTopic(self):
         return self.topic.GetValue()
 
-
     def SetTopic(self, topic):
+        self.saved_topic = topic
         return self.topic.SetValue(topic)
