@@ -3,11 +3,11 @@
 
 import util.fileutil as fileutil
 
+
 class ConfigManager:
     def __init__(self):
         self.config = {}
         self._init_cfg_data()
-
 
     def _init_cfg_data(self):
         self.config['ctrl_1'] = "#BookMark|#8282"
@@ -30,10 +30,23 @@ class ConfigManager:
         for key, item in self.config.items():
             self.config[key] = cfg_data.get(key, item)
 
-
     def GetValue(self, key):
         return self.config.get(key, [])
 
+    def SetValue(self, key):
+        self.config['ctrl_0'] = key['ctrl_0']
+        self.config['ctrl_1'] = key['ctrl_1']
+        self.config['ctrl_2'] = key['ctrl_2']
+        self.config['ctrl_3'] = key['ctrl_3']
+        self.config['ctrl_4'] = key['ctrl_4']
+        self.config['ctrl_5'] = key['ctrl_5']
+        self.config['ctrl_6'] = key['ctrl_6']
+        self.config['ctrl_7'] = key['ctrl_7']
+        self.config['ctrl_8'] = key['ctrl_8']
+        self.config['ctrl_9'] = key['ctrl_9']
 
     def get_all_config(self):
         return self.config.copy()
+
+    def save(self):
+        fileutil.saveAsJson(self.config, './minim.cfg', 2)

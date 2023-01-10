@@ -8,7 +8,6 @@ WINDOW_SIZE_H = 500
 NEXT_STEP = 800
 
 class MemoDialog(sized_controls.SizedDialog):
-
     def __init__(self, *args, **kwargs):
         super(MemoDialog, self).__init__(*args, **kwargs)
         pane = self.GetContentsPane()

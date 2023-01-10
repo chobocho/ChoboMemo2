@@ -18,19 +18,19 @@ class MemoMenu:
         self.parent.SetMenuBar(menubar)
 
     def _add_file_menu(self, menubar):
-        fileMenu = wx.Menu()
+        file_menu = wx.Menu()
 
         set_max_view_count_id = wx.NewId()
-        set_max_view_count = fileMenu.Append(set_max_view_count_id, 'Set max view &count', 'Set max view count')
+        set_max_view_count = file_menu.Append(set_max_view_count_id, 'Set max view &count', 'Set max view count')
         self.parent.Bind(wx.EVT_MENU, self.parent.on_set_max_list, set_max_view_count)
 
-        saveFilteredItemsId = wx.NewId()
-        saveFilteredItems = fileMenu.Append(saveFilteredItemsId, '&Save filtered items', 'Save filtered items')
-        self.parent.Bind(wx.EVT_MENU, self.parent.OnSaveFilteredItems, saveFilteredItems)
+        save_filtered_items_id = wx.NewId()
+        save_filtered_items = file_menu.Append(save_filtered_items_id, '&Save filtered items', 'Save filtered items')
+        self.parent.Bind(wx.EVT_MENU, self.parent.OnSaveFilteredItems, save_filtered_items)
 
-        fileItem = fileMenu.Append(wx.ID_EXIT, '&Quit', 'Quit App')
-        self.parent.Bind(wx.EVT_MENU, self.parent.OnQuit, fileItem)
-        menubar.Append(fileMenu, '&File')
+        file_item = file_menu.Append(wx.ID_EXIT, '&Quit', 'Quit App')
+        self.parent.Bind(wx.EVT_MENU, self.parent.OnQuit, file_item)
+        menubar.Append(file_menu, '&File')
 
     def _add_edit_menu(self, menubar):
         edit_menu = wx.Menu()
@@ -41,49 +41,52 @@ class MemoMenu:
 
         menubar.Append(edit_menu, '&Edit')
 
-
     def _add_find_menu(self, menubar):
         find_menu = wx.Menu()
 
+        set_config_item_id = wx.NewId()
+        set_config_item = find_menu.Append(set_config_item_id, 'Set Filter Items', '')
+        self.parent.Bind(wx.EVT_MENU, self.parent.on_set_config_menu, set_config_item)
+
         ctrl_1_item_id = wx.NewId()
-        ctrl_1_item = find_menu.Append(ctrl_1_item_id, self.__get_menu_text('ctrl_1'), '')
-        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_1, ctrl_1_item)
+        self.ctrl_1_item = find_menu.Append(ctrl_1_item_id, self.__get_menu_text('ctrl_1'), '')
+        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_1, self.ctrl_1_item)
 
         ctrl_2_item_id = wx.NewId()
-        ctrl_2_item = find_menu.Append(ctrl_2_item_id, self.__get_menu_text('ctrl_2'), '')
-        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_2, ctrl_2_item)
+        self.ctrl_2_item = find_menu.Append(ctrl_2_item_id, self.__get_menu_text('ctrl_2'), '')
+        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_2, self.ctrl_2_item)
 
         ctrl_3_item_id = wx.NewId()
-        ctrl_3_item = find_menu.Append(ctrl_3_item_id, self.__get_menu_text('ctrl_3'), '')
-        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_3, ctrl_3_item)
+        self.ctrl_3_item = find_menu.Append(ctrl_3_item_id, self.__get_menu_text('ctrl_3'), '')
+        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_3, self.ctrl_3_item)
 
         ctrl_4_item_id = wx.NewId()
-        ctrl_4_item = find_menu.Append(ctrl_4_item_id, self.__get_menu_text('ctrl_4'), '')
-        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_4, ctrl_4_item)
+        self.ctrl_4_item = find_menu.Append(ctrl_4_item_id, self.__get_menu_text('ctrl_4'), '')
+        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_4, self.ctrl_4_item)
 
         ctrl_5_item_id = wx.NewId()
-        ctrl_5_item = find_menu.Append(ctrl_5_item_id, self.__get_menu_text('ctrl_5'), '')
-        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_5, ctrl_5_item)
+        self.ctrl_5_item = find_menu.Append(ctrl_5_item_id, self.__get_menu_text('ctrl_5'), '')
+        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_5, self.ctrl_5_item)
 
         ctrl_6_item_id = wx.NewId()
-        ctrl_6_item = find_menu.Append(ctrl_6_item_id, self.__get_menu_text('ctrl_6'), '')
-        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_6, ctrl_6_item)
+        self.ctrl_6_item = find_menu.Append(ctrl_6_item_id, self.__get_menu_text('ctrl_6'), '')
+        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_6, self.ctrl_6_item)
 
         ctrl_7_item_id = wx.NewId()
-        ctrl_7_item = find_menu.Append(ctrl_7_item_id, self.__get_menu_text('ctrl_7'), '')
-        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_7, ctrl_7_item)
+        self.ctrl_7_item = find_menu.Append(ctrl_7_item_id, self.__get_menu_text('ctrl_7'), '')
+        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_7, self.ctrl_7_item)
 
         ctrl_8_item_id = wx.NewId()
-        ctrl_8_item = find_menu.Append(ctrl_8_item_id, self.__get_menu_text('ctrl_8'), '')
-        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_8, ctrl_8_item)
+        self.ctrl_8_item = find_menu.Append(ctrl_8_item_id, self.__get_menu_text('ctrl_8'), '')
+        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_8, self.ctrl_8_item)
 
         ctrl_9_item_id = wx.NewId()
-        ctrl_9_item = find_menu.Append(ctrl_9_item_id, self.__get_menu_text('ctrl_9'), '')
-        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_9, ctrl_9_item)
+        self.ctrl_9_item = find_menu.Append(ctrl_9_item_id, self.__get_menu_text('ctrl_9'), '')
+        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_9, self.ctrl_9_item)
 
         ctrl_0_item_id = wx.NewId()
-        ctrl_0_item = find_menu.Append(ctrl_0_item_id, self.__get_menu_text('ctrl_0'), '')
-        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_0, ctrl_0_item)
+        self.ctrl_0_item = find_menu.Append(ctrl_0_item_id, self.__get_menu_text('ctrl_0'), '')
+        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_0, self.ctrl_0_item)
 
         menubar.Append(find_menu, 'F&ind')
 
@@ -144,7 +147,6 @@ class MemoMenu:
         if color == "YELLOW":
             self.bgYellowColorItems.Check(True)
 
-
     def _add_help_menu(self, menubar):
         helpMenu = wx.Menu()
         aboutItemId = wx.NewId()
@@ -152,3 +154,14 @@ class MemoMenu:
         self.parent.Bind(wx.EVT_MENU, self.parent.OnAbout, aboutItem)
         menubar.Append(helpMenu, '&Help')
 
+    def SetValue(self, key):
+        self.ctrl_0_item.SetItemLabel('Ctrl+0> ' + key['ctrl_0'])
+        self.ctrl_1_item.SetItemLabel('Ctrl+1> ' + key['ctrl_1'])
+        self.ctrl_2_item.SetItemLabel('Ctrl+2> ' + key['ctrl_2'])
+        self.ctrl_3_item.SetItemLabel('Ctrl+3> ' + key['ctrl_3'])
+        self.ctrl_4_item.SetItemLabel('Ctrl+4> ' + key['ctrl_4'])
+        self.ctrl_5_item.SetItemLabel('Ctrl+5> ' + key['ctrl_5'])
+        self.ctrl_6_item.SetItemLabel('Ctrl+6> ' + key['ctrl_6'])
+        self.ctrl_7_item.SetItemLabel('Ctrl+7> ' + key['ctrl_7'])
+        self.ctrl_8_item.SetItemLabel('Ctrl+8> ' + key['ctrl_8'])
+        self.ctrl_9_item.SetItemLabel('Ctrl+9> ' + key['ctrl_9'])

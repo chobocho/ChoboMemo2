@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import os
+
+from ui.ConfigSettingUI import ConfigSettingUI
 from ui.MemoPanel import *
 from ui.ListPanel import *
 from ui.memomenu import *
@@ -242,6 +244,35 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def _on_open_uri(self, event):
         self.leftPanel.open_uri()
+
+    def on_set_config_menu(self, event):
+        filter_item = {
+            'ctrl_0' : self.config.GetValue('ctrl_0'),
+            'ctrl_1' : self.config.GetValue('ctrl_1'),
+            'ctrl_2' : self.config.GetValue('ctrl_2'),
+            'ctrl_3' : self.config.GetValue('ctrl_3'),
+            'ctrl_4' : self.config.GetValue('ctrl_4'),
+            'ctrl_5' : self.config.GetValue('ctrl_5'),
+            'ctrl_6' : self.config.GetValue('ctrl_6'),
+            'ctrl_7' : self.config.GetValue('ctrl_7'),
+            'ctrl_8' : self.config.GetValue('ctrl_8'),
+            'ctrl_9' : self.config.GetValue('ctrl_9'),
+            'ctrl_i' : self.config.GetValue('ctrl_i')
+        }
+
+        dlg = ConfigSettingUI(None, title='Set filter items')
+        dlg.SetValue(filter_item)
+
+        is_updated = False
+        if dlg.ShowModal() == wx.ID_OK:
+            filter_item = dlg.GetValue()
+            is_updated = True
+        dlg.Destroy()
+
+        if is_updated:
+            self.config.SetValue(filter_item)
+            self.config.save()
+            self.menu.SetValue(filter_item)
 
     def on_ctrl_1(self, event):
         keyword = self.config.GetValue('ctrl_1')
