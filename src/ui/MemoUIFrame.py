@@ -3,6 +3,8 @@
 
 import os
 
+import wx
+
 from ui.ConfigSettingUI import ConfigSettingUI
 from ui.MemoPanel import *
 from ui.ListPanel import *
@@ -47,7 +49,6 @@ class MemoUIFrame(wx.Frame, Observer):
         self.menu = MemoMenu(self, self.config)
 
     def _addShortKey(self):
-
         ctrl_C_Id = wx.NewIdRef()
         self.Bind(wx.EVT_MENU, self._OnCopyTitle, id=ctrl_C_Id)
         ctrl_D_Id = wx.NewIdRef()
@@ -119,6 +120,12 @@ class MemoUIFrame(wx.Frame, Observer):
         move_backward_id = wx.NewId()
         self.Bind(wx.EVT_MENU, self.move_backward, id=move_backward_id)
 
+        on_clone_item_id = wx.NewId()
+        self.Bind(wx.EVT_MENU, self.on_clone_memo, id=on_clone_item_id)
+
+        on_edit_filter_id = wx.NewId()
+        self.Bind(wx.EVT_MENU, self.on_set_config_menu, id=on_edit_filter_id)
+
         accel_tbl = wx.AcceleratorTable([
             (wx.ACCEL_ALT, ord('B'), move_backward_id),
             (wx.ACCEL_ALT, ord('C'), clear_filter_id),
@@ -148,7 +155,9 @@ class MemoUIFrame(wx.Frame, Observer):
             (wx.ACCEL_CTRL, ord('R'), ctrl_R_Id),
             (wx.ACCEL_CTRL, ord('U'), ctrl_U_Id),
             (wx.ACCEL_CTRL, ord('S'), ctrl_S_Id),
-            (wx.ACCEL_CTRL, ord('Q'), ctrl_Q_Id)])
+            (wx.ACCEL_CTRL, ord('Q'), ctrl_Q_Id),
+            (wx.ACCEL_CTRL|wx.ACCEL_SHIFT, ord('C'), on_clone_item_id),
+            (wx.ACCEL_CTRL|wx.ACCEL_SHIFT, ord('E'), on_edit_filter_id)])
 
         self.SetAcceleratorTable(accel_tbl)
 
@@ -391,12 +400,10 @@ class MemoUIFrame(wx.Frame, Observer):
     def OnSaveMemo(self):
         self.memoManager.OnSave()
 
-    def OnSearchKeyword(self, searchKeyword, searchMainKeyword=""):
-        searchKeywordList = searchKeyword
+    def OnSearchKeyword(self, searchKeyword):
+        search_keyword_list = searchKeyword
 
-        if len(searchMainKeyword) > 0:
-            searchKeywordList = searchKeyword + '|' + searchMainKeyword
-        elif (len(searchKeyword) > 1) and (searchKeyword[-1] == '.'):
+        if (len(searchKeyword) > 1) and (searchKeyword[-1] == '.'):
             self.OnSearchKeywordInTitle(searchKeyword[:-1])
             return
         elif (len(searchKeyword) > 1) and (searchKeyword[0] == '`'):
@@ -407,8 +414,8 @@ class MemoUIFrame(wx.Frame, Observer):
             print(searchKeyword[2:])
             return
 
-        self.logger.info(searchKeywordList)
-        self.memoManager.OnSetFilter(searchKeywordList)
+        print(search_keyword_list)
+        self.memoManager.OnSetFilter(search_keyword_list)
         # self.rightPanel.OnSetSearchKeyword(searchKeyword)
         self.leftPanel.OnItemSelected(0)
         self.leftPanel.on_set_filter_keyword(searchKeyword)
@@ -504,10 +511,6 @@ class MemoUIFrame(wx.Frame, Observer):
         self.rightPanel.OnSetFontSize(font_size)
         self.__OnSetWhiteColorBg()
         self.__OnSetBlueColorBg()
-
-    def showMainSearchBoxToggle(self, event):
-        self.leftPanel.on_toggle_main_search_box()
-        self.leftPanel.Layout()
 
     def move_home(self, event):
         self.rightPanel.move_home()

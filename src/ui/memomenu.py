@@ -28,7 +28,7 @@ class MemoMenu:
         save_filtered_items = file_menu.Append(save_filtered_items_id, '&Save filtered items', 'Save filtered items')
         self.parent.Bind(wx.EVT_MENU, self.parent.OnSaveFilteredItems, save_filtered_items)
 
-        file_item = file_menu.Append(wx.ID_EXIT, '&Quit', 'Quit App')
+        file_item = file_menu.Append(wx.ID_EXIT, '&Quit\tCtrl+Q', 'Quit App')
         self.parent.Bind(wx.EVT_MENU, self.parent.OnQuit, file_item)
         menubar.Append(file_menu, '&File')
 
@@ -36,7 +36,7 @@ class MemoMenu:
         edit_menu = wx.Menu()
 
         clone_memo_id = wx.NewId()
-        clone_memo = edit_menu.Append(clone_memo_id, '&Clone meno', 'Clone memo')
+        clone_memo = edit_menu.Append(clone_memo_id, '&Clone meno\tCtrl+Shift+C', 'Clone memo')
         self.parent.Bind(wx.EVT_MENU, self.parent.on_clone_memo, clone_memo)
 
         menubar.Append(edit_menu, '&Edit')
@@ -44,53 +44,53 @@ class MemoMenu:
     def _add_find_menu(self, menubar):
         find_menu = wx.Menu()
 
-        set_config_item_id = wx.NewId()
-        set_config_item = find_menu.Append(set_config_item_id, 'Set Filter Items', '')
-        self.parent.Bind(wx.EVT_MENU, self.parent.on_set_config_menu, set_config_item)
-
         ctrl_1_item_id = wx.NewId()
-        self.ctrl_1_item = find_menu.Append(ctrl_1_item_id, self.__get_menu_text('ctrl_1'), '')
+        self.ctrl_1_item = find_menu.Append(ctrl_1_item_id, self._get_menu_text('ctrl_1') + '\tCtrl+1', '')
         self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_1, self.ctrl_1_item)
 
         ctrl_2_item_id = wx.NewId()
-        self.ctrl_2_item = find_menu.Append(ctrl_2_item_id, self.__get_menu_text('ctrl_2'), '')
+        self.ctrl_2_item = find_menu.Append(ctrl_2_item_id, self._get_menu_text('ctrl_2') + '\tCtrl+2', '')
         self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_2, self.ctrl_2_item)
 
         ctrl_3_item_id = wx.NewId()
-        self.ctrl_3_item = find_menu.Append(ctrl_3_item_id, self.__get_menu_text('ctrl_3'), '')
+        self.ctrl_3_item = find_menu.Append(ctrl_3_item_id, self._get_menu_text('ctrl_3') + '\tCtrl+3', '')
         self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_3, self.ctrl_3_item)
 
         ctrl_4_item_id = wx.NewId()
-        self.ctrl_4_item = find_menu.Append(ctrl_4_item_id, self.__get_menu_text('ctrl_4'), '')
+        self.ctrl_4_item = find_menu.Append(ctrl_4_item_id, self._get_menu_text('ctrl_4') + '\tCtrl+4', '')
         self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_4, self.ctrl_4_item)
 
         ctrl_5_item_id = wx.NewId()
-        self.ctrl_5_item = find_menu.Append(ctrl_5_item_id, self.__get_menu_text('ctrl_5'), '')
+        self.ctrl_5_item = find_menu.Append(ctrl_5_item_id, self._get_menu_text('ctrl_5') + '\tCtrl+5', '')
         self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_5, self.ctrl_5_item)
 
         ctrl_6_item_id = wx.NewId()
-        self.ctrl_6_item = find_menu.Append(ctrl_6_item_id, self.__get_menu_text('ctrl_6'), '')
+        self.ctrl_6_item = find_menu.Append(ctrl_6_item_id, self._get_menu_text('ctrl_6') + '\tCtrl+6', '')
         self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_6, self.ctrl_6_item)
 
         ctrl_7_item_id = wx.NewId()
-        self.ctrl_7_item = find_menu.Append(ctrl_7_item_id, self.__get_menu_text('ctrl_7'), '')
+        self.ctrl_7_item = find_menu.Append(ctrl_7_item_id, self._get_menu_text('ctrl_7') + '\tCtrl+7', '')
         self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_7, self.ctrl_7_item)
 
         ctrl_8_item_id = wx.NewId()
-        self.ctrl_8_item = find_menu.Append(ctrl_8_item_id, self.__get_menu_text('ctrl_8'), '')
+        self.ctrl_8_item = find_menu.Append(ctrl_8_item_id, self._get_menu_text('ctrl_8') + '\tCtrl+8', '')
         self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_8, self.ctrl_8_item)
 
         ctrl_9_item_id = wx.NewId()
-        self.ctrl_9_item = find_menu.Append(ctrl_9_item_id, self.__get_menu_text('ctrl_9'), '')
+        self.ctrl_9_item = find_menu.Append(ctrl_9_item_id, self._get_menu_text('ctrl_9') + '\tCtrl+9', '')
         self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_9, self.ctrl_9_item)
 
         ctrl_0_item_id = wx.NewId()
-        self.ctrl_0_item = find_menu.Append(ctrl_0_item_id, self.__get_menu_text('ctrl_0'), '')
+        self.ctrl_0_item = find_menu.Append(ctrl_0_item_id, self._get_menu_text('ctrl_0') + '\tCtrl+0', '')
         self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_0, self.ctrl_0_item)
+
+        set_config_item_id = wx.NewId()
+        set_config_item = find_menu.Append(set_config_item_id, 'Set Filter Items' + '\tCtrl+Shift+E', '')
+        self.parent.Bind(wx.EVT_MENU, self.parent.on_set_config_menu, set_config_item)
 
         menubar.Append(find_menu, 'F&ind')
 
-    def __get_menu_text(self, id):
+    def _get_menu_text(self, id):
         text = self.config.GetValue(id)
         if len(text) == 0:
             return "EMPTY"
@@ -100,10 +100,6 @@ class MemoMenu:
 
     def _add_view_menu(self, menubar):
         viewMenu = wx.Menu()
-
-        showMainSearchBoxId = wx.NewId()
-        self.showMainSearchBox = viewMenu.Append(showMainSearchBoxId, '&Toggle main search box', 'Toggle main search box')
-        self.parent.Bind(wx.EVT_MENU, self.parent.showMainSearchBoxToggle, self.showMainSearchBox)
 
         FontSize14Id = wx.NewId()
         self.FontSize14 = viewMenu.Append(FontSize14Id, 'Font size 1&4', 'Set Font size 14')
