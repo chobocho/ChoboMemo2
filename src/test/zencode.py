@@ -13,8 +13,7 @@ code2 = """
 code3 = "self.ctrl_{0}_text.SetValue(config_data['ctrl_{0}'])"
 code4 = "'ctrl_{0}' : self.ctrl_{0}_text.GetValue(),"
 code5 = "self.config['ctrl_{0}'] = key['ctrl_{0}']"
-code6 = "self.ctrl_{0}_item.SetItemLabel('Ctrl+{0}> ' + key['ctrl_{0}'])"
-
+code6 = "self.ctrl_{0}_item.SetItemLabel(key['ctrl_{0}'] + '\\tCtrl+{0}')"
 
 def main():
     for i in range(10):

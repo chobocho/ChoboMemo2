@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+import collections
 import os
 
 import wx
@@ -44,6 +44,8 @@ class MemoUIFrame(wx.Frame, Observer):
         self.SetDropTarget(filedrop)
 
         self.memoManager = None
+        self.about_text = collections.OrderedDict()
+        self.make_about_box()
 
     def _addMenubar(self):
         self.menu = MemoMenu(self, self.config)
@@ -51,8 +53,8 @@ class MemoUIFrame(wx.Frame, Observer):
     def _addShortKey(self):
         ctrl_C_Id = wx.NewIdRef()
         self.Bind(wx.EVT_MENU, self._OnCopyTitle, id=ctrl_C_Id)
-        ctrl_D_Id = wx.NewIdRef()
-        self.Bind(wx.EVT_MENU, self._OnDeleteMemo, id=ctrl_D_Id)
+        ctrl_alt_D_id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self._OnDeleteMemo, id=ctrl_alt_D_id)
         ctrl_E_Id = wx.NewIdRef()
         self.Bind(wx.EVT_MENU, self._OnUpdateMemo, id=ctrl_E_Id)
         ctrl_U_Id = wx.NewIdRef()
@@ -126,6 +128,9 @@ class MemoUIFrame(wx.Frame, Observer):
         on_edit_filter_id = wx.NewId()
         self.Bind(wx.EVT_MENU, self.on_set_config_menu, id=on_edit_filter_id)
 
+        on_about_id = wx.NewId()
+        self.Bind(wx.EVT_MENU, self.OnAbout, id=on_about_id)
+
         accel_tbl = wx.AcceleratorTable([
             (wx.ACCEL_ALT, ord('B'), move_backward_id),
             (wx.ACCEL_ALT, ord('C'), clear_filter_id),
@@ -145,7 +150,6 @@ class MemoUIFrame(wx.Frame, Observer):
             (wx.ACCEL_CTRL, ord('9'), ctrl_9_Id),
             (wx.ACCEL_CTRL, ord('0'), ctrl_0_Id),
             (wx.ACCEL_CTRL, ord('C'), ctrl_C_Id),
-            (wx.ACCEL_CTRL, ord('D'), ctrl_D_Id),
             (wx.ACCEL_CTRL, ord('E'), ctrl_E_Id),
             (wx.ACCEL_CTRL, ord('F'), ctrl_F_Id),
             (wx.ACCEL_CTRL, ord('G'), ctrl_G_Id),
@@ -156,6 +160,8 @@ class MemoUIFrame(wx.Frame, Observer):
             (wx.ACCEL_CTRL, ord('U'), ctrl_U_Id),
             (wx.ACCEL_CTRL, ord('S'), ctrl_S_Id),
             (wx.ACCEL_CTRL, ord('Q'), ctrl_Q_Id),
+            (wx.ACCEL_CTRL|wx.ACCEL_ALT, ord('D'), ctrl_alt_D_id),
+            (wx.ACCEL_CTRL|wx.ACCEL_SHIFT, ord('I'), on_about_id),
             (wx.ACCEL_CTRL|wx.ACCEL_SHIFT, ord('C'), on_clone_item_id),
             (wx.ACCEL_CTRL|wx.ACCEL_SHIFT, ord('E'), on_edit_filter_id)])
 
@@ -266,7 +272,8 @@ class MemoUIFrame(wx.Frame, Observer):
             'ctrl_7' : self.config.GetValue('ctrl_7'),
             'ctrl_8' : self.config.GetValue('ctrl_8'),
             'ctrl_9' : self.config.GetValue('ctrl_9'),
-            'ctrl_i' : self.config.GetValue('ctrl_i')
+            'ctrl_i' : self.config.GetValue('ctrl_i'),
+            'memo' : self.config.GetValue('memo')
         }
 
         dlg = ConfigSettingUI(None, title='Set filter items')
@@ -282,6 +289,10 @@ class MemoUIFrame(wx.Frame, Observer):
             self.config.SetValue(filter_item)
             self.config.save()
             self.menu.SetValue(filter_item)
+
+    def on_ctrl_i(self, event):
+        keyword = self.config.GetValue('ctrl_i')
+        self.__OnFindMemo(keyword)
 
     def on_ctrl_1(self, event):
         keyword = self.config.GetValue('ctrl_1')
@@ -376,58 +387,59 @@ class MemoUIFrame(wx.Frame, Observer):
         self.rightPanel.OnSetBGColor(wx.WHITE, wx.BLACK)
         self.menu.on_toggle_view_menu("WHITE")
 
+    def make_about_box(self):
+        self.about_text['Alt +P'] = "Open URL in clipboard\n"
+        self.about_text['Ctrl+N'] = "Create memo"
+        self.about_text['Ctrl+E'] = "Edit memo"
+        self.about_text['Ctrl+U'] = "Edit memo"
+        self.about_text['Ctrl+Alt+D'] = "Delete memo\n"
+        self.about_text['Ctrl+F'] = "Find memo\n"
+        self.about_text['Ctrl+S'] = "Save\n"
+        self.about_text['Ctrl+Q'] = "Quit\n"
+        self.about_text['Ctrl+M'] = "Run Notepad"
+        self.about_text['Ctrl+M'] = "Run MsPainter"
+
     def OnAbout(self, event):
-        help = """
-    Ctrl+N : Create memo
-    Ctrl+E : Edit memo  
-    Ctrl+U : Edit memo  
-    Ctrl+D : Delete memo
-    Ctrl+F : Find
-    Ctrl+S : Save
-    Ctrl+Q : Quit
+        help_text_data = ""
+        for k,v in self.about_text.items():
+            help_text_data += f"{k} : {v}\n"
 
-    Ctrl+M : Notepad
-    Ctrl+P : MsPaint
-
-    Alt +P : Open URL in clipboard
-    -------------------------------------
-    http://www.chobocho.com
-    """
-        msg = "Minim" + '\n\n' + help + '\n\n    ' + self.swVersion
+        homepage = "-------------------------------------\nhttp://www.chobocho.com"
+        msg = f"Minim\n\n{help_text_data}\n{homepage}\n\n{self.swVersion}"
         title = 'About'
         wx.MessageBox(msg, title, wx.OK | wx.ICON_INFORMATION)
 
     def OnSaveMemo(self):
         self.memoManager.OnSave()
 
-    def OnSearchKeyword(self, searchKeyword):
-        search_keyword_list = searchKeyword
+    def OnSearchKeyword(self, search_keyword):
+        search_keyword_list = search_keyword
 
-        if (len(searchKeyword) > 1) and (searchKeyword[-1] == '.'):
-            self.OnSearchKeywordInTitle(searchKeyword[:-1])
+        if (len(search_keyword) > 1) and (search_keyword[-1] == '.'):
+            self.OnSearchKeywordInTitle(search_keyword[:-1])
             return
-        elif (len(searchKeyword) > 1) and (searchKeyword[0] == '`'):
-            self.OnSearchKeywordInTitle(searchKeyword[1:])
+        elif (len(search_keyword) > 1) and (search_keyword[0] == '`'):
+            self.OnSearchKeywordInTitle(search_keyword[1:])
             return
-        elif (len(searchKeyword) > 2) and (searchKeyword[:2].lower() == 't:'):
-            self.OnSearchKeywordInTitle(searchKeyword[2:])
-            print(searchKeyword[2:])
+        elif (len(search_keyword) > 2) and (search_keyword[:2].lower() == 't:'):
+            self.OnSearchKeywordInTitle(search_keyword[2:])
+            print(search_keyword[2:])
             return
 
         print(search_keyword_list)
         self.memoManager.OnSetFilter(search_keyword_list)
         # self.rightPanel.OnSetSearchKeyword(searchKeyword)
         self.leftPanel.OnItemSelected(0)
-        self.leftPanel.on_set_filter_keyword(searchKeyword)
+        self.leftPanel.on_set_filter_keyword(search_keyword)
 
-    def OnSearchKeywordInTitle(self, searchKeyword):
-        searchKeywordList = searchKeyword
+    def OnSearchKeywordInTitle(self, search_keyword):
+        search_keyword_list = search_keyword
 
-        self.logger.info(searchKeywordList)
-        self.memoManager.OnSetFilterInTitle(searchKeywordList)
+        self.logger.info(search_keyword_list)
+        self.memoManager.OnSetFilterInTitle(search_keyword_list)
         # self.rightPanel.OnSetSearchKeyword(searchKeyword)
         self.leftPanel.OnItemSelected(0)
-        self.leftPanel.on_set_filter_keyword(searchKeyword)
+        self.leftPanel.on_set_filter_keyword(search_keyword)
 
     def OnUpdateMemoList(self, memoList):
         self.logger.info('.')

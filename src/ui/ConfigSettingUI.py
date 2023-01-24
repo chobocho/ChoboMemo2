@@ -11,6 +11,12 @@ class ConfigSettingUI(sized_controls.SizedDialog):
 
     def init_ui(self):
         pane = self.GetContentsPane()
+        ctrl_i_pane = sized_controls.SizedPanel(pane)
+        ctrl_i_pane.SetSizerType('horizontal')
+        ctrl_i_pane.SetSizerProps(align='center')
+        ctrl_i_lbl = wx.StaticText(ctrl_i_pane, id=wx.NewId(), label="Ctrl+i", size=(50, 30))
+        self.ctrl_i_text = wx.TextCtrl(ctrl_i_pane, size=(TEXT_SIZE_W, 30))
+        self.ctrl_i_text.SetValue("")
         ctrl_1_pane = sized_controls.SizedPanel(pane)
         ctrl_1_pane.SetSizerType('horizontal')
         ctrl_1_pane.SetSizerProps(align='center')
@@ -71,6 +77,14 @@ class ConfigSettingUI(sized_controls.SizedDialog):
         ctrl_0_lbl = wx.StaticText(ctrl_0_pane, id=wx.NewId(), label="Ctrl+0", size=(50, 30))
         self.ctrl_0_text = wx.TextCtrl(ctrl_0_pane, size=(TEXT_SIZE_W, 30))
         self.ctrl_0_text.SetValue("")
+
+        memo_pane = sized_controls.SizedPanel(pane)
+        memo_pane.SetSizerType('horizontal')
+        memo_pane.SetSizerProps(align='center')
+        memo_lbl = wx.StaticText(memo_pane, id=wx.NewId(), label="Memo", size=(50, 30))
+        self.memo_text = wx.TextCtrl(memo_pane, style=wx.TE_MULTILINE, size=(TEXT_SIZE_W, 90))
+        self.memo_text.SetValue("")
+
         pane_btns = sized_controls.SizedPanel(pane)
         pane_btns.SetSizerType('horizontal')
         pane_btns.SetSizerProps(align='center')
@@ -88,16 +102,18 @@ class ConfigSettingUI(sized_controls.SizedDialog):
 
     def GetValue(self):
         config_data = {
-            'ctrl_0' : self.ctrl_0_text.GetValue(),
-            'ctrl_1' : self.ctrl_1_text.GetValue(),
-            'ctrl_2' : self.ctrl_2_text.GetValue(),
-            'ctrl_3' : self.ctrl_3_text.GetValue(),
-            'ctrl_4' : self.ctrl_4_text.GetValue(),
-            'ctrl_5' : self.ctrl_5_text.GetValue(),
-            'ctrl_6' : self.ctrl_6_text.GetValue(),
-            'ctrl_7' : self.ctrl_7_text.GetValue(),
-            'ctrl_8' : self.ctrl_8_text.GetValue(),
-            'ctrl_9' : self.ctrl_9_text.GetValue(),
+            'ctrl_0': self.ctrl_0_text.GetValue(),
+            'ctrl_1': self.ctrl_1_text.GetValue(),
+            'ctrl_2': self.ctrl_2_text.GetValue(),
+            'ctrl_3': self.ctrl_3_text.GetValue(),
+            'ctrl_4': self.ctrl_4_text.GetValue(),
+            'ctrl_5': self.ctrl_5_text.GetValue(),
+            'ctrl_6': self.ctrl_6_text.GetValue(),
+            'ctrl_7': self.ctrl_7_text.GetValue(),
+            'ctrl_8': self.ctrl_8_text.GetValue(),
+            'ctrl_9': self.ctrl_9_text.GetValue(),
+            'ctrl_i': self.ctrl_i_text.GetValue(),
+            'memo': self.memo_text.GetValue()
         }
         return config_data
 
@@ -112,3 +128,5 @@ class ConfigSettingUI(sized_controls.SizedDialog):
         self.ctrl_7_text.SetValue(config_data['ctrl_7'])
         self.ctrl_8_text.SetValue(config_data['ctrl_8'])
         self.ctrl_9_text.SetValue(config_data['ctrl_9'])
+        self.ctrl_i_text.SetValue(config_data['ctrl_i'])
+        self.memo_text.SetValue(config_data['memo'])

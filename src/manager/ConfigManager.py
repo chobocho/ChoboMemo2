@@ -20,6 +20,8 @@ class ConfigManager:
         self.config['ctrl_8'] = ""
         self.config['ctrl_9'] = ""
         self.config['ctrl_0'] = ""
+        self.config['ctrl_i'] = "#8282"
+        self.config['memo'] = ""
         self.config['WINDOW_SIZE_W'] = 800
         self.config['WINDOW_SIZE_H'] = 600
         self.config['AND'] = '&'
@@ -44,6 +46,8 @@ class ConfigManager:
         self.config['ctrl_7'] = key['ctrl_7']
         self.config['ctrl_8'] = key['ctrl_8']
         self.config['ctrl_9'] = key['ctrl_9']
+        self.config['ctrl_i'] = key['ctrl_i']
+        self.config['memo'] = key['memo']
 
     def get_all_config(self):
         return self.config.copy()

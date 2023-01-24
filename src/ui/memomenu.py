@@ -36,13 +36,29 @@ class MemoMenu:
         edit_menu = wx.Menu()
 
         clone_memo_id = wx.NewId()
-        clone_memo = edit_menu.Append(clone_memo_id, '&Clone meno\tCtrl+Shift+C', 'Clone memo')
+        clone_memo = edit_menu.Append(clone_memo_id, '&Clone memo\tCtrl+Shift+C', 'Clone memo')
         self.parent.Bind(wx.EVT_MENU, self.parent.on_clone_memo, clone_memo)
+
+        create_memo_id = wx.NewId()
+        create_memo = edit_menu.Append(create_memo_id, '&Create memo\tCtrl+N', '')
+        self.parent.Bind(wx.EVT_MENU, self.parent._OnCreateMemo, create_memo)
+
+        edit_memo_id = wx.NewId()
+        edit_memo = edit_menu.Append(edit_memo_id, '&Edit memo\tCtrl+E', '')
+        self.parent.Bind(wx.EVT_MENU, self.parent._OnUpdateMemo, edit_memo)
+
+        delete_memo_id = wx.NewId()
+        delete_memo = edit_menu.Append(delete_memo_id, '&Delete memo\tCtrl+Alt+D', '')
+        self.parent.Bind(wx.EVT_MENU, self.parent._OnDeleteMemo, delete_memo)
 
         menubar.Append(edit_menu, '&Edit')
 
     def _add_find_menu(self, menubar):
         find_menu = wx.Menu()
+
+        ctrl_i_item_id = wx.NewId()
+        self.ctrl_i_item = find_menu.Append(ctrl_i_item_id, self._get_menu_text('ctrl_i') + '\tCtrl+i', '')
+        self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_i, self.ctrl_i_item)
 
         ctrl_1_item_id = wx.NewId()
         self.ctrl_1_item = find_menu.Append(ctrl_1_item_id, self._get_menu_text('ctrl_1') + '\tCtrl+1', '')
@@ -145,19 +161,29 @@ class MemoMenu:
 
     def _add_help_menu(self, menubar):
         helpMenu = wx.Menu()
+
+        notepad_item_id = wx.NewId()
+        notepad_item = helpMenu.Append(notepad_item_id, 'Run &Notepad\tCtrl+M', '')
+        self.parent.Bind(wx.EVT_MENU, self.parent._OnPressCtrlM, notepad_item)
+
+        mspaint_item_id = wx.NewId()
+        mspaint_item = helpMenu.Append(mspaint_item_id, 'Run Ms&Paint\tCtrl+P', '')
+        self.parent.Bind(wx.EVT_MENU, self.parent._OnPressCtrlP, mspaint_item)
+
         aboutItemId = wx.NewId()
-        aboutItem = helpMenu.Append(aboutItemId, '&About', 'About')
+        aboutItem = helpMenu.Append(aboutItemId, '&About\tCtrl+Shift+I', 'About')
         self.parent.Bind(wx.EVT_MENU, self.parent.OnAbout, aboutItem)
         menubar.Append(helpMenu, '&Help')
 
     def SetValue(self, key):
-        self.ctrl_0_item.SetItemLabel('Ctrl+0> ' + key['ctrl_0'])
-        self.ctrl_1_item.SetItemLabel('Ctrl+1> ' + key['ctrl_1'])
-        self.ctrl_2_item.SetItemLabel('Ctrl+2> ' + key['ctrl_2'])
-        self.ctrl_3_item.SetItemLabel('Ctrl+3> ' + key['ctrl_3'])
-        self.ctrl_4_item.SetItemLabel('Ctrl+4> ' + key['ctrl_4'])
-        self.ctrl_5_item.SetItemLabel('Ctrl+5> ' + key['ctrl_5'])
-        self.ctrl_6_item.SetItemLabel('Ctrl+6> ' + key['ctrl_6'])
-        self.ctrl_7_item.SetItemLabel('Ctrl+7> ' + key['ctrl_7'])
-        self.ctrl_8_item.SetItemLabel('Ctrl+8> ' + key['ctrl_8'])
-        self.ctrl_9_item.SetItemLabel('Ctrl+9> ' + key['ctrl_9'])
+        self.ctrl_0_item.SetItemLabel(key['ctrl_0'] + '\tCtrl+0')
+        self.ctrl_1_item.SetItemLabel(key['ctrl_1'] + '\tCtrl+1')
+        self.ctrl_2_item.SetItemLabel(key['ctrl_2'] + '\tCtrl+2')
+        self.ctrl_3_item.SetItemLabel(key['ctrl_3'] + '\tCtrl+3')
+        self.ctrl_4_item.SetItemLabel(key['ctrl_4'] + '\tCtrl+4')
+        self.ctrl_5_item.SetItemLabel(key['ctrl_5'] + '\tCtrl+5')
+        self.ctrl_6_item.SetItemLabel(key['ctrl_6'] + '\tCtrl+6')
+        self.ctrl_7_item.SetItemLabel(key['ctrl_7'] + '\tCtrl+7')
+        self.ctrl_8_item.SetItemLabel(key['ctrl_8'] + '\tCtrl+8')
+        self.ctrl_9_item.SetItemLabel(key['ctrl_9'] + '\tCtrl+9')
+        self.ctrl_i_item.SetItemLabel(key['ctrl_i'] + '\tCtrl+i')
