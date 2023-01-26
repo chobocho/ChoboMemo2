@@ -13,5 +13,8 @@ def load_config(filename):
 
     config_data = {}
     with open(filename, encoding="UTF-8") as json_file:
-        config_data = json.load(json_file)
+        try:
+            config_data = json.load(json_file)
+        except:
+            ...
     return config_data

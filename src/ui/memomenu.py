@@ -4,9 +4,9 @@ class MemoMenu:
     def __init__(self, parent, _config):
         self.parent = parent
         self.config = _config
-        self._addMenubar()
+        self._add_menubar()
 
-    def _addMenubar(self):
+    def _add_menubar(self):
         menubar = wx.MenuBar()
 
         self._add_file_menu(menubar)
@@ -41,7 +41,7 @@ class MemoMenu:
 
         create_memo_id = wx.NewId()
         create_memo = edit_menu.Append(create_memo_id, '&Create memo\tCtrl+N', '')
-        self.parent.Bind(wx.EVT_MENU, self.parent._OnCreateMemo, create_memo)
+        self.parent.Bind(wx.EVT_MENU, self.parent._on_create_memo, create_memo)
 
         edit_memo_id = wx.NewId()
         edit_memo = edit_menu.Append(edit_memo_id, '&Edit memo\tCtrl+E', '')
@@ -55,6 +55,14 @@ class MemoMenu:
 
     def _add_find_menu(self, menubar):
         find_menu = wx.Menu()
+
+        find_item_id = wx.NewId()
+        self.find_item = find_menu.Append(find_item_id, 'Find\tCtrl+F', '')
+        self.parent.Bind(wx.EVT_MENU, self.parent.on_advanced_find, self.find_item)
+
+        simple_find_item_id = wx.NewId()
+        self.simple_find_item = find_menu.Append(simple_find_item_id, 'Simple Find\tCtrl+Shift+F', '')
+        self.parent.Bind(wx.EVT_MENU, self.parent.OnFind, self.simple_find_item)
 
         ctrl_i_item_id = wx.NewId()
         self.ctrl_i_item = find_menu.Append(ctrl_i_item_id, self._get_menu_text('ctrl_i') + '\tCtrl+i', '')
@@ -115,34 +123,34 @@ class MemoMenu:
         return text[:10] + "..."
 
     def _add_view_menu(self, menubar):
-        viewMenu = wx.Menu()
+        view_menu = wx.Menu()
 
-        FontSize14Id = wx.NewId()
-        self.FontSize14 = viewMenu.Append(FontSize14Id, 'Font size 1&4', 'Set Font size 14')
+        font_size14_id = wx.NewId()
+        self.FontSize14 = view_menu.Append(font_size14_id, 'Font size 1&4', 'Set Font size 14')
         self.parent.Bind(wx.EVT_MENU, self.parent.OnSetFontSize14, self.FontSize14)
 
-        FontSize10Id = wx.NewId()
-        self.FontSize10 = viewMenu.Append(FontSize10Id, 'Font size 1&0', 'Set Font size 10')
+        font_size10_id = wx.NewId()
+        self.FontSize10 = view_menu.Append(font_size10_id, 'Font size 1&0', 'Set Font size 10')
         self.parent.Bind(wx.EVT_MENU, self.parent.OnSetFontSize10, self.FontSize10)
 
-        FontSize8Id = wx.NewId()
-        self.FontSize8 = viewMenu.Append(FontSize8Id, 'Font size &8', 'Set Font size 8')
+        font_size8_id = wx.NewId()
+        self.FontSize8 = view_menu.Append(font_size8_id, 'Font size &8', 'Set Font size 8')
         self.parent.Bind(wx.EVT_MENU, self.parent.OnSetFontSize8, self.FontSize8)
 
-        bgBlackColorItemsId = wx.NewId()
-        self.bgBlackColorItems = viewMenu.AppendCheckItem(bgBlackColorItemsId, 'Set Blac&k', 'Set backgourd as Black')
+        bg_black_color_items_id = wx.NewId()
+        self.bgBlackColorItems = view_menu.AppendCheckItem(bg_black_color_items_id, 'Set Blac&k', 'Set backgourd as Black')
         self.parent.Bind(wx.EVT_MENU, self.parent.OnSetBlackColorBg, self.bgBlackColorItems)
-        bgBlueColorItemsId = wx.NewId()
-        self.bgBlueColorItems = viewMenu.AppendCheckItem(bgBlueColorItemsId, 'Set &Blue', 'Set backgourd as Blue')
+        bg_blue_color_items_id = wx.NewId()
+        self.bgBlueColorItems = view_menu.AppendCheckItem(bg_blue_color_items_id, 'Set &Blue', 'Set backgourd as Blue')
         self.parent.Bind(wx.EVT_MENU, self.parent.OnSetBlueColorBg, self.bgBlueColorItems)
         self.bgBlueColorItems.Check(True)
-        bgWhiteColorItemsId = wx.NewId()
-        self.bgWhiteColorItems = viewMenu.AppendCheckItem(bgWhiteColorItemsId, 'Set &White', 'Set backgourd as White')
+        bg_white_color_items_id = wx.NewId()
+        self.bgWhiteColorItems = view_menu.AppendCheckItem(bg_white_color_items_id, 'Set &White', 'Set backgourd as White')
         self.parent.Bind(wx.EVT_MENU, self.parent.OnSetWhiteColorBg, self.bgWhiteColorItems)
-        bgYellowColorItemsId = wx.NewId()
-        self.bgYellowColorItems = viewMenu.AppendCheckItem(bgYellowColorItemsId, 'Set &Yellow', 'Set backgourd as Yellow')
+        bg_yellow_color_items_id = wx.NewId()
+        self.bgYellowColorItems = view_menu.AppendCheckItem(bg_yellow_color_items_id, 'Set &Yellow', 'Set backgourd as Yellow')
         self.parent.Bind(wx.EVT_MENU, self.parent.OnSetYellowColorBg, self.bgYellowColorItems)
-        menubar.Append(viewMenu, '&View')
+        menubar.Append(view_menu, '&View')
 
     def on_toggle_view_menu(self, color):
         self.bgBlackColorItems.Check(False)

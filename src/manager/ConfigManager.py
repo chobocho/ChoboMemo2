@@ -26,6 +26,7 @@ class ConfigManager:
         self.config['WINDOW_SIZE_H'] = 600
         self.config['AND'] = '&'
         self.config['OR'] = '|'
+        self.config['ask_before_quit'] = False
         self.config['compressedSave'] = False
 
         cfg_data = fileutil.load_config('./minim.cfg')
@@ -49,8 +50,20 @@ class ConfigManager:
         self.config['ctrl_i'] = key['ctrl_i']
         self.config['memo'] = key['memo']
 
+    def SetMemo(self, data):
+        self.config['memo'] = data
+
     def get_all_config(self):
         return self.config.copy()
 
     def save(self):
         fileutil.saveAsJson(self.config, './minim.cfg', 2)
+
+    def get_ctrl_value(self):
+        ctrl_list = ['ctrl_i', 'ctrl_1', 'ctrl_2', 'ctrl_3', 'ctrl_4', 'ctrl_5',
+                     'ctrl_6', 'ctrl_7', 'ctrl_8', 'ctrl_9', 'ctrl_0']
+        result = []
+        for i in ctrl_list:
+            result.append(self.config[i])
+
+        return result

@@ -71,14 +71,14 @@ class MemoManager(Observable):
         self.dataManager.OnSetMemoList(memoData)
         self.OnNotify(UPDATE_MEMO)
 
-    def OnCreateMemo(self, memo):
-        self.__OnCreateMemo(memo)
+    def on_create_memo(self, memo):
+        self._on_create_memo(memo)
         self.OnNotify(UPDATE_MEMO)
 
-    def __OnCreateMemo(self, memo):
+    def _on_create_memo(self, memo):
         if not self.canChange:
             return
-        self.dataManager.OnCreateMemo(memo, self.dbm)
+        self.dataManager.on_create_memo(memo, self.dbm)
 
     def OnDeleteMemo(self, memoIdx):
         self.logger.info(memoIdx)
@@ -115,7 +115,7 @@ class MemoManager(Observable):
                 self.logger.info("No need to save!")
                 return
             if self.fileManager.saveDataFile(self.dataManager.OnGetMemoList(), needCompress=self.saveCompressed):
-                self.dataManager.OnSetNeedToSave(False)
+                self.dataManager.on_set_need_to_save(False)
         else:
             if len(filename) == 0:
                 self.fileManager.saveDataFile(self.OnGetMemoList(), needCompress=self.saveCompressed)
@@ -138,7 +138,7 @@ class MemoManager(Observable):
 
     def OnAddItemFromTextFile(self, filename):
         memo = self.__OnAddItemFromTextFile(filename)
-        self.OnCreateMemo(memo)
+        self.on_create_memo(memo)
 
     def __OnAddItemFromTextFile(self, filename):
         _1MB = 1024 * 1024
@@ -166,7 +166,7 @@ class MemoManager(Observable):
             for name in allow_file_name:
                 if name in filename:
                     memo = self.__OnAddItemFromTextFile(filename)
-                    self.__OnCreateMemo(memo)
+                    self._on_create_memo(memo)
                     is_processed = True
                     break
 
@@ -174,14 +174,14 @@ class MemoManager(Observable):
                 memo = {}
                 memo['id'] = self.fileManager.getFileNameOnly(filename)
                 memo['memo'] = filename + "\n\n---[Memo]---\n"
-                self.__OnCreateMemo(memo)
+                self._on_create_memo(memo)
 
         self.OnNotify(UPDATE_MEMO)
 
 
     def OnCloneMemo(self, memoIdx):
         memo = self.OnGetMemo(memoIdx)
-        self.OnCreateMemo(memo)
+        self.on_create_memo(memo)
 
 def test():
     """Test code for TDD"""

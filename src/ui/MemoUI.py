@@ -123,9 +123,9 @@ class MemoDialog(sized_controls.SizedDialog):
 
         result = []
         for line in lines:
-            tmpLine = line.strip()
-            if len(tmpLine) > 0:
-                result.append(tmpLine)
+            tmp_line = line.strip()
+            if len(tmp_line) > 0:
+                result.append(tmp_line)
 
         self.text.SetValue('\n'.join(result))
 
