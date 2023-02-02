@@ -442,18 +442,21 @@ class MemoUIFrame(wx.Frame, Observer):
         self.about_text['Ctrl+Shift+E'] = "Edit filter items"
         self.about_text['Alt+Shift+E'] = "Edit filter items\n"
         self.about_text['Ctrl+F'] = "Find memo\n"
-        self.about_text['Ctrl+S'] = "Save\n"
+        self.about_text['Ctrl+Shift+F'] = "Simple Find memo"
+        self.about_text['Ctrl+S'] = "Save"
         self.about_text['Ctrl+Q'] = "Quit\n"
         self.about_text['Ctrl+M'] = "Run Notepad"
-        self.about_text['Ctrl+M'] = "Run MsPaint"
+        self.about_text['Ctrl+P'] = "Run MsPaint"
 
     def OnAbout(self, event):
         help_text_data = ""
         for k,v in self.about_text.items():
             help_text_data += f"{k} : {v}\n"
 
-        homepage = "-------------------------------------\nhttp://www.chobocho.com"
-        msg = f"Minim\n\n{help_text_data}\n{homepage}\n\n{self.swVersion}"
+        planner = 'Planner: NH._.K'
+        developer = "Dev: chobocho.com"
+        homepage = f"-------------------------------------\n"
+        msg = f"Minim\n\n{help_text_data}\n{homepage}{developer}\n{planner}"
         title = 'About'
         wx.MessageBox(msg, title, wx.OK | wx.ICON_INFORMATION)
 

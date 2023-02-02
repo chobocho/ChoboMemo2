@@ -8,40 +8,45 @@ WINDOW_SIZE_H = 500
 NEXT_STEP = 800
 LIST_SIZE_W = 250
 
+
 class AdvanceFindUI(sized_controls.SizedDialog):
     def __init__(self, *args, ctrl_btn_list=[], recent_item_list=[], user_memo_list=[], **kwargs):
         super(AdvanceFindUI, self).__init__(*args, **kwargs)
         self.user_memo_list = user_memo_list
         self.is_update_memo = True
         font = wx.Font(14, wx.FONTFAMILY_TELETYPE, wx.NORMAL, wx.NORMAL)
+        btn_font = wx.Font(14, wx.FONTFAMILY_SWISS, wx.NORMAL, wx.BOLD)
         pane = self.GetContentsPane()
-        self._add_result_text_box(font, pane)
-
-        static_line = wx.StaticLine(pane, style=wx.LI_HORIZONTAL)
-        static_line.SetSizerProps(border=('all', 0), expand=True)
 
         ##
-        # list ctrl1 Ctrl+1-0
         ctrl_list_panel = sized_controls.SizedPanel(pane)
         ctrl_list_panel.SetSizerType('horizontal')
         ctrl_list_panel.SetSizerProps(align='center')
 
-        self._add_ctrl_btn_list(ctrl_list_panel, ctrl_btn_list)
-        self._add_recent_item_list(ctrl_list_panel, recent_item_list)
-        self._add_user_item_list(ctrl_list_panel, font, self.user_memo_list)
+        self._add_ctrl_btn_list(ctrl_list_panel, btn_font, ctrl_btn_list)
+        self._add_recent_item_list(ctrl_list_panel, btn_font, recent_item_list)
+        self._add_user_item_list(ctrl_list_panel, font, btn_font, self.user_memo_list)
 
         static_line = wx.StaticLine(pane, style=wx.LI_HORIZONTAL)
         static_line.SetSizerProps(border=('all', 0), expand=True)
-
+        self._add_result_text_box(font, pane)
         self._add_ok_cancel_btn_box(pane)
 
         set_focus_input_field_id = wx.NewId()
         self.Bind(wx.EVT_MENU, self.on_set_focus_input_field, id=set_focus_input_field_id)
 
+        clear_input_field_id = wx.NewId()
+        self.Bind(wx.EVT_MENU, self.on_clear_result_btn, id=clear_input_field_id)
+
+        set_focus_user_keyword_field_id = wx.NewId()
+        self.Bind(wx.EVT_MENU, self.on_set_focus_user_input_field, id=set_focus_user_keyword_field_id)
+
         accel_tbl = wx.AcceleratorTable([
+            (wx.ACCEL_ALT, ord('C'), clear_input_field_id),
             (wx.ACCEL_ALT, ord('D'), set_focus_input_field_id),
             (wx.ACCEL_ALT, ord('L'), wx.ID_CANCEL),
-            (wx.ACCEL_ALT, ord('O'), wx.ID_OK)
+            (wx.ACCEL_ALT, ord('O'), wx.ID_OK),
+            (wx.ACCEL_ALT, ord('U'), set_focus_user_keyword_field_id),
         ])
         self.SetAcceleratorTable(accel_tbl)
         self.Fit()
@@ -56,14 +61,22 @@ class AdvanceFindUI(sized_controls.SizedDialog):
         button_cancel = wx.Button(pane_btns, wx.ID_CANCEL, label='Cance&l')
         button_cancel.Bind(wx.EVT_BUTTON, self.on_button)
 
-    def _add_ctrl_btn_list(self, pane, list_data=[]):
+    def _add_ctrl_btn_list(self, pane, btn_font, list_data=[]):
+        ctrl_btn_panel = sized_controls.SizedPanel(pane)
+        ctrl_btn_panel.SetSizerType('vectical')
+        ctrl_btn_panel.SetSizerProps(align='center')
+
+        ctrl_btn_description = wx.Button(ctrl_btn_panel, wx.NewId(), label='Shortcut list', size=(LIST_SIZE_W, 30))
+        ctrl_btn_description.SetFont(btn_font)
+        #ctrl_btn_description.SetOwnForegroundColour(wx.BLUE)
+        ctrl_btn_description.SetBackgroundColour((187, 222, 251, 255))
         ctrl_btn_list_id = wx.NewId()
-        self.ctrl_btn_list = wx.ListCtrl(pane, ctrl_btn_list_id,
+        self.ctrl_btn_list = wx.ListCtrl(ctrl_btn_panel, ctrl_btn_list_id,
                                          style=wx.LC_REPORT
                                                | wx.BORDER_NONE
                                                | wx.LC_NO_HEADER
                                                | wx.LC_EDIT_LABELS,
-                                         size=(LIST_SIZE_W, 400))
+                                         size=(LIST_SIZE_W, 350))
         self.ctrl_btn_list.InsertColumn(0, "Keyword", width=LIST_SIZE_W)
         self.ctrl_btn_list.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_ctrl_btn_list_selected)
         self.ctrl_btn_list.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._on_ctrl_btn_list_dclicked)
@@ -72,9 +85,21 @@ class AdvanceFindUI(sized_controls.SizedDialog):
         self.ctrl_btn_list.DeleteAllItems()
         self.insert_data_to_listctrl(self.ctrl_btn_list, list_data)
 
-    def _add_recent_item_list(self, pane, list_data=[]):
+        lbl_hint1 = wx.StaticText(ctrl_btn_panel, id=wx.NewId(), label="Alt+D: Set focus on input field")
+        lbl_hint2 = wx.StaticText(ctrl_btn_panel, id=wx.NewId(), label="Alt+U: Set focus on user keyword")
+
+    def _add_recent_item_list(self, pane, btn_font, list_data=[]):
+        recent_item_panel = sized_controls.SizedPanel(pane)
+        recent_item_panel.SetSizerType('vectical')
+        recent_item_panel.SetSizerProps(align='center')
+
+        recent_item_description = wx.Button(recent_item_panel, wx.NewId(), label='Recent keyword', size=(LIST_SIZE_W, 30))
+        recent_item_description.SetFont(btn_font)
+        #recent_item_description.SetOwnForegroundColour(wx.BLUE)
+        recent_item_description.SetBackgroundColour((187, 222, 251, 255))
+
         recent_item_list_id = wx.NewId()
-        self.recent_item_list = wx.ListCtrl(pane, recent_item_list_id,
+        self.recent_item_list = wx.ListCtrl(recent_item_panel, recent_item_list_id,
                                          style=wx.LC_REPORT
                                                | wx.BORDER_NONE
                                                | wx.LC_NO_HEADER
@@ -88,10 +113,16 @@ class AdvanceFindUI(sized_controls.SizedDialog):
         self.recent_item_list.DeleteAllItems()
         self.insert_data_to_listctrl(self.recent_item_list, list_data, 1)
 
-    def _add_user_item_list(self, pane, font, list_data=[]):
+    def _add_user_item_list(self, pane, font, btn_font, list_data=[]):
         user_item_panel = sized_controls.SizedPanel(pane)
         user_item_panel.SetSizerType('vectical')
         user_item_panel.SetSizerProps(align='center')
+
+        user_input_description = wx.Button(user_item_panel, wx.NewId(), label='User keyword', size=(LIST_SIZE_W, 30))
+        #user_input_description.Enable(False)
+        user_input_description.SetFont(btn_font)
+        #user_input_description.SetOwnForegroundColour(wx.BLUE)
+        user_input_description.SetBackgroundColour((187, 222, 251, 255))
 
         user_input_panel = sized_controls.SizedPanel(user_item_panel)
         user_input_panel.SetSizerType('horizontal')
@@ -111,7 +142,7 @@ class AdvanceFindUI(sized_controls.SizedDialog):
                                                | wx.BORDER_NONE
                                                | wx.LC_NO_HEADER
                                                | wx.LC_EDIT_LABELS,
-                                         size=(250, 340))
+                                         size=(LIST_SIZE_W, 340))
         self.user_item_list.InsertColumn(0, "Keyword", width=LIST_SIZE_W)
         self.user_item_list.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_user_item_list_selected)
         self.user_item_list.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._on_user_item_list_dclicked)
@@ -134,7 +165,7 @@ class AdvanceFindUI(sized_controls.SizedDialog):
         self.result_text.SetFont(font)
         self.result_text.SetFocus()
 
-        result_clear_btn = wx.Button(result_panel, wx.NewId(), label='Clear')
+        result_clear_btn = wx.Button(result_panel, wx.NewId(), label='&Clear')
         result_clear_btn.Bind(wx.EVT_BUTTON, self.on_clear_result_btn)
 
     def insert_data_to_listctrl(self, list_ctrl, list_data, num=0):
@@ -240,6 +271,9 @@ class AdvanceFindUI(sized_controls.SizedDialog):
 
     def on_set_focus_input_field(self, event):
         self.result_text.SetFocus()
+
+    def on_set_focus_user_input_field(self, event):
+        self.user_input_text.SetFocus()
 
     def on_add_result_text(self, new_text):
         text = new_text.strip()
