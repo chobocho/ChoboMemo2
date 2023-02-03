@@ -14,6 +14,7 @@ Simple memo & code snippet management tool
     Ctrl+U : Edit memo  
     Ctrl+D : Delete memo
     Ctrl+F : Find
+
     Ctrl+S : Save
     Ctrl+Q : Quit
 
@@ -21,6 +22,20 @@ Simple memo & code snippet management tool
     Ctrl+P : MsPaint
 
     Alt +P : Open URL in clipboard
+ 
+    Ctrl+Shift+E : Edit shortcut keys
+    Ctrl+Shift+I : Help    
+    Ctrl+Shift+F : Simple Find
+
+    [Advanced search]
+    ![Keyword] : Find items which do not include keyword
+    ~[Keyword] : Find items which do not include keyword
+
+    `[Keyword] : Find items which have keyword in title
+    t:[Keyword] : Find items which have keyword in title
+    
+    A,B : Find items which have A and B     
+    A|B : Find items which have A or B
 ~~~
 
 ## Search (Ctrl+F)
@@ -31,8 +46,9 @@ Simple memo & code snippet management tool
   - A, B
   
 * A or B
-  - A | B
-  
+  - A | B  
+
+![screen shot](doc/search.png)
   
 # License
 MIT license

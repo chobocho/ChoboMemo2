@@ -20,8 +20,9 @@ class MemoManager(Observable):
         self.dbm = DBManager('20201105.cfm.db')
         self._loadMemo(callback)
         self.canChange = True
-        self.and_op = '&'
+        self.and_op = ','
         self.or_op = '|'
+        self.saveCompressed = False
 
     def _loadMemo(self, callback=None):
         memoData = self.dbm.load()
@@ -55,6 +56,10 @@ class MemoManager(Observable):
        self.dataManager.set_split_op(self.and_op, self.or_op)
 
 
+    def set_save_mode(self, save_mode:bool):
+       self.saveCompressed = save_mode
+
+
     def OnLoadFile(self, filename):
         self.canChange = False
         memoData = self.fileManager.loadDataFile(filename)
@@ -66,14 +71,14 @@ class MemoManager(Observable):
         self.dataManager.OnSetMemoList(memoData)
         self.OnNotify(UPDATE_MEMO)
 
-    def OnCreateMemo(self, memo):
-        self.__OnCreateMemo(memo)
+    def on_create_memo(self, memo):
+        self._on_create_memo(memo)
         self.OnNotify(UPDATE_MEMO)
 
-    def __OnCreateMemo(self, memo):
+    def _on_create_memo(self, memo):
         if not self.canChange:
             return
-        self.dataManager.OnCreateMemo(memo, self.dbm)
+        self.dataManager.on_create_memo(memo, self.dbm)
 
     def OnDeleteMemo(self, memoIdx):
         self.logger.info(memoIdx)
@@ -90,7 +95,7 @@ class MemoManager(Observable):
         self.OnNotify(UPDATE_MEMO)
 
     def OnGetMemo(self, memoIdx, searchKeyword = ""):
-        return self.dataManager.OnGetMemo(memoIdx, searchKeyword)
+        return self.dataManager.OnGetMemo(self.dbm, memoIdx, searchKeyword)
 
     def OnGetMemoList(self):
         return self.dataManager.OnGetFilteredMemoList()
@@ -109,13 +114,13 @@ class MemoManager(Observable):
             if not self.dataManager.OnGetNeedToSave():
                 self.logger.info("No need to save!")
                 return
-            if self.fileManager.saveDataFile(self.dataManager.OnGetMemoList()):
-                self.dataManager.OnSetNeedToSave(False)
+            if self.fileManager.saveDataFile(self.dataManager.OnGetMemoList(), needCompress=self.saveCompressed):
+                self.dataManager.on_set_need_to_save(False)
         else:
             if len(filename) == 0:
-                self.fileManager.saveDataFile(self.OnGetMemoList())
+                self.fileManager.saveDataFile(self.OnGetMemoList(), needCompress=self.saveCompressed)
             else:
-                self.fileManager.saveDataFile(self.OnGetMemoList(), filename)
+                self.fileManager.saveDataFile(self.OnGetMemoList(), filename, needCompress=self.saveCompressed)
 
     def OnSaveAsMD(self, memoIdx=-1, filename=""):
         if len(filename) == 0:
@@ -133,7 +138,7 @@ class MemoManager(Observable):
 
     def OnAddItemFromTextFile(self, filename):
         memo = self.__OnAddItemFromTextFile(filename)
-        self.OnCreateMemo(memo)
+        self.on_create_memo(memo)
 
     def __OnAddItemFromTextFile(self, filename):
         _1MB = 1024 * 1024
@@ -161,7 +166,7 @@ class MemoManager(Observable):
             for name in allow_file_name:
                 if name in filename:
                     memo = self.__OnAddItemFromTextFile(filename)
-                    self.__OnCreateMemo(memo)
+                    self._on_create_memo(memo)
                     is_processed = True
                     break
 
@@ -169,14 +174,14 @@ class MemoManager(Observable):
                 memo = {}
                 memo['id'] = self.fileManager.getFileNameOnly(filename)
                 memo['memo'] = filename + "\n\n---[Memo]---\n"
-                self.__OnCreateMemo(memo)
+                self._on_create_memo(memo)
 
         self.OnNotify(UPDATE_MEMO)
 
 
     def OnCloneMemo(self, memoIdx):
         memo = self.OnGetMemo(memoIdx)
-        self.OnCreateMemo(memo)
+        self.on_create_memo(memo)
 
 def test():
     """Test code for TDD"""

@@ -2,7 +2,7 @@
 #-*- coding: utf-8 -*-
 import logging
 import os
-from store import loadfilev1, loadfilev2, savefilev2
+from store import loadfilev1, loadfilev2, savefilev2, CompressedSaveFile, CompressedLoadFile
 
 
 class FileManager:
@@ -41,21 +41,26 @@ class FileManager:
 
         if version.strip() == "version:1105.1":
              fm = loadfilev2.LoadFile()
+        elif version.strip() == "version:1105.2:gzip":
+            fm = CompressedLoadFile.CompressedLoadFile()
         else:
              fm = loadfilev1.LoadFile()
         return fm.loadfile(dataFile)
 
 
-    def saveDataFile(self, memoList, fileName=""):
+    def saveDataFile(self, memoList, fileName="", needCompress=False):
         saveFileName = self.saveFileName
 
         if len(fileName) > 0:
             saveFileName = fileName
             self.saveFileName = saveFileName
 
-        fm = savefilev2.SaveFile()
+        fm = None
+        if needCompress:
+            fm = CompressedSaveFile.CompressedSaveFile()
+        else:
+            fm = savefilev2.SaveFile()
         fm.savefile(memoList, saveFileName)
-
         self.logger.info("Success to save at " + self.saveFileName)
         return True
 

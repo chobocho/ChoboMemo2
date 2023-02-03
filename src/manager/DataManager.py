@@ -5,12 +5,12 @@ from util import textutil
 
 
 class DataManager:
-    def __init__(self, and_op='&', or_op='|'):
+    def __init__(self, and_op=',', or_op='|'):
         self.logger = logging.getLogger("chobomemo")
-        self.memoList = {}
-        self.memoListOrigin = {}
-        self.hasUpdated = False
-        self.enableDB = True
+        self.memo_list = {}
+        self.memo_list_origin = {}
+        self.has_updated = False
+        self.enable_db = True
         self.and_op = and_op
         self.or_op = or_op
 
@@ -18,63 +18,71 @@ class DataManager:
        self.and_op = and_op
        self.or_op = or_op
 
-    def OnSetNeedToSave(self, flag):
-        self.hasUpdated = flag
+    def on_set_need_to_save(self, flag):
+        self.has_updated = flag
 
     def OnGetNeedToSave(self):
-        return self.hasUpdated
+        return self.has_updated
 
-    def OnCreateMemo(self, memo, dbm):
+    def on_create_memo(self, memo, dbm):
         memo['index'] = str(dbm.insert([memo['id'], memo['memo']]))
-        self.memoListOrigin[memo['index']] = memo.copy()
-        self.hasUpdated = True
+        self.memo_list_origin[memo['index']] = memo.copy()
+        self.has_updated = True
         self.logger.info(memo['index'])
-        self.memoList = self.memoListOrigin.copy()
+        self.memo_list = self.memo_list_origin.copy()
 
     def OnUpdateMemo(self, memo, dbm):
         key = memo['index']
         dbm.update((memo['id'], memo['memo'], memo['index']))
-        self.memoListOrigin[key] = memo.copy()
-        self.hasUpdated = True
+        self.memo_list_origin[key] = memo.copy()
+        self.has_updated = True
         self.logger.info(key)
-        self.memoList = self.memoListOrigin.copy()
+        self.memo_list = self.memo_list_origin.copy()
 
     def OnDeleteMemo(self, memoIdx, dbm):
-        if not (memoIdx in self.memoListOrigin):
+        if not (memoIdx in self.memo_list_origin):
             return
         dbm.delete(memoIdx)
-        del self.memoListOrigin[memoIdx]
-        self.hasUpdated = True
-        self.memoList = self.memoListOrigin.copy()
+        del self.memo_list_origin[memoIdx]
+        self.has_updated = True
+        self.memo_list = self.memo_list_origin.copy()
 
     def OnGetFilteredMemoList(self):
-        return self.memoList
+        return self.memo_list
 
     def OnGetMemoList(self):
-        return self.memoListOrigin
+        return self.memo_list_origin
 
     def OnSetMemoList(self, list):
-        self.memoListOrigin = list.copy()
-        self.memoList =  list.copy()
-        self.logger.info("length of memoList is " + str(len(self.memoList)))
+        self.memo_list_origin = list.copy()
+        self.memo_list =  list.copy()
+        self.logger.info("length of memoList is " + str(len(self.memo_list)))
 
-
-    def OnGetMemo(self, memoIdx, searchKeyword=""):
-        if len(self.memoList) == 0:
+    def OnGetMemo(self, dbm, memoIdx, searchKeyword=""):
+        if len(self.memo_list) == 0:
             return self.__get_emptyMemo(memoIdx)
 
         if len(memoIdx) == 0:
             return self.__get_emptyMemo(memoIdx)
 
-        if len(self.memoList.get(memoIdx, "")) == 0:
+        if len(self.memo_list.get(memoIdx, "")) == 0:
             return self.__get_emptyMemo(memoIdx)
 
-        memo = self.memoList[memoIdx].copy()
+        memo_from_db = dbm.read(memoIdx)
+        if len(memo_from_db) == 0:
+            self.OnDeleteMemo(memoIdx, dbm)
+            memo = self.__get_emptyMemo(memoIdx)
+            memo['memo'] = "\n It is removed memo.\n\n Please press Clear button."
+            return memo
+        else:
+            self.memo_list[memoIdx]['title'] = memo_from_db['title']
+            self.memo_list[memoIdx]['memo'] = memo_from_db['memo']
+            self.logger.info("DB updated: " + memoIdx)
+        memo = self.memo_list[memoIdx].copy()
         keywordList = searchKeyword.lower().split('|')
         highLightPosition = textutil.searchKeyword(memo['memo'].lower(), keywordList)
         memo['highlight'] = highLightPosition[:]
         return memo
-
 
     def __get_emptyMemo(self, memoIdx):
         emptyMemo = {}
@@ -84,88 +92,120 @@ class DataManager:
         emptyMemo['highlight'] = []
         return emptyMemo
 
-
-    def OnSetFilter(self, filter_):
-        filter = filter_.strip().lower()
-        if len(filter) == 0:
-            self.memoList = self.memoListOrigin.copy()
+    def OnSetFilter(self, filter_keyword):
+        filter_keyword = filter_keyword.strip().lower()
+        if len(filter_keyword) == 0:
+            self.memo_list = self.memo_list_origin.copy()
             return
-        if self.or_op in filter:
-            split_filter = filter.split(self.or_op)
+        if self.or_op in filter_keyword:
+            split_filter = filter_keyword.split(self.or_op)
             or_filter = [ key for key in split_filter if len(key.strip()) > 0 ]
             #print(or_filter)
             self.__OnFindOrKeywordList(or_filter)
-        elif self.and_op in filter:
-            split_filter = filter.split(self.and_op)
+        elif self.and_op in filter_keyword:
+            split_filter = filter_keyword.split(self.and_op)
             and_filter = [ key for key in split_filter if len(key.strip()) > 0 ]
             print(and_filter)
             self.__OnFindAndKeywordList(and_filter)
         else:
-            self.__OnFindSimpleKeyword(filter)
+            self.__OnFindSimpleKeyword(filter_keyword)
 
-
-    def OnSetFilterInTitle(self, filter_):
-        filter = filter_.strip().lower()
-        if len(filter) == 0:
-            self.memoList = self.memoListOrigin.copy()
+    def OnSetFilterInTitle(self, filter_keyword):
+        filter_keyword = filter_keyword.strip().lower()
+        if len(filter_keyword) == 0:
+            self.memo_list = self.memo_list_origin.copy()
             return
-        self.__OnFindSimpleKeywordInTitle(filter)
+        self.__OnFindSimpleKeywordInTitle(filter_keyword)
 
+    def __OnFindSimpleKeywordInTitle(self, filter_keyword):
+        self.memo_list = {}
 
-    def __OnFindSimpleKeywordInTitle(self, filter):
-        self.memoList = {}
-        for key in self.memoListOrigin.keys():
-            if filter in self.memoListOrigin[key]['id'].lower():
-                self.memoList[key] = self.memoListOrigin[key]
+        filter_list = filter_keyword.split('|')
 
-
-    def __OnFindSimpleKeyword(self, filter):
-        self.memoList = {}
-        for key in self.memoListOrigin.keys():
-            if filter in self.memoListOrigin[key]['id'].lower():
-                self.memoList[key] = self.memoListOrigin[key]
-            elif filter in self.memoListOrigin[key]['memo'].lower():
-                self.memoList[key] = self.memoListOrigin[key]
-
-
-    def __OnFindOrKeywordList(self, filters):
-        self.memoList = {}
-
-        if len(filters) == 0:
-            return
-
-        for key in self.memoListOrigin.keys():
-            for filter in filters:
-                if filter in self.memoListOrigin[key]['id'].lower():
-                    self.memoList[key] = self.memoListOrigin[key]
-                    break
-                elif filter in self.memoListOrigin[key]['memo'].lower():
-                    self.memoList[key] = self.memoListOrigin[key]
+        for key in self.memo_list_origin.keys():
+            for searchKey in filter_list:
+                if searchKey.lower() in self.memo_list_origin[key]['id'].lower():
+                    self.memo_list[key] = self.memo_list_origin[key]
                     break
 
+    def __OnFindSimpleKeyword(self, filter_keyword):
+        if filter_keyword[0] == '!' or filter_keyword[0] == '~':
+            self._FindHasNotFilterList(filter_keyword[1:])
+        else:
+            self._FindHasFilterList(filter_keyword)
 
-    def __OnFindAndKeywordList(self, filters):
-        self.memoList = {}
 
-        if len(filters) == 0:
+    def _FindHasFilterList(self, filter_keyword):
+        self.memo_list = {}
+        for key in self.memo_list_origin.keys():
+            if filter_keyword in self.memo_list_origin[key]['id'].lower():
+                self.memo_list[key] = self.memo_list_origin[key]
+            elif filter_keyword in self.memo_list_origin[key]['memo'].lower():
+                self.memo_list[key] = self.memo_list_origin[key]
+
+
+    def _FindHasNotFilterList(self, filter_keyword):
+        self.memo_list = {}
+        for key in self.memo_list_origin.keys():
+            hasKeyword = False
+
+            if filter_keyword in self.memo_list_origin[key]['id'].lower():
+                hasKeyword = True
+            if filter_keyword in self.memo_list_origin[key]['memo'].lower():
+                hasKeyword = True
+
+            if not hasKeyword:
+                self.memo_list[key] = self.memo_list_origin[key]
+
+
+    def __OnFindOrKeywordList(self, filter_keyword):
+        self.memo_list = {}
+
+        if len(filter_keyword) == 0:
             return
 
-        for key in self.memoListOrigin.keys():
-            is_find = True
+        for key in self.memo_list_origin.keys():
+            for filter in filter_keyword:
+                if filter in self.memo_list_origin[key]['id'].lower():
+                    self.memo_list[key] = self.memo_list_origin[key]
+                    break
+                elif filter in self.memo_list_origin[key]['memo'].lower():
+                    self.memo_list[key] = self.memo_list_origin[key]
+                    break
 
-            for filter in filters:
-                is_find = False
 
-                if filter in self.memoListOrigin[key]['id'].lower():
+    def __OnFindAndKeywordList(self, filter_keyword):
+        self.memo_list = {}
+
+        if len(filter_keyword) == 0:
+            return
+
+        for key in self.memo_list_origin.keys():
+            is_find = False
+
+            for filter in filter_keyword:
+                if filter[0] == '!' or filter[0] == '~':
+                    keyword = filter[1:]
                     is_find = True
-                elif filter in self.memoListOrigin[key]['memo'].lower():
-                    is_find = True
+
+                    if keyword in self.memo_list_origin[key]['id'].lower():
+                        is_find = False
+                    if keyword in self.memo_list_origin[key]['memo'].lower():
+                        is_find = False
+
+                else:
+                    is_find = False
+
+                    if filter in self.memo_list_origin[key]['id'].lower():
+                        is_find = True
+                    elif filter in self.memo_list_origin[key]['memo'].lower():
+                        is_find = True
 
                 if not is_find:
                    break
 
             if is_find:
-                self.memoList[key] = self.memoListOrigin[key]
+                self.memo_list[key] = self.memo_list_origin[key]
 
 
 def test():

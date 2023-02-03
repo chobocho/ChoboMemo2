@@ -4,7 +4,11 @@
 import wx
 import logging
 
+from util import textutil
+
 WINDOW_SIZE = 480
+MAX_HIGHLIGHT_POS = 128
+NEXT_HOP = 8
 
 class MemoPanel(wx.Panel):
     def __init__(self, parent, *args, **kw):
@@ -16,6 +20,8 @@ class MemoPanel(wx.Panel):
         self.memoIdx = ""
         self.high_light_keyword_pos = []
         self.current_pos = 0
+        self.pos = 0
+        self.move_hop = [0]
 
     def _initUi(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -94,6 +100,8 @@ class MemoPanel(wx.Panel):
         self.title.SetValue(title)
         self.text.SetValue(memo)
         self.OnShowHighLight(hightlight)
+        self.pos = 0
+        self.move_hop = textutil.getEnterPos(memo)
 
     def OnSearchClear(self, event):
         self.searchText.SetValue("")
@@ -116,6 +124,11 @@ class MemoPanel(wx.Panel):
         self.logger.info(highLightPosition)
         self.high_light_keyword_pos = [0]
         self.current_pos = 0
+
+        if len(highLightPosition) >= MAX_HIGHLIGHT_POS:
+            self.logger.info('{0} is too many. Reudce to {1}'.format(len(highLightPosition), MAX_HIGHLIGHT_POS))
+            highLightPosition = highLightPosition[:MAX_HIGHLIGHT_POS]
+
         for pos in highLightPosition:
             self.text.SetStyle(pos[0], pos[1], wx.TextAttr(wx.BLACK,"Light blue"))
             self.high_light_keyword_pos.append(pos[0])
@@ -123,7 +136,7 @@ class MemoPanel(wx.Panel):
         if (len(self.high_light_keyword_pos) > 1):
             self.current_pos = 1
 
-        self.__set_focus()
+        #self.__set_focus()
 
     def __set_focus(self):
         self.text.SetInsertionPoint(self.high_light_keyword_pos[self.current_pos])
@@ -153,3 +166,29 @@ class MemoPanel(wx.Panel):
     def OnSetFontSize(self, font_size):
         font = wx.Font(font_size, wx.FONTFAMILY_TELETYPE, wx.NORMAL, wx.NORMAL)
         self.text.SetFont(font)
+
+    def move_home(self):
+        self.text.SetInsertionPoint(0)
+        self.text.SetFocus()
+
+    def move_end(self):
+        self.text.SetInsertionPoint(len(self.text.GetValue()))
+        self.text.SetFocus()
+
+    def move_forward(self):
+        pos_end = len(self.move_hop) - 1
+        self.pos = self.pos + NEXT_HOP
+        self.pos = self.pos if self.pos < pos_end else pos_end
+        pos = self.move_hop[self.pos]
+
+        self.text.SetInsertionPoint(pos)
+        self.text.SetFocus()
+        print(pos)
+
+    def move_backward(self):
+        self.pos = self.pos - NEXT_HOP
+        self.pos = self.pos if self.pos > 0 else 0
+        pos = self.move_hop[self.pos]
+
+        self.text.SetInsertionPoint(pos)
+        self.text.SetFocus()

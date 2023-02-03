@@ -118,7 +118,7 @@ class VersionInfo:
     def initVersionInfo(self):
         self.versionInfo = {}
         self.versionInfo['filename'] = "version.py"
-        self.versionInfo['header'] = 'SW_VERSION="V0.1105'
+        self.versionInfo['header'] = 'SW_VERSION="V0.1216'
         self.versionInfo['separator'] = "."
         self.versionInfo['date'] = "TE"
         self.versionInfo['month_release_count'] = 1

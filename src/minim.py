@@ -7,7 +7,8 @@ Start  : 2019.12.05
 Update : 2020.01.15
 '''
 
-def initLogger():
+
+def init_logger():
     logger = logging.getLogger("chobomemo")
     logger.setLevel(logging.INFO)
     
@@ -17,8 +18,8 @@ def initLogger():
     stream_hander.setFormatter(formatter)
     logger.addHandler(stream_hander)
     
-    needFileLogging = os.path.exists(".\\needlog.txt")
-    if needFileLogging:
+    need_file_logging = os.path.exists(".\\needlog.txt")
+    if need_file_logging:
         max_log_size = 128 * 1024
         file_handler = logging.handlers.RotatingFileHandler(filename='./minim.log', maxBytes=max_log_size)
         file_handler.setFormatter(formatter)
@@ -26,9 +27,11 @@ def initLogger():
     
     logger.info('=== ' + SW_VERSION + ' ===')
 
-def printEnd():
+
+def print_end():
     logger = logging.getLogger("chobomemo")
     logger.info('=== END ===')
+
 
 def main():
     app = wx.App()
@@ -47,8 +50,7 @@ def main():
     memoManager.OnSave()
 
 
-
 if __name__ == '__main__':
-    initLogger()
+    init_logger()
     main()
-    printEnd()
+    print_end()
