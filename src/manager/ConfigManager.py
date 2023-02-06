@@ -28,6 +28,7 @@ class ConfigManager:
         self.config['OR'] = '|'
         self.config['ask_before_quit'] = False
         self.config['compressedSave'] = False
+        self.config['save_cfm'] = False
 
         cfg_data = fileutil.load_config('./minim.cfg')
         for key, item in self.config.items():

@@ -47,7 +47,8 @@ def main():
     memoManager.OnRegister(frm)
     frm.Show()
     app.MainLoop()
-    memoManager.OnSave()
+    if memoManager.is_need_to_save():
+        memoManager.OnSave()
 
 
 if __name__ == '__main__':

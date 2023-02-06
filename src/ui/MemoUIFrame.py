@@ -377,7 +377,7 @@ class MemoUIFrame(wx.Frame, Observer):
     def OnSetMemoManager(self, memo_manager):
         self.memoManager = memo_manager
         self.memoManager.set_split_op(self.config.GetValue("AND"), self.config.GetValue("OR"))
-        self.memoManager.set_save_mode(self.config.GetValue("compressedSave") == "true")
+        self.memoManager.set_save_mode(self.config.GetValue("compressedSave"), self.config.GetValue('save_cfm'))
 
     def OnSaveFilteredItems(self, event):
         export_file_path = ""

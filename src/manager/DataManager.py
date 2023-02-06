@@ -39,11 +39,11 @@ class DataManager:
         self.logger.info(key)
         self.memo_list = self.memo_list_origin.copy()
 
-    def OnDeleteMemo(self, memoIdx, dbm):
-        if not (memoIdx in self.memo_list_origin):
+    def OnDeleteMemo(self, memo_idx, dbm):
+        if not (memo_idx in self.memo_list_origin):
             return
-        dbm.delete(memoIdx)
-        del self.memo_list_origin[memoIdx]
+        dbm.delete(memo_idx)
+        del self.memo_list_origin[memo_idx]
         self.has_updated = True
         self.memo_list = self.memo_list_origin.copy()
 

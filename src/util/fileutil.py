@@ -16,5 +16,5 @@ def load_config(filename):
         try:
             config_data = json.load(json_file)
         except:
-            ...
+            print(f"load_config {filename} fail!")
     return config_data
