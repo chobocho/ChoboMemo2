@@ -50,6 +50,9 @@ class ConfigManager:
         self.config['ctrl_9'] = key['ctrl_9']
         self.config['ctrl_i'] = key['ctrl_i']
         self.config['memo'] = key['memo']
+        self.config['ask_before_quit'] = key['ask_before_quit']
+        self.config['compressedSave'] = key['compressedSave']
+        self.config['save_cfm'] = key['save_cfm']
 
     def SetMemo(self, data):
         self.config['memo'] = data

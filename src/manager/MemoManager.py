@@ -11,14 +11,14 @@ import os
 UPDATE_MEMO = 1
 
 class MemoManager(Observable):
-    def __init__(self, callback=None):
+    def __init__(self, callback=None, ask_callback=None):
         super().__init__()
         self.logger = logging.getLogger("chobomemo")
         self.dataManager = DataManager()
         self.observer = None
         self.fileManager = FileManager()
         self.dbm = DBManager('20201105.cfm.db')
-        self._loadMemo(callback)
+        self._loadMemo(callback, ask_callback)
         self.canChange = True
         self.and_op = ','
         self.or_op = '|'
@@ -28,31 +28,28 @@ class MemoManager(Observable):
     def is_need_to_save(self):
         return self.need_to_save_cfm
 
-    def _loadMemo(self, callback=None):
+    def _loadMemo(self, callback=None, ask_callback=None):
         memoData = self.dbm.load()
-        if len(memoData) == 0:
-            filename = '20201105.cfm'
-            if os.path.exists(filename):
-                memoData = self.fileManager.loadDataFile(filename)
+        filename = '20201105.cfm'
+        if (len(memoData) == 0) and os.path.exists(filename) and (ask_callback is not None) and ask_callback():
+            memoData = self.fileManager.loadDataFile(filename)
 
-                gap = int(len(memoData)/100)
-                tick = 0
-                progress = 0
+            gap = int(len(memoData) / 100)
+            tick = 0
+            progress = 0
 
-                for data in memoData:
-                    #print(memoData[data]['id'])
-                    self.dbm.insert([memoData[data]['id'], memoData[data]['memo']])
-                    tick+=1
-                    if tick >= gap:
-                        tick = 0
-                        if (None != callback) and (progress < 99):
-                            progress += 1
-                            callback.Update(progress, str(progress) + "% done!")
-
+            for data in memoData:
+                # print(memoData[data]['id'])
+                self.dbm.insert([memoData[data]['id'], memoData[data]['memo']])
+                tick += 1
+                if tick >= gap:
+                    tick = 0
+                    if (None != callback) and (progress < 99):
+                        progress += 1
+                        callback.Update(progress, str(progress) + "% done!")
 
         self.dataManager.OnSetMemoList(memoData)
         self.OnNotify(UPDATE_MEMO)
-
 
     def set_split_op(self, and_op, or_op):
        self.and_op = and_op

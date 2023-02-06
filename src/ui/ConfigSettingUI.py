@@ -10,7 +10,48 @@ class ConfigSettingUI(sized_controls.SizedDialog):
         self.init_ui()
 
     def init_ui(self):
-        pane = self.GetContentsPane()
+        config_pane = self.GetContentsPane()
+
+        main_pane = sized_controls.SizedPanel(config_pane)
+        main_pane.SetSizerType('horizontal')
+        main_pane.SetSizerProps(align='center')
+
+        self._add_ctrl_list_ui(main_pane)
+        self._add_config_list_ui(main_pane)
+        self._add_memo_pane(config_pane)
+        self._add_button_pane(config_pane)
+        self.Fit()
+
+    def _add_memo_pane(self, config_pane):
+        memo_pane = sized_controls.SizedPanel(config_pane)
+        memo_pane.SetSizerType('horizontal')
+        memo_pane.SetSizerProps(align='center')
+        memo_lbl = wx.StaticText(memo_pane, id=wx.NewId(), label="Memo", size=(50, 30))
+        self.memo_text = wx.TextCtrl(memo_pane, style=wx.TE_MULTILINE, size=(TEXT_SIZE_W + 200, 120))
+        self.memo_text.SetValue("")
+
+    def _add_button_pane(self, config_pane):
+        pane_btns = sized_controls.SizedPanel(config_pane)
+        pane_btns.SetSizerType('horizontal')
+        pane_btns.SetSizerProps(align='center')
+        button_ok = wx.Button(pane_btns, wx.ID_OK, label='&OK')
+        button_ok.Bind(wx.EVT_BUTTON, self.on_button)
+        button_cancel = wx.Button(pane_btns, wx.ID_CANCEL, label='Cance&l')
+        button_cancel.Bind(wx.EVT_BUTTON, self.on_button)
+
+    def _add_config_list_ui(self, main_pane):
+        pane = sized_controls.SizedPanel(main_pane)
+        pane.SetSizerType('vectical')
+        pane.SetSizerProps(halign='left', valign='top')
+
+        self.cb_save_cfm = wx.CheckBox(pane, wx.NewId(), "Save with CFM", size=(200,25))
+        self.cb_ask_before_quit = wx.CheckBox(pane, wx.NewId(), "Ask before quit", size=(200,25))
+        self.cb_save_compressed_mode = wx.CheckBox(pane, wx.NewId(), "Save CFM as compressed mode", size=(200, 25))
+
+    def _add_ctrl_list_ui(self, main_pane):
+        pane = sized_controls.SizedPanel(main_pane)
+        pane.SetSizerType('vectical')
+        pane.SetSizerProps(align='center')
         ctrl_i_pane = sized_controls.SizedPanel(pane)
         ctrl_i_pane.SetSizerType('horizontal')
         ctrl_i_pane.SetSizerProps(align='center')
@@ -77,22 +118,9 @@ class ConfigSettingUI(sized_controls.SizedDialog):
         ctrl_0_lbl = wx.StaticText(ctrl_0_pane, id=wx.NewId(), label="Ctrl+0", size=(50, 30))
         self.ctrl_0_text = wx.TextCtrl(ctrl_0_pane, size=(TEXT_SIZE_W, 30))
         self.ctrl_0_text.SetValue("")
-
         memo_pane = sized_controls.SizedPanel(pane)
         memo_pane.SetSizerType('horizontal')
         memo_pane.SetSizerProps(align='center')
-        memo_lbl = wx.StaticText(memo_pane, id=wx.NewId(), label="Memo", size=(50, 30))
-        self.memo_text = wx.TextCtrl(memo_pane, style=wx.TE_MULTILINE, size=(TEXT_SIZE_W, 90))
-        self.memo_text.SetValue("")
-
-        pane_btns = sized_controls.SizedPanel(pane)
-        pane_btns.SetSizerType('horizontal')
-        pane_btns.SetSizerProps(align='center')
-        button_ok = wx.Button(pane_btns, wx.ID_OK, label='&OK')
-        button_ok.Bind(wx.EVT_BUTTON, self.on_button)
-        button_cancel = wx.Button(pane_btns, wx.ID_CANCEL, label='Cance&l')
-        button_cancel.Bind(wx.EVT_BUTTON, self.on_button)
-        self.Fit()
 
     def on_button(self, event):
         if self.IsModal():
@@ -113,7 +141,10 @@ class ConfigSettingUI(sized_controls.SizedDialog):
             'ctrl_8': self.ctrl_8_text.GetValue(),
             'ctrl_9': self.ctrl_9_text.GetValue(),
             'ctrl_i': self.ctrl_i_text.GetValue(),
-            'memo': self.memo_text.GetValue()
+            'memo': self.memo_text.GetValue(),
+            'ask_before_quit': self.cb_ask_before_quit.GetValue(),
+            'compressedSave': self.cb_save_compressed_mode.GetValue(),
+            'save_cfm': self.cb_save_cfm.GetValue()
         }
         return config_data
 
@@ -130,3 +161,6 @@ class ConfigSettingUI(sized_controls.SizedDialog):
         self.ctrl_9_text.SetValue(config_data['ctrl_9'])
         self.ctrl_i_text.SetValue(config_data['ctrl_i'])
         self.memo_text.SetValue(config_data['memo'])
+        self.cb_save_cfm.SetValue(config_data['save_cfm'])
+        self.cb_save_compressed_mode.SetValue(config_data['compressedSave'])
+        self.cb_ask_before_quit.SetValue(config_data['ask_before_quit'])

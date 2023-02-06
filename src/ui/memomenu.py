@@ -28,6 +28,10 @@ class MemoMenu:
         save_filtered_items = file_menu.Append(save_filtered_items_id, '&Save filtered items', 'Save filtered items')
         self.parent.Bind(wx.EVT_MENU, self.parent.OnSaveFilteredItems, save_filtered_items)
 
+        set_config_item_id = wx.NewId()
+        set_config_item = file_menu.Append(set_config_item_id, 'Set &configuration' + '\tCtrl+Shift+E', '')
+        self.parent.Bind(wx.EVT_MENU, self.parent.on_set_config_menu, set_config_item)
+
         file_item = file_menu.Append(wx.ID_EXIT, '&Quit\tCtrl+Q', 'Quit App')
         self.parent.Bind(wx.EVT_MENU, self.parent.OnQuit, file_item)
         menubar.Append(file_menu, '&File')
@@ -107,10 +111,6 @@ class MemoMenu:
         ctrl_0_item_id = wx.NewId()
         self.ctrl_0_item = find_menu.Append(ctrl_0_item_id, self._get_menu_text('ctrl_0') + '\tCtrl+0', '')
         self.parent.Bind(wx.EVT_MENU, self.parent.on_ctrl_0, self.ctrl_0_item)
-
-        set_config_item_id = wx.NewId()
-        set_config_item = find_menu.Append(set_config_item_id, 'Set Filter Items' + '\tCtrl+Shift+E', '')
-        self.parent.Bind(wx.EVT_MENU, self.parent.on_set_config_menu, set_config_item)
 
         menubar.Append(find_menu, 'F&ind')
 

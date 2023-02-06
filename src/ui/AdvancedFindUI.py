@@ -12,6 +12,7 @@ LIST_SIZE_W = 250
 class AdvanceFindUI(sized_controls.SizedDialog):
     def __init__(self, *args, ctrl_btn_list=[], recent_item_list=[], user_memo_list=[], **kwargs):
         super(AdvanceFindUI, self).__init__(*args, **kwargs)
+        self.MAX_USER_ITEM_COUNT = 99
         self.user_memo_list = user_memo_list
         self.is_update_memo = True
         font = wx.Font(14, wx.FONTFAMILY_TELETYPE, wx.NORMAL, wx.NORMAL)
@@ -111,6 +112,7 @@ class AdvanceFindUI(sized_controls.SizedDialog):
         self.recent_item_list_selected = -1
 
         self.recent_item_list.DeleteAllItems()
+        list_data.reverse()
         self.insert_data_to_listctrl(self.recent_item_list, list_data, 1)
 
     def _add_user_item_list(self, pane, font, btn_font, list_data=[]):
@@ -179,6 +181,9 @@ class AdvanceFindUI(sized_controls.SizedDialog):
             if index % 2 == num:
                 list_ctrl.SetItemBackgroundColour(index, "Light blue")
 
+            if index >= self.MAX_USER_ITEM_COUNT:
+                break
+
     def on_button(self, event):
         if self.IsModal():
             self.EndModal(event.EventObject.Id)
@@ -233,6 +238,10 @@ class AdvanceFindUI(sized_controls.SizedDialog):
             return
         if new_item in self.user_memo_list:
             return
+        if len(self.user_memo_list) > self.MAX_USER_ITEM_COUNT:
+            del self.user_memo_list[0]
+            self.user_item_list.DeleteItem(0)
+
         self.user_memo_list.append(new_item)
 
         index = self.user_item_list.InsertItem(self.user_item_list.GetItemCount(), 1)

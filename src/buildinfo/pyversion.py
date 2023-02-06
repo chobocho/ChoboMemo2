@@ -11,41 +11,35 @@ class VersionInfo:
         self.versionInfo = {}
         self.initVersionInfo()
 
-
     def getVersionInfo(self):
         result = copy.deepcopy(self.versionInfo)
         return result
-
 
     def updateVersionInfoForRelease(self, filename=""):
         self._updateVersionInfo_preprocess(filename)
         self._makeVersionInfoFile(self._makeNewVersion(1), self.versionInfo['filename'])
         self._saveVersionInfo()
 
-
     def updateVersionInfoForBuild(self, filename=""):
         self._updateVersionInfo_preprocess(filename)
         self._makeVersionInfoFile(self._makeNewVersion(0), self.versionInfo['filename'])
         self._saveVersionInfo()
-
 
     def _updateVersionInfo_preprocess(self, filename=""):
         if len(filename) > 1:
             self.versionDataFile = filename
         self._readVersionInfo()
 
-
     def _makeVersionInfoFile(self, data, filename):
         f = open(filename, 'w', encoding="UTF-8")
         f.write(data)
         f.close()
 
-
     def _makeNewVersion(self, inc_release_count=0):
         separator = self.versionInfo['separator']
                
         today = datetime.datetime.now()
-        yearMonth = chr(65 + today.year - 2001) + chr(65 + today.month - 1)
+        yearMonth = chr(65 + today.year - 2021) + chr(65 + today.month - 1)
 
         if self.versionInfo['date'] != yearMonth:
             self.versionInfo['month_release_count'] = 1
@@ -64,14 +58,12 @@ class VersionInfo:
         
         return new_version
 
-
     def _readVersionInfo(self):
         if os.path.isfile(self.versionDataFile):
             if not self._readJsonFile():
                 self._makeVersionFile()
         else:
             self._makeVersionFile()
-
 
     def _saveVersionInfo(self):
         #print("_saveVersionInfo")
@@ -93,8 +85,7 @@ class VersionInfo:
         f = open(self.versionDataFile,'w', encoding="UTF-8")
         f.write(json.dumps(jsonData))
         f.close()
-      
-      
+
     def _readJsonFile(self):
         #print (self.versionDataFile)
         try:

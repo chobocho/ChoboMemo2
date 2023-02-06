@@ -1,4 +1,7 @@
 import logging.handlers
+
+import wx
+
 from ui.MemoUIFrame import *
 from manager.MemoManager import MemoManager
 from buildinfo.info import *
@@ -33,12 +36,22 @@ def print_end():
     logger.info('=== END ===')
 
 
+def ask_callback():
+    result = False
+    ask_load_cfm_dialog = wx.MessageDialog(None, "Do you want create DB from CFM file?", "Create DB from CFM",
+                                           wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
+    if ask_load_cfm_dialog.ShowModal() == wx.ID_YES:
+        result = True
+    ask_load_cfm_dialog.Destroy()
+    return result
+
+
 def main():
     app = wx.App()
 
     progress_bar = wx.ProgressDialog("Create DB", "Please wait", maximum=100, parent=None,
                                           style=wx.PD_APP_MODAL | wx.PD_AUTO_HIDE)
-    memoManager = MemoManager(progress_bar)
+    memoManager = MemoManager(progress_bar, ask_callback)
     progress_bar.Destroy()
     progress_bar = None
 

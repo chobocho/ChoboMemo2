@@ -302,10 +302,13 @@ class MemoUIFrame(wx.Frame, Observer):
             'ctrl_8': self.config.GetValue('ctrl_8'),
             'ctrl_9': self.config.GetValue('ctrl_9'),
             'ctrl_i': self.config.GetValue('ctrl_i'),
-            'memo': self.config.GetValue('memo')
+            'memo': self.config.GetValue('memo'),
+            'ask_before_quit': self.config.GetValue('ask_before_quit'),
+            'compressedSave': self.config.GetValue('compressedSave'),
+            'save_cfm': self.config.GetValue('save_cfm')
         }
 
-        dlg = ConfigSettingUI(None, title='Set filter items')
+        dlg = ConfigSettingUI(None, title='Set configuration')
         dlg.SetValue(filter_item)
 
         is_updated = False
@@ -439,8 +442,8 @@ class MemoUIFrame(wx.Frame, Observer):
         self.about_text['Alt+Shift+C'] = "Clone memo\n"
         self.about_text['Ctrl+Shift+I'] = "Display this windows"
         self.about_text['Alt+Shift+I'] = "Display this windows\n"
-        self.about_text['Ctrl+Shift+E'] = "Edit filter items"
-        self.about_text['Alt+Shift+E'] = "Edit filter items\n"
+        self.about_text['Ctrl+Shift+E'] = "Set configuration"
+        self.about_text['Alt+Shift+E'] = "Set configuration\n"
         self.about_text['Ctrl+F'] = "Find memo\n"
         self.about_text['Ctrl+Shift+F'] = "Simple Find memo"
         self.about_text['Ctrl+S'] = "Save"
