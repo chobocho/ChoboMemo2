@@ -52,29 +52,31 @@ class MemoPanel(wx.Panel):
         copyBtn.Bind(wx.EVT_BUTTON, self.OnCopyToClipboard)
         btnBox.Add(copyBtn, 1, wx.ALIGN_CENTRE|wx.ALL, 1)
 
-        self.searchText = wx.TextCtrl(self, style = wx.TE_PROCESS_ENTER,size=(200,25))
+        self.searchText = wx.TextCtrl(self, wx.NewId(), style = wx.TE_PROCESS_ENTER,size=(200,25))
         self.searchText.Bind(wx.EVT_TEXT_ENTER, self.OnSearchKeyword)
         self.searchText.SetValue("")
+        self.searchText.SetHint("Input high light keyword~")
         btnBox.Add(self.searchText, 0, wx.ALIGN_CENTRE, 5)
 
-        self.searchBtn = wx.Button(self, 10, "Find", size=(50,30))
+        self.searchBtn = wx.Button(self, wx.NewId(), "Find", size=(50,30))
         self.searchBtn.Bind(wx.EVT_BUTTON, self.OnSearchKeyword)
         btnBox.Add(self.searchBtn, 0, wx.ALIGN_CENTRE, 5)        
 
-        self.searchBtn = wx.Button(self, 10, "<", size=(30,30))
-        self.searchBtn.Bind(wx.EVT_BUTTON, self._on_move_prev_keyword)
-        btnBox.Add(self.searchBtn, 0, wx.ALIGN_CENTRE, 5)
+        self.search_prev_btn = wx.Button(self, wx.NewId(), "<", size=(30,30))
+        self.search_prev_btn.Bind(wx.EVT_BUTTON, self._on_move_prev_keyword)
+        btnBox.Add(self.search_prev_btn, 0, wx.ALIGN_CENTRE, 5)
 
-        self.searchBtn = wx.Button(self, 10, ">", size=(30,30))
-        self.searchBtn.Bind(wx.EVT_BUTTON, self._on_move_next_keyword)
-        btnBox.Add(self.searchBtn, 0, wx.ALIGN_CENTRE, 5)
+        self.search_next_btn = wx.Button(self, wx.NewId(), ">", size=(30,30))
+        self.search_next_btn.Bind(wx.EVT_BUTTON, self._on_move_next_keyword)
+        btnBox.Add(self.search_next_btn, 0, wx.ALIGN_CENTRE, 5)
 
-        self.searchClearBtn = wx.Button(self, 10, "Clear", size=(50,30))
+        self.searchClearBtn = wx.Button(self, wx.NewId(), "Clear", size=(50,30))
         self.searchClearBtn.Bind(wx.EVT_BUTTON, self.OnSearchClear)
         btnBox.Add(self.searchClearBtn, 1, wx.ALIGN_CENTRE, 5)
 
-        self.saveAsMDBtn = wx.Button(self, 10, "Save", size=(50,30))
+        self.saveAsMDBtn = wx.Button(self, wx.NewId(), "Save", size=(50,30))
         self.saveAsMDBtn.Bind(wx.EVT_BUTTON, self.OnSaveAsMD)
+        self.saveAsMDBtn.SetToolTip("Save current memo as a file")
         btnBox.Add(self.saveAsMDBtn, 1, wx.ALIGN_CENTRE, 5)
 
         sizer.Add(btnBox, 0, wx.ALIGN_LEFT, 1)

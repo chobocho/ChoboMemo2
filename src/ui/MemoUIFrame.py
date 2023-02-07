@@ -49,6 +49,7 @@ class MemoUIFrame(wx.Frame, Observer):
         self.about_text = collections.OrderedDict()
         self.make_about_box()
         self.cache = QueryCache()
+        self.leftPanel.on_toggle_save_btn(self.config.GetValue('save_cfm'))
 
     def _addMenubar(self):
         self.menu = MemoMenu(self, self.config)
@@ -263,17 +264,18 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def run_advanced_find(self):
         user_memo = self.config.GetValue('memo').split('\n')
-        dlg = AdvanceFindUI(None, title='Input keyword', ctrl_btn_list=self.config.get_ctrl_value(),
+        dlg = AdvanceFindUI(None, title='Input search keyword', ctrl_btn_list=self.config.get_ctrl_value(),
                             recent_item_list=self.cache.get(), user_memo_list=user_memo)
 
         if dlg.ShowModal() != wx.ID_CANCEL:
             input_keyword = dlg.GetValue()
-            is_update, user_memo = dlg.on_get_user_memo()
-            if is_update:
-                self.config.SetMemo('\n'.join(user_memo))
             keyword = input_keyword.strip()
             self.OnSearchKeyword(keyword)
+
+        is_update, user_memo = dlg.on_get_user_memo()
         dlg.Destroy()
+        if is_update:
+            self.config.SetMemo('\n'.join(user_memo))
 
     def _OnFindMemo(self, event):
         keyword = self.config.GetValue('ctrl_1')
@@ -319,8 +321,8 @@ class MemoUIFrame(wx.Frame, Observer):
 
         if is_updated:
             self.config.SetValue(filter_item)
-            self.config.save()
             self.menu.SetValue(filter_item)
+            self.leftPanel.on_toggle_save_btn(filter_item['save_cfm'])
 
     def on_ctrl_i(self, event):
         keyword = self.config.GetValue('ctrl_i')
@@ -399,9 +401,9 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def on_close_window(self, event):
         try:
+            self.config.save()
             if self.cache.is_need_to_save:
                 self.cache.save()
-                self.config.save()
         except:
             ...
         if self.config.GetValue('ask_before_quit'):
@@ -462,9 +464,6 @@ class MemoUIFrame(wx.Frame, Observer):
         msg = f"Minim\n\n{help_text_data}\n{homepage}{developer}\n{planner}"
         title = 'About'
         wx.MessageBox(msg, title, wx.OK | wx.ICON_INFORMATION)
-
-    def OnSaveMemo(self):
-        self.memoManager.OnSave()
 
     def OnSearchKeyword(self, search_keyword):
         search_keyword_list = search_keyword

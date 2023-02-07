@@ -8,6 +8,7 @@ class ConfigManager:
     def __init__(self):
         self.config = {}
         self._init_cfg_data()
+        self.is_update = False
 
     def _init_cfg_data(self):
         self.config['ctrl_1'] = "#BookMark|#8282"
@@ -34,6 +35,12 @@ class ConfigManager:
         for key, item in self.config.items():
             self.config[key] = cfg_data.get(key, item)
 
+        bool_list = ['ask_before_quit', 'compressedSave', 'save_cfm']
+        for item in bool_list:
+            if type(self.config[item]) == str:
+                self.config[item] = 'true' in self.config[item]
+                self.is_update = True
+
     def GetValue(self, key):
         return self.config.get(key, [])
 
@@ -53,15 +60,22 @@ class ConfigManager:
         self.config['ask_before_quit'] = key['ask_before_quit']
         self.config['compressedSave'] = key['compressedSave']
         self.config['save_cfm'] = key['save_cfm']
+        self.is_update = True
 
     def SetMemo(self, data):
         self.config['memo'] = data
+        self.is_update = True
 
     def get_all_config(self):
         return self.config.copy()
 
     def save(self):
-        fileutil.saveAsJson(self.config, './minim.cfg', 2)
+        if self.is_update:
+            print("[ConfigManager] save")
+            fileutil.saveAsJson(self.config, './minim.cfg', 2)
+            self.is_update = False
+        else:
+            print("[ConfigManager] not updated! Skip save!")
 
     def get_ctrl_value(self):
         ctrl_list = ['ctrl_i', 'ctrl_1', 'ctrl_2', 'ctrl_3', 'ctrl_4', 'ctrl_5',

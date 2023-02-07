@@ -2,10 +2,12 @@ import wx
 from wx.lib import sized_controls
 
 from util.clipboardutil import on_get_uri_from_clipboard
+from util.textutil import get_today
 
 WINDOW_SIZE_W = 900
 WINDOW_SIZE_H = 500
 NEXT_STEP = 800
+
 
 class MemoDialog(sized_controls.SizedDialog):
     def __init__(self, *args, **kwargs):
@@ -81,9 +83,7 @@ class MemoDialog(sized_controls.SizedDialog):
             (wx.ACCEL_ALT, ord('U'), undo_btn_id)
         ])
         self.SetAcceleratorTable(accel_tbl)
-
         self.Fit()
-
 
     def on_button(self, event):
         if self.IsModal():
@@ -92,7 +92,7 @@ class MemoDialog(sized_controls.SizedDialog):
             self.Close()
 
     def add_info(self, event):
-        text = self.text.GetValue() + "\n\n---[Memo]---\n"
+        text = f"{self.text.GetValue()}\n\n---[Memo]---\nCreate: {get_today()}\nUpdate:\n\n→■□●○▶▷"
         self.text.SetValue(text)
 
     def append_from_clipboard(self, event):

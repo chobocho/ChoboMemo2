@@ -2,6 +2,7 @@
 Text util for chobomemo
 """
 import re
+from datetime import date
 
 def getEnterPos(text):
     enter_list = text.split('\n')
@@ -21,6 +22,7 @@ def getEnterPos(text):
                 hoplist.append(pos)
 
     return hoplist
+
 
 def searchKeyword(text, keywordList):
     searchResult = []
@@ -42,6 +44,7 @@ def searchKeyword(text, keywordList):
         searchResult.append(match.span())
     return searchResult
 
+
 def _removeSpace(keywordList):
     if len(keywordList) == 0:
         return []
@@ -54,6 +57,11 @@ def _removeSpace(keywordList):
  
     return keywords
 
+
+def get_today():
+    return date.today().strftime("%Y.%m.%d")
+
+
 def test():
     assert _removeSpace("") == []
     assert _removeSpace(['a', '', 'b']) == ['a', 'b']
@@ -62,3 +70,4 @@ def test():
     assert searchKeyword("abc", ['a', '', 'b']) == [(0,1), (1,2)]
     assert searchKeyword("abc", ['ac', '', 'ce']) == []
     assert searchKeyword("abc", ['bc', '', 'ac']) == [(1,3)]
+    print(date.today().strftime("%Y.%m.%d"))

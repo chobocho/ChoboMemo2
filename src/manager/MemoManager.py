@@ -112,9 +112,10 @@ class MemoManager(Observable):
     def OnSave(self, filter="", filename=""):
         if len(filter) == 0:
             if not self.dataManager.OnGetNeedToSave():
-                self.logger.info("No need to save!")
+                self.logger.info("No need to save CFM!")
                 return
             if self.fileManager.saveDataFile(self.dataManager.OnGetMemoList(), needCompress=self.save_compressed):
+                self.logger.info("Saved CFM!")
                 self.dataManager.on_set_need_to_save(False)
         else:
             if len(filename) == 0:

@@ -48,21 +48,22 @@ class ListPanel(wx.Panel):
 
     def _add_memo_btn_box(self, sizer):
         memo_mng_btn_box = wx.BoxSizer(wx.HORIZONTAL)
-        self.find_memo_btn = wx.Button(self, 10, "Find", size=(55, 30))
+        self.find_memo_btn = wx.Button(self, wx.NewId(), "Find", size=(55, 30))
         self.find_memo_btn.Bind(wx.EVT_BUTTON, self._on_find_memo)
         memo_mng_btn_box.Add(self.find_memo_btn, 1, wx.ALIGN_CENTRE, 1)
-        self.editMemoBtn = wx.Button(self, 10, "Edit", size=(55, 30))
+        self.editMemoBtn = wx.Button(self, wx.NewId(), "Edit", size=(55, 30))
         self.editMemoBtn.Bind(wx.EVT_BUTTON, self._OnUpdateMemo)
         memo_mng_btn_box.Add(self.editMemoBtn, 1, wx.ALIGN_CENTRE, 1)
-        self.createMemoBtn = wx.Button(self, 10, "New", size=(55, 30))
+        self.createMemoBtn = wx.Button(self, wx.NewId(), "New", size=(55, 30))
         self.createMemoBtn.Bind(wx.EVT_BUTTON, self._on_create_memo)
         memo_mng_btn_box.Add(self.createMemoBtn, 1, wx.ALIGN_CENTRE, 1)
-        self.memoSaveBtn = wx.Button(self, 10, "Save", size=(55, 30))
-        self.memoSaveBtn.Bind(wx.EVT_BUTTON, self._on_save_memo)
-        memo_mng_btn_box.Add(self.memoSaveBtn, 1, wx.ALIGN_CENTRE, 1)
-        self.memoDeleteBtn = wx.Button(self, 10, "Delete", size=(55, 30))
+        self.memoDeleteBtn = wx.Button(self, wx.NewId(), "Delete", size=(55, 30))
         self.memoDeleteBtn.Bind(wx.EVT_BUTTON, self._OnDeleteMemo)
         memo_mng_btn_box.Add(self.memoDeleteBtn, 1, wx.ALIGN_CENTRE, 1)
+        self.memoSaveBtn = wx.Button(self, wx.NewId(), "Save", size=(55, 30))
+        self.memoSaveBtn.Bind(wx.EVT_BUTTON, self._on_save_memo)
+        self.memoSaveBtn.SetToolTip("Save as CFM file")
+        memo_mng_btn_box.Add(self.memoSaveBtn, 1, wx.ALIGN_CENTRE, 1)
         sizer.Add(memo_mng_btn_box, 0, wx.ALIGN_LEFT, 1)
 
     def _init_main_search_ui(self, sizer):
@@ -72,11 +73,12 @@ class ListPanel(wx.Panel):
         self.searchText = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER, size=(200, 25))
         self.searchText.Bind(wx.EVT_TEXT_ENTER, self.OnSearchKeyword)
         self.searchText.SetValue("")
+        self.searchText.SetHint("검색어 입력 후 엔터를 치세요")
         list_mng_btn_box.Add(self.searchText, 0, wx.ALIGN_CENTRE, 1)
-        self.searchBtn = wx.Button(self, 10, "Find", size=(50, 25))
+        self.searchBtn = wx.Button(self, wx.NewId(), "Find", size=(50, 25))
         self.searchBtn.Bind(wx.EVT_BUTTON, self.OnSearchKeyword)
         list_mng_btn_box.Add(self.searchBtn, 0, wx.ALIGN_CENTRE, 1)
-        self.searchClearBtn = wx.Button(self, 10, "Clear", size=(50, 25))
+        self.searchClearBtn = wx.Button(self, wx.NewId(), "Clear", size=(50, 25))
         self.searchClearBtn.Bind(wx.EVT_BUTTON, self.OnSearchClear)
         list_mng_btn_box.Add(self.searchClearBtn, 1, wx.ALIGN_CENTRE, 1)
 
@@ -290,5 +292,12 @@ class ListPanel(wx.Panel):
             return
 
         chosen_item = self.memo_list.GetItem(self.current_item, 0).GetText()
+        chosen_item_title = self.memo_list.GetItem(self.current_item, 1).GetText()
         self.parent.OnCloneMemo(chosen_item)
+        self._OnSearchKeywordInTitle(chosen_item_title)
 
+    def on_toggle_save_btn(self, enable):
+        if enable and (self.memoSaveBtn.IsShown() is False):
+            self.memoSaveBtn.Show()
+        elif (enable is False) and self.memoSaveBtn.IsShown():
+            self.memoSaveBtn.Hide()

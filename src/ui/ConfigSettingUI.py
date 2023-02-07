@@ -44,8 +44,9 @@ class ConfigSettingUI(sized_controls.SizedDialog):
         pane.SetSizerType('vectical')
         pane.SetSizerProps(halign='left', valign='top')
 
-        self.cb_save_cfm = wx.CheckBox(pane, wx.NewId(), "Save with CFM", size=(200,25))
         self.cb_ask_before_quit = wx.CheckBox(pane, wx.NewId(), "Ask before quit", size=(200,25))
+        self.cb_save_cfm = wx.CheckBox(pane, wx.NewId(), "Save with CFM", size=(200,25))
+        self.cb_save_cfm.Bind(wx.EVT_CHECKBOX, self.on_toggle_save_cfm)
         self.cb_save_compressed_mode = wx.CheckBox(pane, wx.NewId(), "Save CFM as compressed mode", size=(200, 25))
 
     def _add_ctrl_list_ui(self, main_pane):
@@ -122,6 +123,12 @@ class ConfigSettingUI(sized_controls.SizedDialog):
         memo_pane.SetSizerType('horizontal')
         memo_pane.SetSizerProps(align='center')
 
+    def on_toggle_save_cfm(self, event):
+        if self.cb_save_cfm.GetValue():
+            self.cb_save_compressed_mode.Enable(True)
+        else:
+            self.cb_save_compressed_mode.Enable(False)
+
     def on_button(self, event):
         if self.IsModal():
             self.EndModal(event.EventObject.Id)
@@ -163,4 +170,5 @@ class ConfigSettingUI(sized_controls.SizedDialog):
         self.memo_text.SetValue(config_data['memo'])
         self.cb_save_cfm.SetValue(config_data['save_cfm'])
         self.cb_save_compressed_mode.SetValue(config_data['compressedSave'])
+        self.cb_save_compressed_mode.Enable(config_data['save_cfm'])
         self.cb_ask_before_quit.SetValue(config_data['ask_before_quit'])

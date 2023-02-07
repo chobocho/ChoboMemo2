@@ -14,8 +14,8 @@ class AdvanceFindUI(sized_controls.SizedDialog):
         super(AdvanceFindUI, self).__init__(*args, **kwargs)
         self.MAX_USER_ITEM_COUNT = 99
         self.user_memo_list = user_memo_list
-        self.is_update_memo = True
-        font = wx.Font(14, wx.FONTFAMILY_TELETYPE, wx.NORMAL, wx.NORMAL)
+        self.is_update_memo = False
+        font = wx.Font(12, wx.FONTFAMILY_TELETYPE, wx.NORMAL, wx.NORMAL)
         btn_font = wx.Font(14, wx.FONTFAMILY_SWISS, wx.NORMAL, wx.BOLD)
         pane = self.GetContentsPane()
 
@@ -134,9 +134,11 @@ class AdvanceFindUI(sized_controls.SizedDialog):
         self.user_input_text.Bind(wx.EVT_TEXT_ENTER, self.on_add_user_input)
         self.user_input_text.SetValue("")
         self.user_input_text.SetFont(font)
+        self.user_input_text.SetToolTip("추가할 단어를 입력 후 엔터를 치세요")
 
         user_input_clear_btn = wx.Button(user_input_panel, wx.NewId(), label='C', size=(20, 25))
         user_input_clear_btn.Bind(wx.EVT_BUTTON, self.on_clear_user_input)
+        user_input_clear_btn.SetToolTip("Clear user input text")
 
         user_item_list_id = wx.NewId()
         self.user_item_list = wx.ListCtrl(user_item_panel, user_item_list_id,
@@ -149,6 +151,7 @@ class AdvanceFindUI(sized_controls.SizedDialog):
         self.user_item_list.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_user_item_list_selected)
         self.user_item_list.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._on_user_item_list_dclicked)
         self.user_item_list.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self._on_user_item_list_remove)
+        self.user_item_list.SetToolTip("단어를 삭제하려면 마우스를 우클릭 하세요")
         self.user_item_list_selected = -1
 
         self.user_item_list.DeleteAllItems()
@@ -165,6 +168,7 @@ class AdvanceFindUI(sized_controls.SizedDialog):
         self.result_text.Bind(wx.EVT_TEXT_ENTER, self.on_button)
         self.result_text.SetValue("")
         self.result_text.SetFont(font)
+        self.result_text.SetToolTip("검색 할 단어를 입력 후 엔터를 치세요")
         self.result_text.SetFocus()
 
         result_clear_btn = wx.Button(result_panel, wx.NewId(), label='&Clear')
