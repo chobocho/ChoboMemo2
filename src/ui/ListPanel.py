@@ -141,14 +141,15 @@ class ListPanel(wx.Panel):
             return
 
         chosen_item = self.memo_list.GetItem(self.current_item, 0).GetText()
-        title = self.memo_list.GetItem(self.current_item, 1).GetText()
-        msg = f'Do you want to delete [{chosen_item}] {title}'
+        memo_title = self.memo_list.GetItem(self.current_item, 1).GetText()
+        msg = f'Do you want to delete [{chosen_item}] {memo_title}'
         title = 'Delete memo'
         ask_delete_dialog = wx.MessageDialog(None, msg, title, wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
         if ask_delete_dialog.ShowModal() == wx.ID_YES:
             self.parent.OnDeleteMemo(chosen_item)
             self.logger.info(msg)
         ask_delete_dialog.Destroy()
+        self._OnSearchKeywordInTitle(memo_title)
 
     def OnSearchClear(self, event):
         self.on_clear_filter()
@@ -233,7 +234,7 @@ class ListPanel(wx.Panel):
 
     def _get_uri_from_data(self, raw_data):
         if len(raw_data) == 0:
-            return
+            return ""
 
         idx = raw_data.find('\n')
         if idx == -1:

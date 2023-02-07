@@ -467,7 +467,6 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def OnSearchKeyword(self, search_keyword):
         search_keyword_list = search_keyword
-        self.cache.add(search_keyword)
 
         if (len(search_keyword) > 1) and (search_keyword[-1] == '.'):
             self.OnSearchKeywordInTitle(search_keyword[:-1])
@@ -477,10 +476,10 @@ class MemoUIFrame(wx.Frame, Observer):
             return
         elif (len(search_keyword) > 2) and (search_keyword[:2].lower() == 't:'):
             self.OnSearchKeywordInTitle(search_keyword[2:])
-            print(search_keyword[2:])
             return
 
         print(search_keyword_list)
+        self.cache.add(search_keyword)
         self.memoManager.OnSetFilter(search_keyword_list)
         # self.rightPanel.OnSetSearchKeyword(searchKeyword)
         self.leftPanel.OnItemSelected(0)
@@ -488,7 +487,7 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def OnSearchKeywordInTitle(self, search_keyword):
         search_keyword_list = search_keyword
-
+        self.cache.add(search_keyword)
         self.logger.info(search_keyword_list)
         self.memoManager.OnSetFilterInTitle(search_keyword_list)
         # self.rightPanel.OnSetSearchKeyword(searchKeyword)

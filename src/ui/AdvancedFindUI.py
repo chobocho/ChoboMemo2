@@ -81,6 +81,7 @@ class AdvanceFindUI(sized_controls.SizedDialog):
         self.ctrl_btn_list.InsertColumn(0, "Keyword", width=LIST_SIZE_W)
         self.ctrl_btn_list.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_ctrl_btn_list_selected)
         self.ctrl_btn_list.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._on_ctrl_btn_list_dclicked)
+        self.ctrl_btn_list.SetToolTip("단어를 클릭 또는 더블 클릭 해보세요")
         self.ctrl_btn_list_selected = -1
 
         self.ctrl_btn_list.DeleteAllItems()
@@ -109,6 +110,7 @@ class AdvanceFindUI(sized_controls.SizedDialog):
         self.recent_item_list.InsertColumn(0, "Keyword", width=LIST_SIZE_W)
         self.recent_item_list.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_recent_item_list_selected)
         self.recent_item_list.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._on_recent_item_list_dclicked)
+        self.recent_item_list.SetToolTip("단어를 더블 클릭 해보세요")
         self.recent_item_list_selected = -1
 
         self.recent_item_list.DeleteAllItems()
