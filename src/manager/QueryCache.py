@@ -27,5 +27,5 @@ class QueryCache:
         load_data = fileutil.load_config('./minim_recent.cfg')
         if 'cache' in load_data:
             self.cache = load_data['cache']
-        print("Load", self.cache)
+        print("Load", len(self.cache))
 

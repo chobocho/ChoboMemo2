@@ -73,7 +73,7 @@ class ListPanel(wx.Panel):
         self.searchText = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER, size=(200, 25))
         self.searchText.Bind(wx.EVT_TEXT_ENTER, self.OnSearchKeyword)
         self.searchText.SetValue("")
-        self.searchText.SetHint("검색어 입력 후 엔터를 치세요")
+        self.searchText.SetHint("Alt+D: Set focus here!")
         list_mng_btn_box.Add(self.searchText, 0, wx.ALIGN_CENTRE, 1)
         self.searchBtn = wx.Button(self, wx.NewId(), "Find", size=(50, 25))
         self.searchBtn.Bind(wx.EVT_BUTTON, self.OnSearchKeyword)
@@ -141,14 +141,15 @@ class ListPanel(wx.Panel):
             return
 
         chosen_item = self.memo_list.GetItem(self.current_item, 0).GetText()
-        title = self.memo_list.GetItem(self.current_item, 1).GetText()
-        msg = f'Do you want to delete [{chosen_item}] {title}'
+        memo_title = self.memo_list.GetItem(self.current_item, 1).GetText()
+        msg = f'Do you want to delete [{chosen_item}] {memo_title}'
         title = 'Delete memo'
         ask_delete_dialog = wx.MessageDialog(None, msg, title, wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
         if ask_delete_dialog.ShowModal() == wx.ID_YES:
             self.parent.OnDeleteMemo(chosen_item)
             self.logger.info(msg)
         ask_delete_dialog.Destroy()
+        self._OnSearchKeywordInTitle(memo_title)
 
     def OnSearchClear(self, event):
         self.on_clear_filter()
@@ -178,6 +179,8 @@ class ListPanel(wx.Panel):
         self.parent.OnSearchKeywordInTitle(searchKeyword)
 
     def _OnItemSelected(self, event):
+        if self.current_item != event.Index:
+            self.parent.save_memo_panel()
         self.current_item = event.Index
         self.OnItemSelected(self.current_item)
 
@@ -233,7 +236,7 @@ class ListPanel(wx.Panel):
 
     def _get_uri_from_data(self, raw_data):
         if len(raw_data) == 0:
-            return
+            return ""
 
         idx = raw_data.find('\n')
         if idx == -1:

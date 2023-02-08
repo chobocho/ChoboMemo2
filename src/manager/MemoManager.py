@@ -109,8 +109,8 @@ class MemoManager(Observable):
         self.observer = observer
         self.OnNotify(UPDATE_MEMO)
 
-    def OnSave(self, filter="", filename=""):
-        if len(filter) == 0:
+    def OnSave(self, filter_name="", filename=""):
+        if len(filter_name) == 0:
             if not self.dataManager.OnGetNeedToSave():
                 self.logger.info("No need to save CFM!")
                 return
@@ -123,10 +123,10 @@ class MemoManager(Observable):
             else:
                 self.fileManager.saveDataFile(self.OnGetMemoList(), filename, needCompress=self.save_compressed)
 
-    def OnSaveAsMD(self, memoIdx=-1, filename=""):
+    def OnSaveAsMD(self, memo_idx=-1, filename=""):
         if len(filename) == 0:
             return
-        memo = self.OnGetMemo(memoIdx)
+        memo = self.OnGetMemo(memo_idx)
         self.fileManager.saveAsMarkdown(memo, filename)
 
     def OnSetFilter(self, searchKeyword):
