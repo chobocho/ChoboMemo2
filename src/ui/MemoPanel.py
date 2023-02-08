@@ -15,74 +15,119 @@ class MemoPanel(wx.Panel):
         super(MemoPanel, self).__init__(*args, **kw)
         self.logger = logging.getLogger("chobomemo")
         self.parent = parent
-        self._initUi()
+        self._init_ui()
         self.SetAutoLayout(True)
-        self.memoIdx = ""
+        self.memo_idx = ""
         self.high_light_keyword_pos = []
         self.current_pos = 0
         self.pos = 0
         self.move_hop = [0]
+        self.original_title = ""
+        self.original_memo = ""
 
-    def _initUi(self):
+    def _init_ui(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
+        self._add_title_box(sizer)
+        self._add_text_box(sizer)
+        self._add_button_box(sizer)
+        self.SetSizer(sizer)
 
-        titleBox = wx.BoxSizer(wx.HORIZONTAL)
-        self.title = wx.TextCtrl(self, style = wx.TE_READONLY,
-                                 size=(WINDOW_SIZE,25))
-        self.title.SetValue("")
-        titleBox.Add(self.title, 1, wx.ALIGN_CENTER_VERTICAL, 1)
-        sizer.Add(titleBox, 0, wx.ALIGN_LEFT)
-
-        self.text = wx.TextCtrl(self, style = wx.TE_PROCESS_ENTER|
-                                              wx.TE_MULTILINE|
-                                              wx.TE_READONLY|
-                                              wx.TE_RICH2, 
-                                size=(WINDOW_SIZE/2,WINDOW_SIZE))
-        self.text.SetValue("")
-        font = wx.Font(14, wx.FONTFAMILY_TELETYPE, wx.NORMAL, wx.NORMAL)
-        self.text.SetFont(font)
-        self.text.SetBackgroundColour((0,51,102))
-        self.text.SetForegroundColour(wx.WHITE)
-        sizer.Add(self.text, 1, wx.EXPAND)
-
+    def _add_button_box(self, sizer):
         btnBox = wx.BoxSizer(wx.HORIZONTAL)
-
         copyBtnId = wx.NewId()
-        copyBtn = wx.Button(self, copyBtnId, "Copy", size=(50,30))
+        copyBtn = wx.Button(self, copyBtnId, "Copy", size=(50, 30))
         copyBtn.Bind(wx.EVT_BUTTON, self.OnCopyToClipboard)
-        btnBox.Add(copyBtn, 1, wx.ALIGN_CENTRE|wx.ALL, 1)
-
-        self.searchText = wx.TextCtrl(self, wx.NewId(), style = wx.TE_PROCESS_ENTER,size=(200,25))
+        btnBox.Add(copyBtn, 1, wx.ALIGN_CENTRE | wx.ALL, 1)
+        self.searchText = wx.TextCtrl(self, wx.NewId(), style=wx.TE_PROCESS_ENTER, size=(200, 25))
         self.searchText.Bind(wx.EVT_TEXT_ENTER, self.OnSearchKeyword)
         self.searchText.SetValue("")
-        self.searchText.SetHint("Input high light keyword~")
+        self.searchText.SetHint("Alt+U: Set focus here!")
         btnBox.Add(self.searchText, 0, wx.ALIGN_CENTRE, 5)
-
-        self.searchBtn = wx.Button(self, wx.NewId(), "Find", size=(50,30))
+        self.searchBtn = wx.Button(self, wx.NewId(), "Find", size=(50, 30))
         self.searchBtn.Bind(wx.EVT_BUTTON, self.OnSearchKeyword)
-        btnBox.Add(self.searchBtn, 0, wx.ALIGN_CENTRE, 5)        
-
-        self.search_prev_btn = wx.Button(self, wx.NewId(), "<", size=(30,30))
+        btnBox.Add(self.searchBtn, 0, wx.ALIGN_CENTRE, 5)
+        self.search_prev_btn = wx.Button(self, wx.NewId(), "<", size=(30, 30))
         self.search_prev_btn.Bind(wx.EVT_BUTTON, self._on_move_prev_keyword)
         btnBox.Add(self.search_prev_btn, 0, wx.ALIGN_CENTRE, 5)
-
-        self.search_next_btn = wx.Button(self, wx.NewId(), ">", size=(30,30))
+        self.search_next_btn = wx.Button(self, wx.NewId(), ">", size=(30, 30))
         self.search_next_btn.Bind(wx.EVT_BUTTON, self._on_move_next_keyword)
         btnBox.Add(self.search_next_btn, 0, wx.ALIGN_CENTRE, 5)
-
-        self.searchClearBtn = wx.Button(self, wx.NewId(), "Clear", size=(50,30))
+        self.searchClearBtn = wx.Button(self, wx.NewId(), "Clear", size=(50, 30))
         self.searchClearBtn.Bind(wx.EVT_BUTTON, self.OnSearchClear)
         btnBox.Add(self.searchClearBtn, 1, wx.ALIGN_CENTRE, 5)
-
-        self.saveAsMDBtn = wx.Button(self, wx.NewId(), "Save", size=(50,30))
+        self.saveAsMDBtn = wx.Button(self, wx.NewId(), "Save", size=(50, 30))
         self.saveAsMDBtn.Bind(wx.EVT_BUTTON, self.OnSaveAsMD)
         self.saveAsMDBtn.SetToolTip("Save current memo as a file")
         btnBox.Add(self.saveAsMDBtn, 1, wx.ALIGN_CENTRE, 5)
-
         sizer.Add(btnBox, 0, wx.ALIGN_LEFT, 1)
 
-        self.SetSizer(sizer)
+    def _add_text_box(self, sizer):
+        self.text = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER |
+                                            wx.TE_MULTILINE |
+                                            wx.TE_READONLY |
+                                            wx.TE_RICH2,
+                                size=(WINDOW_SIZE, WINDOW_SIZE))
+        self.text.SetValue("")
+        font = wx.Font(14, wx.FONTFAMILY_TELETYPE, wx.NORMAL, wx.NORMAL)
+        self.text.SetFont(font)
+        self.text.SetBackgroundColour((0, 51, 102))
+        self.text.SetForegroundColour(wx.WHITE)
+        sizer.Add(self.text, 1, wx.EXPAND)
 
+    def _add_title_box(self, sizer):
+        titleBox = wx.BoxSizer(wx.HORIZONTAL)
+        self.cb_edit_mode = wx.CheckBox(self, wx.NewId(), "Edit", size=(50, 25))
+        self.cb_edit_mode.SetValue(False)
+        self.cb_edit_mode.SetToolTip("Check for edit")
+        self.cb_edit_mode.Bind(wx.EVT_CHECKBOX, self._on_toggle_edit_mode)
+        titleBox.Add(self.cb_edit_mode, 0, wx.ALIGN_LEFT, 1)
+        self.title = wx.TextCtrl(self, style=wx.TE_READONLY,
+                                 size=(WINDOW_SIZE-50, 25))
+        self.title.SetValue("")
+        titleBox.Add(self.title, 1, wx.EXPAND, 1)
+        sizer.Add(titleBox, 0, wx.EXPAND)
+
+    def _on_toggle_edit_mode(self, event):
+        self.on_toggle_edit_mode()
+
+    def on_toggle_edit_mode(self):
+        if len(self.memo_idx) == 0:
+            self.cb_edit_mode.SetValue(False)
+            return
+
+        if self.cb_edit_mode.GetValue():
+            self._on_set_edit_mode()
+        else:
+            self._on_set_read_mode()
+            self.update_memo()
+            self._OnSearchKeyword()
+
+    def on_revert_edit_mode(self):
+        self.cb_edit_mode.SetValue(not self.cb_edit_mode.GetValue())
+        self.on_toggle_edit_mode()
+
+
+    def is_edit_mode(self):
+        return self.cb_edit_mode.GetValue()
+
+    def update_memo(self):
+        if self.original_title == self.title.GetValue() and self.original_memo == self.text.GetValue():
+            return
+        self.logger.info(f'{self.memo_idx}')
+        memo_data = {'index': self.memo_idx, 'id': self.title.GetValue(), 'memo': self.text.GetValue(), 'highlight':[]}
+        self.original_title = ""
+        self.original_memo = ""
+        self.parent.OnUpdateMemo(memo_data)
+
+    def _on_set_edit_mode(self):
+        self._set_edit_mode_color()
+        self.title.SetEditable(True)
+        self.text.SetEditable(True)
+
+    def _on_set_read_mode(self):
+        self._set_read_mode_color()
+        self.title.SetEditable(False)
+        self.text.SetEditable(False)
     def OnCopyToClipboard(self, event):
         text = self.text.GetValue()
         if wx.TheClipboard.Open():
@@ -90,20 +135,29 @@ class MemoPanel(wx.Panel):
             wx.TheClipboard.Close()
         self.logger.info('')
 
-    def OnSetBGColor(self, bgColor, fontColor):
-        self.text.SetBackgroundColour(bgColor)
-        self.text.SetForegroundColour(fontColor)
+    def OnSetBGColor(self, bg_color, font_color):
+        self.text.SetBackgroundColour(bg_color)
+        self.text.SetForegroundColour(font_color)
         self.text.Refresh()
 
-    def OnSetMemo(self, index, title, memo, hightlight=None):
-        if hightlight is None:
-            hightlight = []
-        self.memoIdx = index
+    def _set_edit_mode_color(self):
+        self.OnSetBGColor("Light blue", wx.BLACK)
+
+    def _set_read_mode_color(self):
+        self.parent._on_set_blue_color_bg()
+
+    def OnSetMemo(self, index, title, memo_data, highlight=None):
+        self.logger.info(f'{index}')
+        if highlight is None:
+            highlight = []
+        self.memo_idx = index
         self.title.SetValue(title)
-        self.text.SetValue(memo)
-        self.OnShowHighLight(hightlight)
+        self.text.SetValue(memo_data)
+        self.OnShowHighLight(highlight)
         self.pos = 0
-        self.move_hop = textutil.getEnterPos(memo)
+        self.move_hop = textutil.getEnterPos(memo_data)
+        self.original_title = title
+        self.original_memo = memo_data
 
     def OnSearchClear(self, event):
         self.searchText.SetValue("")
@@ -120,7 +174,7 @@ class MemoPanel(wx.Panel):
     def _OnSearchKeyword(self):
         searchKeyword = self.searchText.GetValue()
         self.logger.info(searchKeyword)
-        self.parent.OnGetMemo(self.memoIdx)
+        self.parent.OnGetMemo(self.memo_idx)
 
     def OnShowHighLight(self, highLightPosition):
         self.logger.info(highLightPosition)
@@ -128,11 +182,15 @@ class MemoPanel(wx.Panel):
         self.current_pos = 0
 
         if len(highLightPosition) >= MAX_HIGHLIGHT_POS:
-            self.logger.info('{0} is too many. Reudce to {1}'.format(len(highLightPosition), MAX_HIGHLIGHT_POS))
+            self.logger.info('{0} is too many. Reduce to {1}'.format(len(highLightPosition), MAX_HIGHLIGHT_POS))
             highLightPosition = highLightPosition[:MAX_HIGHLIGHT_POS]
 
+        is_edit_mode = self.is_edit_mode()
         for pos in highLightPosition:
-            self.text.SetStyle(pos[0], pos[1], wx.TextAttr(wx.BLACK,"Light blue"))
+            if is_edit_mode:
+                self.text.SetStyle(pos[0], pos[1], wx.TextAttr(wx.BLACK, wx.WHITE))
+            else:
+                self.text.SetStyle(pos[0], pos[1], wx.TextAttr(wx.BLACK, wx.WHITE))
             self.high_light_keyword_pos.append(pos[0])
 
         if (len(self.high_light_keyword_pos) > 1):
@@ -161,9 +219,9 @@ class MemoPanel(wx.Panel):
         self.__set_focus()
 
     def OnSaveAsMD(self, evnet):
-        if len(self.memoIdx) == 0:
+        if len(self.memo_idx) == 0:
             return
-        self.parent.OnSaveMD(self.memoIdx)
+        self.parent.OnSaveMD(self.memo_idx)
 
     def OnSetFontSize(self, font_size):
         font = wx.Font(font_size, wx.FONTFAMILY_TELETYPE, wx.NORMAL, wx.NORMAL)
@@ -194,3 +252,6 @@ class MemoPanel(wx.Panel):
 
         self.text.SetInsertionPoint(pos)
         self.text.SetFocus()
+
+    def set_focus_on_search_text(self, event):
+        self.searchText.SetFocus()
