@@ -76,16 +76,33 @@ class MemoPanel(wx.Panel):
 
     def _add_title_box(self, sizer):
         titleBox = wx.BoxSizer(wx.HORIZONTAL)
-        self.cb_edit_mode = wx.CheckBox(self, wx.NewId(), "Edit", size=(50, 25))
-        self.cb_edit_mode.SetValue(False)
-        self.cb_edit_mode.SetToolTip("Check for edit")
-        self.cb_edit_mode.Bind(wx.EVT_CHECKBOX, self._on_toggle_edit_mode)
-        titleBox.Add(self.cb_edit_mode, 0, wx.ALIGN_LEFT, 1)
         self.title = wx.TextCtrl(self, style=wx.TE_READONLY,
                                  size=(WINDOW_SIZE-50, 25))
         self.title.SetValue("")
         titleBox.Add(self.title, 1, wx.EXPAND, 1)
+
+        lbl_space = wx.StaticText(self, wx.NewId(), " ", size=(10,25))
+        titleBox.Add(lbl_space, 0, wx.ALIGN_LEFT, 1)
+
+        self.cb_edit_mode = wx.CheckBox(self, wx.NewId(), "Edit", size=(50, 25))
+        self.cb_edit_mode.SetValue(False)
+        self.cb_edit_mode.SetToolTip("Check for edit (Ctrl+E)")
+        self.cb_edit_mode.Bind(wx.EVT_CHECKBOX, self._on_toggle_edit_mode)
+        titleBox.Add(self.cb_edit_mode, 0, wx.ALIGN_LEFT, 1)
+
+        self.undo_btn = wx.Button(self, wx.NewId(), "Undo", size=(50, 25))
+        self.undo_btn.SetToolTip("Restore to original")
+        self.undo_btn.Bind(wx.EVT_BUTTON, self.on_undo_memo)
+        self.undo_btn.Disable()
+        titleBox.Add(self.undo_btn, 0, wx.ALIGN_CENTRE, 1)
+
         sizer.Add(titleBox, 0, wx.EXPAND)
+
+    def on_undo_memo(self, event):
+        if self.original_title == self.title.GetValue() and self.original_memo == self.text.GetValue():
+            return
+        self.title.SetValue(self.original_title)
+        self.text.SetValue(self.original_memo)
 
     def _on_toggle_edit_mode(self, event):
         self.on_toggle_edit_mode()
@@ -106,28 +123,46 @@ class MemoPanel(wx.Panel):
         self.cb_edit_mode.SetValue(not self.cb_edit_mode.GetValue())
         self.on_toggle_edit_mode()
 
-
     def is_edit_mode(self):
         return self.cb_edit_mode.GetValue()
 
     def update_memo(self):
         if self.original_title == self.title.GetValue() and self.original_memo == self.text.GetValue():
+            print(">>> MemoPanel Not update memo <<<")
+            self.parent.OnSearchKeywordInTitle(self.title.GetValue())
             return
+        print(">>> MemoPanel update memo <<<")
         self.logger.info(f'{self.memo_idx}')
         memo_data = {'index': self.memo_idx, 'id': self.title.GetValue(), 'memo': self.text.GetValue(), 'highlight':[]}
         self.original_title = ""
         self.original_memo = ""
         self.parent.OnUpdateMemo(memo_data)
+        self.parent.OnSearchKeywordInTitle(self.title.GetValue())
+
+    def save_memo(self):
+        if self.original_title == self.title.GetValue() and self.original_memo == self.text.GetValue():
+            print(">>> MemoPanel Not save memo <<<")
+            return
+        print(">>> MemoPanel save memo <<<")
+        self.logger.info(f'{self.memo_idx}')
+        memo_data = {'index': self.memo_idx, 'id': self.title.GetValue(), 'memo': self.text.GetValue(), 'highlight':[]}
+        self.original_title = ""
+        self.original_memo = ""
+        self.parent.on_only_save_memo(memo_data)
 
     def _on_set_edit_mode(self):
         self._set_edit_mode_color()
         self.title.SetEditable(True)
         self.text.SetEditable(True)
+        self.undo_btn.Enable()
+        self.text.SetFocus()
 
     def _on_set_read_mode(self):
         self._set_read_mode_color()
         self.title.SetEditable(False)
         self.text.SetEditable(False)
+        self.undo_btn.Disable()
+
     def OnCopyToClipboard(self, event):
         text = self.text.GetValue()
         if wx.TheClipboard.Open():
@@ -142,9 +177,11 @@ class MemoPanel(wx.Panel):
 
     def _set_edit_mode_color(self):
         self.OnSetBGColor("Light blue", wx.BLACK)
+        self.title.SetBackgroundColour("Light blue")
 
     def _set_read_mode_color(self):
         self.parent._on_set_blue_color_bg()
+        self.title.SetBackgroundColour(wx.NullColour)
 
     def OnSetMemo(self, index, title, memo_data, highlight=None):
         self.logger.info(f'{index}')

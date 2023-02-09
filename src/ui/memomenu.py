@@ -48,7 +48,7 @@ class MemoMenu:
         self.parent.Bind(wx.EVT_MENU, self.parent._on_create_memo, create_memo)
 
         edit_memo_id = wx.NewId()
-        edit_memo = edit_menu.Append(edit_memo_id, '&Edit memo\tCtrl+E', '')
+        edit_memo = edit_menu.Append(edit_memo_id, '&Edit memo\tCtrl+U', '')
         self.parent.Bind(wx.EVT_MENU, self.parent._OnUpdateMemo, edit_memo)
 
         delete_memo_id = wx.NewId()

@@ -25,7 +25,7 @@ class ConfigManager:
         self.config['memo'] = ""
         self.config['WINDOW_SIZE_W'] = 800
         self.config['WINDOW_SIZE_H'] = 600
-        self.config['AND'] = '&'
+        self.config['AND'] = ','
         self.config['OR'] = '|'
         self.config['ask_before_quit'] = False
         self.config['compressedSave'] = False

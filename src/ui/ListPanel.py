@@ -49,18 +49,23 @@ class ListPanel(wx.Panel):
     def _add_memo_btn_box(self, sizer):
         memo_mng_btn_box = wx.BoxSizer(wx.HORIZONTAL)
         self.find_memo_btn = wx.Button(self, wx.NewId(), "Find", size=(55, 30))
+        self.find_memo_btn.SetToolTip("Show Find popup (Ctrl+F)")
         self.find_memo_btn.Bind(wx.EVT_BUTTON, self._on_find_memo)
         memo_mng_btn_box.Add(self.find_memo_btn, 1, wx.ALIGN_CENTRE, 1)
         self.editMemoBtn = wx.Button(self, wx.NewId(), "Edit", size=(55, 30))
+        self.editMemoBtn.SetToolTip("Show Editor popup (Ctrl+U)")
         self.editMemoBtn.Bind(wx.EVT_BUTTON, self._OnUpdateMemo)
         memo_mng_btn_box.Add(self.editMemoBtn, 1, wx.ALIGN_CENTRE, 1)
         self.createMemoBtn = wx.Button(self, wx.NewId(), "New", size=(55, 30))
+        self.createMemoBtn.SetToolTip("Create a new memo (Ctrl+N)")
         self.createMemoBtn.Bind(wx.EVT_BUTTON, self._on_create_memo)
         memo_mng_btn_box.Add(self.createMemoBtn, 1, wx.ALIGN_CENTRE, 1)
         self.memoDeleteBtn = wx.Button(self, wx.NewId(), "Delete", size=(55, 30))
+        self.memoDeleteBtn.SetToolTip("Delete a selected memo (Ctrl+Alte+D)")
         self.memoDeleteBtn.Bind(wx.EVT_BUTTON, self._OnDeleteMemo)
         memo_mng_btn_box.Add(self.memoDeleteBtn, 1, wx.ALIGN_CENTRE, 1)
         self.memoSaveBtn = wx.Button(self, wx.NewId(), "Save", size=(55, 30))
+        self.memoSaveBtn.SetToolTip("Save as a CFM (Ctrl+S)")
         self.memoSaveBtn.Bind(wx.EVT_BUTTON, self._on_save_memo)
         self.memoSaveBtn.SetToolTip("Save as CFM file")
         memo_mng_btn_box.Add(self.memoSaveBtn, 1, wx.ALIGN_CENTRE, 1)
@@ -79,6 +84,7 @@ class ListPanel(wx.Panel):
         self.searchBtn.Bind(wx.EVT_BUTTON, self.OnSearchKeyword)
         list_mng_btn_box.Add(self.searchBtn, 0, wx.ALIGN_CENTRE, 1)
         self.searchClearBtn = wx.Button(self, wx.NewId(), "Clear", size=(50, 25))
+        self.searchClearBtn.SetToolTip("Clear search keyword (Alt+C)")
         self.searchClearBtn.Bind(wx.EVT_BUTTON, self.OnSearchClear)
         list_mng_btn_box.Add(self.searchClearBtn, 1, wx.ALIGN_CENTRE, 1)
 
@@ -86,6 +92,7 @@ class ListPanel(wx.Panel):
         sizer.Add(main_search_box, 0, wx.ALIGN_LEFT, 1)
 
     def _on_create_memo(self, event):
+        self.parent.save_memo_panel()
         self.OnCreateMemo()
 
     def OnCreateMemo(self):
@@ -104,9 +111,11 @@ class ListPanel(wx.Panel):
         self.cache.add(title)
 
     def _on_find_memo(self, event):
+        self.parent.save_memo_panel()
         self.parent.run_advanced_find()
 
     def _OnUpdateMemo(self, event):
+        self.parent.save_memo_panel()
         self.OnUpdateMemo()
 
     def OnUpdateMemo(self):
@@ -132,6 +141,7 @@ class ListPanel(wx.Panel):
         self.cache.add(title)
 
     def _OnDeleteMemo(self, event):
+        self.parent.save_memo_panel()
         self.OnDeleteMemo()
 
     def OnDeleteMemo(self):
@@ -191,7 +201,6 @@ class ListPanel(wx.Panel):
         if index < 0:
             index = 0
         chosen_item = self.memo_list.GetItem(index, 0).GetText()
-        self.logger.info(str(index) + ':' + chosen_item)
         self.parent.OnGetMemo(chosen_item)
 
     def _open_uri(self, event):
@@ -265,6 +274,7 @@ class ListPanel(wx.Panel):
                 self.memo_list.SetItemBackgroundColour(index, "Light blue")
 
     def _on_save_memo(self, event):
+        self.parent.save_memo_panel()
         self.OnSaveMemo()
 
     def OnSaveMemo(self):

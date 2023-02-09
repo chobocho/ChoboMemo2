@@ -59,8 +59,8 @@ class MemoUIFrame(wx.Frame, Observer):
         self.Bind(wx.EVT_MENU, self._OnCopyTitle, id=ctrl_C_Id)
         ctrl_alt_D_id = wx.NewId()
         self.Bind(wx.EVT_MENU, self._OnDeleteMemo, id=ctrl_alt_D_id)
-        ctrl_E_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self._OnUpdateMemo, id=ctrl_E_Id)
+        edit_popup_id = wx.NewId()
+        self.Bind(wx.EVT_MENU, self._OnUpdateMemo, id=edit_popup_id)
         ctrl_F_Id = wx.NewId()
         self.Bind(wx.EVT_MENU, self.OnFind, id=ctrl_F_Id)
 
@@ -164,14 +164,14 @@ class MemoUIFrame(wx.Frame, Observer):
             (wx.ACCEL_CTRL, ord('9'), ctrl_9_Id),
             (wx.ACCEL_CTRL, ord('0'), ctrl_0_Id),
             (wx.ACCEL_CTRL, ord('C'), ctrl_C_Id),
-            (wx.ACCEL_CTRL, ord('E'), ctrl_E_Id),
+            (wx.ACCEL_CTRL, ord('E'), on_edit_mode_id),
             (wx.ACCEL_CTRL, ord('F'), on_advanced_find_id),
             (wx.ACCEL_CTRL, ord('G'), ctrl_G_Id),
             (wx.ACCEL_CTRL, ord('M'), ctrl_M_Id),
             (wx.ACCEL_CTRL, ord('N'), ctrl_N_Id),
             (wx.ACCEL_CTRL, ord('P'), ctrl_P_Id),
             (wx.ACCEL_CTRL, ord('R'), ctrl_R_Id),
-            (wx.ACCEL_CTRL, ord('U'), on_edit_mode_id),
+            (wx.ACCEL_CTRL, ord('U'), edit_popup_id),
             (wx.ACCEL_CTRL, ord('S'), ctrl_S_Id),
             (wx.ACCEL_CTRL, ord('Q'), ctrl_Q_Id),
             (wx.ACCEL_ALT|wx.ACCEL_SHIFT, ord('I'), on_about_id),
@@ -380,8 +380,16 @@ class MemoUIFrame(wx.Frame, Observer):
         self.memoManager.OnDeleteMemo(memo_idx)
 
     def save_memo_panel(self):
+        print(">> save_memo_panel <<")
         if self.rightPanel.is_edit_mode():
-            self.rightPanel.update_memo()
+            self.rightPanel.save_memo()
+
+    def on_only_save_memo(self, memo_data):
+        print(">> on_only_save_memo <<")
+        self.memoManager.on_save_memo(memo_data)
+
+    def is_edit_mode(self):
+        return self.rightPanel.is_edit_mode()
 
     def OnUpdateMemo(self, memo):
         self.memoManager.OnUpdateMemo(memo)
@@ -409,6 +417,7 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def on_close_window(self, event):
         try:
+            self.save_memo_panel()
             self.config.save()
             if self.cache.is_need_to_save:
                 self.cache.save()
@@ -445,8 +454,8 @@ class MemoUIFrame(wx.Frame, Observer):
     def make_about_box(self):
         self.about_text['Alt +P'] = "Open URL in clipboard\n"
         self.about_text['Ctrl+N'] = "Create memo"
-        self.about_text['Ctrl+E'] = "Edit memo"
-        self.about_text['Ctrl+U'] = "Toggle edit mode"
+        self.about_text['Ctrl+E'] = "Toggle edit mode"
+        self.about_text['Ctrl+U'] = "Edit memo"
         self.about_text['Ctrl+Alt+D'] = "Delete memo"
         self.about_text['Ctrl+Shift+C'] = "Clone memo"
         self.about_text['Alt+Shift+C'] = "Clone memo\n"
@@ -496,7 +505,7 @@ class MemoUIFrame(wx.Frame, Observer):
     def OnSearchKeywordInTitle(self, search_keyword):
         search_keyword_list = search_keyword
         self.cache.add(search_keyword)
-        self.logger.info(search_keyword_list)
+        print(f'OnSearchKeywordInTitle> {search_keyword_list}')
         self.memoManager.OnSetFilterInTitle(search_keyword_list)
         # self.rightPanel.OnSetSearchKeyword(searchKeyword)
         self.leftPanel.OnItemSelected(0)
@@ -520,6 +529,7 @@ class MemoUIFrame(wx.Frame, Observer):
         self.logger.info(event)
         if event == MemoManager.UPDATE_MEMO:
             self.OnUpdateMemoList(self.memoManager.OnGetMemoList())
+            self.leftPanel.OnItemSelected(0)
 
     def OnSaveMD(self, memoIdx):
         self.logger.info(memoIdx)
@@ -566,6 +576,7 @@ class MemoUIFrame(wx.Frame, Observer):
         self.leftPanel.on_focus_filter()
 
     def on_clone_memo(self, event):
+        self.save_memo_panel()
         self.leftPanel.on_clone_memo()
 
     def OnCloneMemo(self, memoIdx):
