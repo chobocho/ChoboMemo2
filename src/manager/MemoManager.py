@@ -94,13 +94,6 @@ class MemoManager(Observable):
         self.dataManager.OnUpdateMemo(memo, self.dbm)
         self.OnNotify(UPDATE_MEMO)
 
-    def on_save_memo(self, memo_data):
-        if not self.canChange:
-            return
-        print(">>> on_save_memo <<<")
-        self.logger.info(memo_data['index'])
-        self.dataManager.OnUpdateMemo(memo_data, self.dbm)
-
     def OnGetMemo(self, memoIdx, searchKeyword = ""):
         return self.dataManager.OnGetMemo(self.dbm, memoIdx, searchKeyword)
 

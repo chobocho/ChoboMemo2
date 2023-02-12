@@ -71,8 +71,6 @@ class MemoUIFrame(wx.Frame, Observer):
 
         ctrl_P_Id = wx.NewId()
         self.Bind(wx.EVT_MENU, self._OnPressCtrlP, id=ctrl_P_Id)
-        ctrl_R_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self._OnPressCtrlR, id=ctrl_R_Id)
 
         ctrl_M_Id = wx.NewId()
         self.Bind(wx.EVT_MENU, self._OnPressCtrlM, id=ctrl_M_Id)
@@ -170,7 +168,6 @@ class MemoUIFrame(wx.Frame, Observer):
             (wx.ACCEL_CTRL, ord('M'), ctrl_M_Id),
             (wx.ACCEL_CTRL, ord('N'), ctrl_N_Id),
             (wx.ACCEL_CTRL, ord('P'), ctrl_P_Id),
-            (wx.ACCEL_CTRL, ord('R'), ctrl_R_Id),
             (wx.ACCEL_CTRL, ord('U'), edit_popup_id),
             (wx.ACCEL_CTRL, ord('S'), ctrl_S_Id),
             (wx.ACCEL_CTRL, ord('Q'), ctrl_Q_Id),
@@ -384,16 +381,15 @@ class MemoUIFrame(wx.Frame, Observer):
         if self.rightPanel.is_edit_mode():
             self.rightPanel.save_memo()
 
-    def on_only_save_memo(self, memo_data):
-        print(">> on_only_save_memo <<")
-        self.memoManager.on_save_memo(memo_data)
-
     def is_edit_mode(self):
         return self.rightPanel.is_edit_mode()
 
     def OnUpdateMemo(self, memo):
-        self.memoManager.OnUpdateMemo(memo)
+        self.on_update_memo(memo)
         self.rightPanel.OnSetMemo(memo['index'], memo['id'], memo['memo'], memo['highlight'])
+
+    def on_update_memo(self, memo):
+        self.memoManager.OnUpdateMemo(memo)
 
     def OnSetMemoManager(self, memo_manager):
         self.memoManager = memo_manager
@@ -529,7 +525,6 @@ class MemoUIFrame(wx.Frame, Observer):
         self.logger.info(event)
         if event == MemoManager.UPDATE_MEMO:
             self.OnUpdateMemoList(self.memoManager.OnGetMemoList())
-            self.leftPanel.OnItemSelected(0)
 
     def OnSaveMD(self, memoIdx):
         self.logger.info(memoIdx)
@@ -547,9 +542,6 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def _OnPressCtrlP(self, event):
         self.action.OnRunCommand("ctrl_p")
-
-    def _OnPressCtrlR(self, event):
-        self.leftPanel.query_recent_used_items()
 
     def _OnPressCtrlM(self, event):
         self.action.OnRunCommand("ctrl_m")

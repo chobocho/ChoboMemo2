@@ -127,28 +127,28 @@ class MemoPanel(wx.Panel):
         return self.cb_edit_mode.GetValue()
 
     def update_memo(self):
-        if self.original_title == self.title.GetValue() and self.original_memo == self.text.GetValue():
-            print(">>> MemoPanel Not update memo <<<")
-            self.parent.OnSearchKeywordInTitle(self.title.GetValue())
+        memo_data = self._update_memo()
+        if memo_data is None:
             return
-        print(">>> MemoPanel update memo <<<")
-        self.logger.info(f'{self.memo_idx}')
-        memo_data = {'index': self.memo_idx, 'id': self.title.GetValue(), 'memo': self.text.GetValue(), 'highlight':[]}
-        self.original_title = ""
-        self.original_memo = ""
         self.parent.OnUpdateMemo(memo_data)
         self.parent.OnSearchKeywordInTitle(self.title.GetValue())
 
-    def save_memo(self):
+    def _update_memo(self):
         if self.original_title == self.title.GetValue() and self.original_memo == self.text.GetValue():
-            print(">>> MemoPanel Not save memo <<<")
+            print(">>> MemoPanel Not update memo <<<")
             return
-        print(">>> MemoPanel save memo <<<")
+        print(">>> MemoPanel update memo <<<")
         self.logger.info(f'{self.memo_idx}')
-        memo_data = {'index': self.memo_idx, 'id': self.title.GetValue(), 'memo': self.text.GetValue(), 'highlight':[]}
         self.original_title = ""
         self.original_memo = ""
-        self.parent.on_only_save_memo(memo_data)
+        memo_data = {'index': self.memo_idx, 'id': self.title.GetValue(), 'memo': self.text.GetValue(), 'highlight':[]}
+        return memo_data
+
+    def save_memo(self):
+        memo_data = self._update_memo()
+        if memo_data is None:
+            return
+        self.parent.on_update_memo(memo_data)
 
     def _on_set_edit_mode(self):
         self._set_edit_mode_color()

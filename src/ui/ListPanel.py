@@ -162,6 +162,7 @@ class ListPanel(wx.Panel):
         self._OnSearchKeywordInTitle(memo_title)
 
     def OnSearchClear(self, event):
+        self.parent.save_memo_panel()
         self.on_clear_filter()
 
     def on_clear_filter(self):
@@ -172,6 +173,7 @@ class ListPanel(wx.Panel):
         self.searchText.SetFocus()
 
     def OnSearchKeyword(self, event):
+        self.parent.save_memo_panel()
         input_search_keyword = self.searchText.GetValue()
         search_keyword = input_search_keyword.strip()
         self._OnSearchKeyword(search_keyword)
