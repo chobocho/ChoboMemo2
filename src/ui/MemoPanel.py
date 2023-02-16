@@ -53,6 +53,7 @@ class MemoPanel(wx.Panel):
         self.search_next_btn.Bind(wx.EVT_BUTTON, self._on_move_next_keyword)
         btnBox.Add(self.search_next_btn, 0, wx.ALIGN_CENTRE, 5)
         self.searchClearBtn = wx.Button(self, wx.NewId(), "Clear", size=(50, 30))
+        self.searchClearBtn.SetToolTip("Ctrl+Alt+C")
         self.searchClearBtn.Bind(wx.EVT_BUTTON, self.OnSearchClear)
         btnBox.Add(self.searchClearBtn, 1, wx.ALIGN_CENTRE, 5)
         self.saveAsMDBtn = wx.Button(self, wx.NewId(), "Save", size=(50, 30))
@@ -197,7 +198,10 @@ class MemoPanel(wx.Panel):
         self.original_memo = memo_data
 
     def OnSearchClear(self, event):
+        if len(self.searchText.GetValue()) == 0:
+            return
         self.searchText.SetValue("")
+        self._OnSearchKeyword()
 
     def OnGetSearchKeyword(self):
         return self.searchText.GetValue()

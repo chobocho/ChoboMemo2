@@ -140,6 +140,9 @@ class MemoUIFrame(wx.Frame, Observer):
         on_edit_mode_id = wx.NewId()
         self.Bind(wx.EVT_MENU, self.on_toggle_edit_mode, id=on_edit_mode_id)
 
+        on_clear_high_light_id = wx.NewId()
+        self.Bind(wx.EVT_MENU, self.rightPanel.OnSearchClear, id=on_clear_high_light_id)
+
         self.Bind(wx.EVT_CLOSE, self.on_close_window)
 
         accel_tbl = wx.AcceleratorTable([
@@ -171,15 +174,16 @@ class MemoUIFrame(wx.Frame, Observer):
             (wx.ACCEL_CTRL, ord('U'), edit_popup_id),
             (wx.ACCEL_CTRL, ord('S'), ctrl_S_Id),
             (wx.ACCEL_CTRL, ord('Q'), ctrl_Q_Id),
-            (wx.ACCEL_ALT|wx.ACCEL_SHIFT, ord('I'), on_about_id),
-            (wx.ACCEL_ALT|wx.ACCEL_SHIFT, ord('C'), on_clone_item_id),
-            (wx.ACCEL_ALT|wx.ACCEL_SHIFT, ord('E'), on_edit_filter_id),
-            (wx.ACCEL_ALT|wx.ACCEL_SHIFT, ord('F'), ctrl_F_Id),
-            (wx.ACCEL_CTRL|wx.ACCEL_ALT, ord('D'), ctrl_alt_D_id),
-            (wx.ACCEL_CTRL|wx.ACCEL_SHIFT, ord('I'), on_about_id),
-            (wx.ACCEL_CTRL|wx.ACCEL_SHIFT, ord('C'), on_clone_item_id),
-            (wx.ACCEL_CTRL|wx.ACCEL_SHIFT, ord('E'), on_edit_filter_id),
-            (wx.ACCEL_CTRL|wx.ACCEL_SHIFT, ord('F'), ctrl_F_Id)])
+            (wx.ACCEL_ALT | wx.ACCEL_SHIFT, ord('I'), on_about_id),
+            (wx.ACCEL_ALT | wx.ACCEL_SHIFT, ord('C'), on_clone_item_id),
+            (wx.ACCEL_ALT | wx.ACCEL_SHIFT, ord('E'), on_edit_filter_id),
+            (wx.ACCEL_ALT | wx.ACCEL_SHIFT, ord('F'), ctrl_F_Id),
+            (wx.ACCEL_CTRL | wx.ACCEL_ALT, ord('C'), on_clear_high_light_id),
+            (wx.ACCEL_CTRL | wx.ACCEL_ALT, ord('D'), ctrl_alt_D_id),
+            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('I'), on_about_id),
+            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('C'), on_clone_item_id),
+            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('E'), on_edit_filter_id),
+            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('F'), ctrl_F_Id)])
 
         self.SetAcceleratorTable(accel_tbl)
 

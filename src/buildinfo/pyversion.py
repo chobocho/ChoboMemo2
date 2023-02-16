@@ -39,7 +39,7 @@ class VersionInfo:
         separator = self.versionInfo['separator']
                
         today = datetime.datetime.now()
-        yearMonth = chr(65 + today.year - 2021) + chr(65 + today.month - 1)
+        yearMonth = 'a' + chr(65 + today.year - 2021) + chr(65 + today.month - 1)
 
         if self.versionInfo['date'] != yearMonth:
             self.versionInfo['month_release_count'] = 1
