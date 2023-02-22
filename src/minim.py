@@ -23,8 +23,7 @@ def init_logger():
     
     need_file_logging = os.path.exists(".\\needlog.txt")
     if need_file_logging:
-        max_log_size = 128 * 1024
-        file_handler = logging.handlers.RotatingFileHandler(filename='./minim.log', maxBytes=max_log_size)
+        file_handler = logging.handlers.RotatingFileHandler(filename='./minim.log', maxBytes=(max_log_size := 128 * 1024))
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
     
@@ -37,11 +36,9 @@ def print_end():
 
 
 def ask_callback():
-    result = False
     ask_load_cfm_dialog = wx.MessageDialog(None, "Do you want create DB from CFM file?", "Create DB from CFM",
                                            wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
-    if ask_load_cfm_dialog.ShowModal() == wx.ID_YES:
-        result = True
+    result = ask_load_cfm_dialog.ShowModal() == wx.ID_YES
     ask_load_cfm_dialog.Destroy()
     return result
 
@@ -51,17 +48,17 @@ def main():
 
     progress_bar = wx.ProgressDialog("Create DB", "Please wait", maximum=100, parent=None,
                                           style=wx.PD_APP_MODAL | wx.PD_AUTO_HIDE)
-    memoManager = MemoManager(progress_bar, ask_callback)
+    memo_manager = MemoManager(progress_bar, ask_callback)
     progress_bar.Destroy()
     progress_bar = None
 
     frm = MemoUIFrame(None, swVersion=SW_VERSION, size=(800,600))
-    frm.OnSetMemoManager(memoManager)
-    memoManager.OnRegister(frm)
+    frm.OnSetMemoManager(memo_manager)
+    memo_manager.OnRegister(frm)
     frm.Show()
     app.MainLoop()
-    if memoManager.is_need_to_save():
-        memoManager.OnSave()
+    if memo_manager.is_need_to_save():
+        memo_manager.OnSave()
 
 
 if __name__ == '__main__':

@@ -39,11 +39,10 @@ class MemoUIFrame(wx.Frame, Observer):
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.splitter, 1, wx.EXPAND)
         self.SetSizer(sizer)
-        self._addMenubar()
-        self._addShortKey()
+        self._add_menubar()
+        self._add_short_key()
 
-        filedrop = FileDrop(self)
-        self.SetDropTarget(filedrop)
+        self.SetDropTarget(FileDrop(self))
 
         self.memoManager = None
         self.about_text = collections.OrderedDict()
@@ -51,29 +50,18 @@ class MemoUIFrame(wx.Frame, Observer):
         self.cache = QueryCache()
         self.leftPanel.on_toggle_save_btn(self.config.GetValue('save_cfm'))
 
-    def _addMenubar(self):
+    def _add_menubar(self):
         self.menu = MemoMenu(self, self.config)
 
-    def _addShortKey(self):
-        ctrl_C_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self._OnCopyTitle, id=ctrl_C_Id)
-        ctrl_alt_D_id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self._OnDeleteMemo, id=ctrl_alt_D_id)
-        edit_popup_id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self._OnUpdateMemo, id=edit_popup_id)
-        ctrl_F_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.OnFind, id=ctrl_F_Id)
-
-        ctrl_G_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self._on_open_uri, id=ctrl_G_Id)
-        ctrl_N_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self._on_create_memo, id=ctrl_N_Id)
-
-        ctrl_P_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self._OnPressCtrlP, id=ctrl_P_Id)
-
-        ctrl_M_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self._OnPressCtrlM, id=ctrl_M_Id)
+    def _add_short_key(self):
+        self.Bind(wx.EVT_MENU, self._OnCopyTitle, id=(ctrl_C_Id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self._OnDeleteMemo, id=(ctrl_alt_D_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self._OnUpdateMemo, id=(edit_popup_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.OnFind, id=(ctrl_F_Id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self._on_open_uri, id=(ctrl_G_Id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self._on_create_memo, id=(ctrl_N_Id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self._OnPressCtrlP, id=(ctrl_P_Id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self._OnPressCtrlM, id=(ctrl_M_Id := wx.NewId()))
 
         ctrl_Q_Id = wx.NewId()
         self.Bind(wx.EVT_MENU, self.OnQuit, id=ctrl_Q_Id)
@@ -101,48 +89,20 @@ class MemoUIFrame(wx.Frame, Observer):
         ctrl_0_Id = wx.NewId()
         self.Bind(wx.EVT_MENU, self.on_ctrl_0, id=ctrl_0_Id)
 
-        clear_filter_id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.__on_clear_filter, id=clear_filter_id)
-
-        focus_filter_id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.__on_focus_filter, id=focus_filter_id)
-
-        alt_p_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.__on_open_uri_from_clipboard, id=alt_p_Id)
-
-        move_home_id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.move_home, id=move_home_id)
-
-        move_end_id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.move_end, id=move_end_id)
-
-        move_forward_id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.move_forward, id=move_forward_id)
-
-        move_backward_id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.move_backward, id=move_backward_id)
-
-        on_clone_item_id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.on_clone_memo, id=on_clone_item_id)
-
-        on_edit_filter_id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.on_set_config_menu, id=on_edit_filter_id)
-
-        on_about_id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.OnAbout, id=on_about_id)
-
-        on_advanced_find_id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.on_advanced_find, id=on_advanced_find_id)
-
-        set_focus_on_memo_panel_id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.rightPanel.set_focus_on_search_text, id=set_focus_on_memo_panel_id)
-
-        on_edit_mode_id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.on_toggle_edit_mode, id=on_edit_mode_id)
-
-        on_clear_high_light_id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.rightPanel.OnSearchClear, id=on_clear_high_light_id)
-
+        self.Bind(wx.EVT_MENU, self.__on_clear_filter, id=(clear_filter_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.__on_focus_filter, id=(focus_filter_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.__on_open_uri_from_clipboard, id=(alt_p_Id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.move_home, id=(move_home_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.move_end, id=(move_end_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.move_forward, id=(move_forward_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.move_backward, id=(move_backward_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.on_clone_memo, id=(on_clone_item_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.on_set_config_menu, id=(on_edit_filter_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.OnAbout, id=(on_about_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.on_advanced_find, id=(on_advanced_find_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.rightPanel.set_focus_on_search_text, id=(set_focus_on_memo_panel_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.on_toggle_edit_mode, id=(on_edit_mode_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.rightPanel.OnSearchClear, id=(on_clear_high_light_id := wx.NewId()))
         self.Bind(wx.EVT_CLOSE, self.on_close_window)
 
         accel_tbl = wx.AcceleratorTable([
@@ -206,7 +166,7 @@ class MemoUIFrame(wx.Frame, Observer):
                     self.memoManager.OnAddItemFromTextFile(loadFile)
                     return
 
-            self.memoManager.OnAddItemByFiles(filelist)
+            self.memoManager.on_add_item_by_files(filelist)
             self.logger.info(loadFile + " is not CFM file!")
             return
 

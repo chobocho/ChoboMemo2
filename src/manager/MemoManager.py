@@ -62,13 +62,11 @@ class MemoManager(Observable):
 
     def OnLoadFile(self, filename):
         self.canChange = False
-        memoData = self.fileManager.loadDataFile(filename)
-        self.dataManager.OnSetMemoList(memoData)
+        self.dataManager.OnSetMemoList(self.fileManager.loadDataFile(filename))
         self.OnNotify(UPDATE_MEMO)
 
     def OnLoadDB(self):
-        memoData = self.dbm.load()
-        self.dataManager.OnSetMemoList(memoData)
+        self.dataManager.OnSetMemoList(self.dbm.load())
         self.OnNotify(UPDATE_MEMO)
 
     def on_create_memo(self, memo):
@@ -138,25 +136,22 @@ class MemoManager(Observable):
         self.OnNotify(UPDATE_MEMO)
 
     def OnAddItemFromTextFile(self, filename):
-        memo = self.__OnAddItemFromTextFile(filename)
+        memo = self._on_add_item_from_text_file(filename)
         self.on_create_memo(memo)
 
-    def __OnAddItemFromTextFile(self, filename):
-        _1MB = 1024 * 1024
-        memo = {}
-        memo['id'] = self.fileManager.getFileNameOnly(filename)
-        memo['memo'] = ''
+    def _on_add_item_from_text_file(self, filename):
+        new_memo = {'id': self.fileManager.getFileNameOnly(filename), 'memo': ''}
 
-        if self.fileManager.getFileSize(filename) > _1MB:
+        if self.fileManager.getFileSize(filename) > (_1MB := 1024 * 1024):
             self.logger.info("It is bigger than 1MB: " + filename)
-            return memo
+            return new_memo
 
         file_data = self.fileManager.OnLoadTextFile(filename)
-        memo['memo'] = filename + '\n\n' + ''.join(file_data)
+        new_memo['memo'] = filename + '\n\n' + ''.join(file_data)
         #print(len(filedata), memo)
-        return memo
+        return new_memo
 
-    def OnAddItemByFiles(self, files):
+    def on_add_item_by_files(self, files):
         allow_file_name = ['.txt', '.py', '.java', '.cpp']
 
         #file_list = self.fileManager.getFileList(files)
@@ -166,23 +161,20 @@ class MemoManager(Observable):
             is_processed = False
             for name in allow_file_name:
                 if name in filename:
-                    memo = self.__OnAddItemFromTextFile(filename)
-                    self._on_create_memo(memo)
+                    new_memo = self._on_add_item_from_text_file(filename)
+                    self._on_create_memo(new_memo)
                     is_processed = True
                     break
 
             if not is_processed:
-                memo = {}
-                memo['id'] = self.fileManager.getFileNameOnly(filename)
-                memo['memo'] = filename + "\n\n---[Memo]---\n"
-                self._on_create_memo(memo)
+                new_memo = {'id': self.fileManager.getFileNameOnly(filename), 'memo': f'{filename}\n\n---[Memo]---\n'}
+                self._on_create_memo(new_memo)
 
         self.OnNotify(UPDATE_MEMO)
 
+    def OnCloneMemo(self, memo_idx):
+        self.on_create_memo(self.OnGetMemo(memo_idx))
 
-    def OnCloneMemo(self, memoIdx):
-        memo = self.OnGetMemo(memoIdx)
-        self.on_create_memo(memo)
 
 def test():
     """Test code for TDD"""
