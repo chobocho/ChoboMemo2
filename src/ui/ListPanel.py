@@ -123,7 +123,7 @@ class ListPanel(wx.Panel):
             return
 
         chosen_item = self.memo_list.GetItem(self.current_item, 0).GetText()
-        self.logger.info(str(self.current_item) + ':' + chosen_item)
+        self.logger.info(f'{str(self.current_item)}:{chosen_item}')
         memo = self.parent.OnGetMemoItem(chosen_item)
 
         dlg = MemoDialog(None, title='Update memo')
@@ -152,9 +152,9 @@ class ListPanel(wx.Panel):
 
         chosen_item = self.memo_list.GetItem(self.current_item, 0).GetText()
         memo_title = self.memo_list.GetItem(self.current_item, 1).GetText()
-        msg = f'Do you want to delete [{chosen_item}] {memo_title}'
-        title = 'Delete memo'
-        ask_delete_dialog = wx.MessageDialog(None, msg, title, wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
+        ask_delete_dialog = wx.MessageDialog(None, msg := f'Do you want to delete [{chosen_item}] {memo_title}',
+                                             title := 'Delete memo',
+                                             wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
         if ask_delete_dialog.ShowModal() == wx.ID_YES:
             self.parent.OnDeleteMemo(chosen_item)
             self.logger.info(msg)
@@ -184,11 +184,11 @@ class ListPanel(wx.Panel):
     def _on_set_search_keyword(self, keyword):
         self.searchText.SetValue(keyword)
 
-    def _OnSearchKeyword(self, searchKeyword):
-        self.parent.OnSearchKeyword(searchKeyword)
+    def _OnSearchKeyword(self, search_keyword):
+        self.parent.OnSearchKeyword(search_keyword)
 
-    def _OnSearchKeywordInTitle(self, searchKeyword):
-        self.parent.OnSearchKeywordInTitle(searchKeyword)
+    def _OnSearchKeywordInTitle(self, search_keyword):
+        self.parent.OnSearchKeywordInTitle(search_keyword)
 
     def _OnItemSelected(self, event):
         if self.current_item != event.Index:
@@ -245,12 +245,12 @@ class ListPanel(wx.Panel):
             wx.TheClipboard.SetData(wx.TextDataObject('\n'.join(selected_item_list)))
             wx.TheClipboard.Close()
 
-    def _get_uri_from_data(self, raw_data):
+    @staticmethod
+    def _get_uri_from_data(raw_data):
         if len(raw_data) == 0:
             return ""
 
-        idx = raw_data.find('\n')
-        if idx == -1:
+        if (idx := raw_data.find('\n')) == -1:
             return ""
         return raw_data[:idx]
 

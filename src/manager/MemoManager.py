@@ -18,7 +18,7 @@ class MemoManager(Observable):
         self.observer = None
         self.fileManager = FileManager()
         self.dbm = DBManager('20201105.cfm.db')
-        self._loadMemo(callback, ask_callback)
+        self._load_memo(callback, ask_callback)
         self.canChange = True
         self.and_op = ','
         self.or_op = '|'
@@ -28,19 +28,19 @@ class MemoManager(Observable):
     def is_need_to_save(self):
         return self.need_to_save_cfm
 
-    def _loadMemo(self, callback=None, ask_callback=None):
-        memoData = self.dbm.load()
+    def _load_memo(self, callback=None, ask_callback=None):
         filename = '20201105.cfm'
-        if (len(memoData) == 0) and os.path.exists(filename) and (ask_callback is not None) and ask_callback():
-            memoData = self.fileManager.loadDataFile(filename)
+        if (len(memo_data := self.dbm.load()) == 0) and os.path.exists(filename) \
+                and (ask_callback is not None) and ask_callback():
+            memo_data = self.fileManager.loadDataFile(filename)
 
-            gap = int(len(memoData) / 100)
+            gap = int(len(memo_data) / 100)
             tick = 0
             progress = 0
 
-            for data in memoData:
+            for data in memo_data:
                 # print(memoData[data]['id'])
-                self.dbm.insert([memoData[data]['id'], memoData[data]['memo']])
+                self.dbm.insert([memo_data[data]['id'], memo_data[data]['memo']])
                 tick += 1
                 if tick >= gap:
                     tick = 0
@@ -48,24 +48,24 @@ class MemoManager(Observable):
                         progress += 1
                         callback.Update(progress, str(progress) + "% done!")
 
-        self.dataManager.OnSetMemoList(memoData)
+        self.dataManager.OnSetMemoList(memo_data)
         self.OnNotify(UPDATE_MEMO)
 
     def set_split_op(self, and_op, or_op):
-       self.and_op = and_op
-       self.or_op = or_op
-       self.dataManager.set_split_op(self.and_op, self.or_op)
+        self.and_op = and_op
+        self.or_op = or_op
+        self.dataManager.set_split_op(self.and_op, self.or_op)
 
     def set_save_mode(self, save_mode:bool, save_cfm:bool):
-       self.save_compressed = save_mode
-       self.need_to_save_cfm = save_cfm
+        self.save_compressed = save_mode
+        self.need_to_save_cfm = save_cfm
 
     def OnLoadFile(self, filename):
         self.canChange = False
         self.dataManager.OnSetMemoList(self.fileManager.loadDataFile(filename))
         self.OnNotify(UPDATE_MEMO)
 
-    def OnLoadDB(self):
+    def on_load_db(self):
         self.dataManager.OnSetMemoList(self.dbm.load())
         self.OnNotify(UPDATE_MEMO)
 
@@ -78,11 +78,11 @@ class MemoManager(Observable):
             return
         self.dataManager.on_create_memo(memo, self.dbm)
 
-    def OnDeleteMemo(self, memoIdx):
-        self.logger.info(memoIdx)
+    def on_delete_memo(self, memo_idx):
+        self.logger.info(memo_idx)
         if not self.canChange:
             return
-        self.dataManager.OnDeleteMemo(memoIdx, self.dbm)
+        self.dataManager.OnDeleteMemo(memo_idx, self.dbm)
         self.OnNotify(UPDATE_MEMO)
 
     def OnUpdateMemo(self, memo):

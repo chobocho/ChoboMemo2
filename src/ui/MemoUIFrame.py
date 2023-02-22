@@ -171,7 +171,7 @@ class MemoUIFrame(wx.Frame, Observer):
             return
 
         if ".db" in loadFile.lower():
-            self.memoManager.OnLoadDB()
+            self.memoManager.on_load_db()
         else:
             self.memoManager.OnLoadFile(loadFile)
         self.SetTitle(self.swVersion + ' : ' + loadFile)
@@ -338,7 +338,7 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def OnDeleteMemo(self, memo_idx):
         self.logger.info(memo_idx)
-        self.memoManager.OnDeleteMemo(memo_idx)
+        self.memoManager.on_delete_memo(memo_idx)
 
     def save_memo_panel(self):
         print(">> save_memo_panel <<")

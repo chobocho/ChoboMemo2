@@ -22,8 +22,7 @@ class MemoDialog(sized_controls.SizedDialog):
         self.text = wx.TextCtrl(pane, style = wx.TE_MULTILINE,size=(WINDOW_SIZE_W,WINDOW_SIZE_H))
         self.text.SetValue("")
         self.saved_text = ""
-        font = wx.Font(14, wx.FONTFAMILY_TELETYPE, wx.NORMAL, wx.NORMAL)
-        self.text.SetFont(font)
+        self.text.SetFont(wx.Font(14, wx.FONTFAMILY_TELETYPE, wx.NORMAL, wx.NORMAL))
 
         static_line = wx.StaticLine(pane, style=wx.LI_HORIZONTAL)
         static_line.SetSizerProps(border=('all', 0), expand=True)
@@ -38,36 +37,23 @@ class MemoDialog(sized_controls.SizedDialog):
         button_cancel = wx.Button(pane_btns, wx.ID_CANCEL, label='Cance&l')
         button_cancel.Bind(wx.EVT_BUTTON, self.on_button)
 
-        add_info_btn_id = wx.NewId()
-        add_info_btn = wx.Button(pane_btns, add_info_btn_id, label='&Add Info')
+        add_info_btn = wx.Button(pane_btns, (add_info_btn_id := wx.NewId()), label='&Add Info')
         add_info_btn.Bind(wx.EVT_BUTTON, self.add_info)
 
-        append_btn_id = wx.NewId()
-        append_btn = wx.Button(pane_btns, append_btn_id, label='A&ppend')
+        append_btn = wx.Button(pane_btns, (append_btn_id := wx.NewId()), label='A&ppend')
         append_btn.Bind(wx.EVT_BUTTON, self.append_from_clipboard)
 
-        remove_space_btn_id = wx.NewId()
-        remove_space_btn = wx.Button(pane_btns, remove_space_btn_id, label='&Trim')
+        remove_space_btn = wx.Button(pane_btns, (remove_space_btn_id := wx.NewId()), label='&Trim')
         remove_space_btn.Bind(wx.EVT_BUTTON, self.remove_space)
 
-        undo_btn_id = wx.NewId()
-        undo_btn = wx.Button(pane_btns, undo_btn_id, label='&Undo')
+        undo_btn = wx.Button(pane_btns, (undo_btn_id := wx.NewId()), label='&Undo')
         undo_btn.Bind(wx.EVT_BUTTON, self.undo)
 
-        save_text_id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.save_text, id=save_text_id)
-
-        move_home_id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.move_home, id=move_home_id)
-
-        move_end_id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.move_end, id=move_end_id)
-
-        move_forward_id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.move_forward, id=move_forward_id)
-
-        move_backward_id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.move_backward, id=move_backward_id)
+        self.Bind(wx.EVT_MENU, self.save_text, id=(save_text_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.move_home, id=(move_home_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.move_end, id=(move_end_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.move_forward, id=(move_forward_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.move_backward, id=(move_backward_id := wx.NewId()))
 
         accel_tbl = wx.AcceleratorTable([
             (wx.ACCEL_ALT, ord('A'), add_info_btn_id),
