@@ -171,7 +171,7 @@ class MemoUIFrame(wx.Frame, Observer):
             return
 
         if ".db" in loadFile.lower():
-            self.memoManager.on_load_db()
+            self.memoManager.OnLoadDB()
         else:
             self.memoManager.OnLoadFile(loadFile)
         self.SetTitle(self.swVersion + ' : ' + loadFile)
@@ -193,6 +193,9 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def _OnSaveMemo(self, event):
         self.OnSaveMemo()
+
+    def OnSaveMemo(self):
+        self.memoManager.OnSave()
 
     def on_set_max_list(self, event):
         maxCount = self.leftPanel.get_max_list_count()

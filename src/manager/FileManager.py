@@ -40,27 +40,26 @@ class FileManager:
         fm = None
 
         if version.strip() == "version:1105.1":
-             fm = loadfilev2.LoadFile()
+            fm = loadfilev2.LoadFile()
         elif version.strip() == "version:1105.2:gzip":
             fm = CompressedLoadFile.CompressedLoadFile()
         else:
-             fm = loadfilev1.LoadFile()
+            fm = loadfilev1.LoadFile()
         return fm.loadfile(dataFile)
 
+    def saveDataFile(self, memo_list, file_name="", need_compress=False):
+        save_file_name = self.saveFileName
 
-    def saveDataFile(self, memoList, fileName="", needCompress=False):
-        saveFileName = self.saveFileName
-
-        if len(fileName) > 0:
-            saveFileName = fileName
-            self.saveFileName = saveFileName
+        if len(file_name) > 0:
+            save_file_name = file_name
+            self.saveFileName = save_file_name
 
         fm = None
-        if needCompress:
+        if need_compress:
             fm = CompressedSaveFile.CompressedSaveFile()
         else:
             fm = savefilev2.SaveFile()
-        fm.savefile(memoList, saveFileName)
+        fm.savefile(memo_list, save_file_name)
         self.logger.info("Success to save at " + self.saveFileName)
         return True
 

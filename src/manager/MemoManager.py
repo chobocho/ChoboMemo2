@@ -8,7 +8,9 @@ from manager.dbmanager import DBManager
 import logging
 import os
 
+
 UPDATE_MEMO = 1
+
 
 class MemoManager(Observable):
     def __init__(self, callback=None, ask_callback=None):
@@ -92,8 +94,8 @@ class MemoManager(Observable):
         self.dataManager.OnUpdateMemo(memo, self.dbm)
         self.OnNotify(UPDATE_MEMO)
 
-    def OnGetMemo(self, memoIdx, searchKeyword = ""):
-        return self.dataManager.OnGetMemo(self.dbm, memoIdx, searchKeyword)
+    def OnGetMemo(self, memo_idx, search_keyword =""):
+        return self.dataManager.OnGetMemo(self.dbm, memo_idx, search_keyword)
 
     def OnGetMemoList(self):
         return self.dataManager.OnGetFilteredMemoList()
@@ -112,14 +114,14 @@ class MemoManager(Observable):
             if not self.dataManager.OnGetNeedToSave():
                 self.logger.info("No need to save CFM!")
                 return
-            if self.fileManager.saveDataFile(self.dataManager.OnGetMemoList(), needCompress=self.save_compressed):
+            if self.fileManager.saveDataFile(self.dataManager.OnGetMemoList(), need_compress=self.save_compressed):
                 self.logger.info("Saved CFM!")
                 self.dataManager.on_set_need_to_save(False)
         else:
             if len(filename) == 0:
-                self.fileManager.saveDataFile(self.OnGetMemoList(), needCompress=self.save_compressed)
+                self.fileManager.saveDataFile(self.OnGetMemoList(), need_compress=self.save_compressed)
             else:
-                self.fileManager.saveDataFile(self.OnGetMemoList(), filename, needCompress=self.save_compressed)
+                self.fileManager.saveDataFile(self.OnGetMemoList(), filename, need_compress=self.save_compressed)
 
     def OnSaveAsMD(self, memo_idx=-1, filename=""):
         if len(filename) == 0:
