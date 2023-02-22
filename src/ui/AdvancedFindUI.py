@@ -42,12 +42,16 @@ class AdvanceFindUI(sized_controls.SizedDialog):
         set_focus_user_keyword_field_id = wx.NewId()
         self.Bind(wx.EVT_MENU, self.on_set_focus_user_input_field, id=set_focus_user_keyword_field_id)
 
+        clear_user_keyword_field_id = wx.NewId()
+        self.Bind(wx.EVT_MENU, self.on_clear_user_input, id=clear_user_keyword_field_id)
+
         accel_tbl = wx.AcceleratorTable([
             (wx.ACCEL_ALT, ord('C'), clear_input_field_id),
             (wx.ACCEL_ALT, ord('D'), set_focus_input_field_id),
             (wx.ACCEL_ALT, ord('L'), wx.ID_CANCEL),
             (wx.ACCEL_ALT, ord('O'), wx.ID_OK),
             (wx.ACCEL_ALT, ord('U'), set_focus_user_keyword_field_id),
+            (wx.ACCEL_CTRL | wx.ACCEL_ALT, ord('C'), clear_user_keyword_field_id)
         ])
         self.SetAcceleratorTable(accel_tbl)
         self.Fit()
@@ -77,7 +81,7 @@ class AdvanceFindUI(sized_controls.SizedDialog):
                                                | wx.BORDER_NONE
                                                | wx.LC_NO_HEADER
                                                | wx.LC_EDIT_LABELS,
-                                         size=(LIST_SIZE_W, 350))
+                                         size=(LIST_SIZE_W, 400))
         self.ctrl_btn_list.InsertColumn(0, "Keyword", width=LIST_SIZE_W)
         self.ctrl_btn_list.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_ctrl_btn_list_selected)
         self.ctrl_btn_list.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._on_ctrl_btn_list_dclicked)
@@ -86,9 +90,6 @@ class AdvanceFindUI(sized_controls.SizedDialog):
 
         self.ctrl_btn_list.DeleteAllItems()
         self.insert_data_to_listctrl(self.ctrl_btn_list, list_data)
-
-        lbl_hint1 = wx.StaticText(ctrl_btn_panel, id=wx.NewId(), label="Alt+D: Set focus on input field")
-        lbl_hint2 = wx.StaticText(ctrl_btn_panel, id=wx.NewId(), label="Alt+U: Set focus on user keyword")
 
     def _add_recent_item_list(self, pane, btn_font, list_data=[]):
         recent_item_panel = sized_controls.SizedPanel(pane)
@@ -135,12 +136,13 @@ class AdvanceFindUI(sized_controls.SizedDialog):
         self.user_input_text = wx.TextCtrl(user_input_panel, style=wx.TE_PROCESS_ENTER, size=(230, 25))
         self.user_input_text.Bind(wx.EVT_TEXT_ENTER, self.on_add_user_input)
         self.user_input_text.SetValue("")
+        self.user_input_text.SetHint("Alt+U: Focus on here")
         self.user_input_text.SetFont(font)
         self.user_input_text.SetToolTip("추가할 단어를 입력 후 엔터를 치세요")
 
         user_input_clear_btn = wx.Button(user_input_panel, wx.NewId(), label='C', size=(20, 25))
         user_input_clear_btn.Bind(wx.EVT_BUTTON, self.on_clear_user_input)
-        user_input_clear_btn.SetToolTip("Clear user input text")
+        user_input_clear_btn.SetToolTip("Ctrl+Alt+C")
 
         user_item_list_id = wx.NewId()
         self.user_item_list = wx.ListCtrl(user_item_panel, user_item_list_id,
@@ -170,6 +172,7 @@ class AdvanceFindUI(sized_controls.SizedDialog):
         self.result_text.Bind(wx.EVT_TEXT_ENTER, self.on_button)
         self.result_text.SetValue("")
         self.result_text.SetFont(font)
+        self.result_text.SetHint("Alt+D: Set focus on user keyword")
         self.result_text.SetToolTip("검색 할 단어를 입력 후 엔터를 치세요")
         self.result_text.SetFocus()
 
