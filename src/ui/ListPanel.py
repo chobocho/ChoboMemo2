@@ -34,7 +34,7 @@ class ListPanel(wx.Panel):
                                      size=(300, self.list_height))
         sizer.Add(self.memo_list, 1, wx.EXPAND)
         self.memo_list.Bind(wx.EVT_LIST_ITEM_SELECTED, self._OnItemSelected)
-        self.memo_list.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self._OnUpdateMemo)
+        self.memo_list.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self._on_update_memo)
         self.memo_list.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._open_uri)
         self.memo_list.InsertColumn(0, "No", width=60)
         self.memo_list.InsertColumn(1, "Title", width=240)
@@ -54,7 +54,7 @@ class ListPanel(wx.Panel):
         memo_mng_btn_box.Add(self.find_memo_btn, 1, wx.ALIGN_CENTRE, 1)
         self.editMemoBtn = wx.Button(self, wx.NewId(), "Edit", size=(55, 30))
         self.editMemoBtn.SetToolTip("Show Editor popup (Ctrl+U)")
-        self.editMemoBtn.Bind(wx.EVT_BUTTON, self._OnUpdateMemo)
+        self.editMemoBtn.Bind(wx.EVT_BUTTON, self._on_update_memo)
         memo_mng_btn_box.Add(self.editMemoBtn, 1, wx.ALIGN_CENTRE, 1)
         self.createMemoBtn = wx.Button(self, wx.NewId(), "New", size=(55, 30))
         self.createMemoBtn.SetToolTip("Create a new memo (Ctrl+N)")
@@ -75,7 +75,13 @@ class ListPanel(wx.Panel):
         main_search_box = wx.BoxSizer(wx.VERTICAL)
 
         list_mng_btn_box = wx.BoxSizer(wx.HORIZONTAL)
-        self.searchText = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER, size=(200, 25))
+
+        lbl_space = wx.StaticText(self, wx.NewId(), " ", size=(10, 25))
+        list_mng_btn_box.Add(lbl_space, 0, wx.ALIGN_LEFT, 1)
+        self.cb_lock_search_text = wx.CheckBox(self, wx.NewId(), size=(20, 25))
+        self.cb_lock_search_text.SetToolTip("Ctrl+L: Lock search keyword")
+        list_mng_btn_box.Add(self.cb_lock_search_text, 0, wx.ALIGN_LEFT, 1)
+        self.searchText = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER, size=(170, 25))
         self.searchText.Bind(wx.EVT_TEXT_ENTER, self.OnSearchKeyword)
         self.searchText.SetValue("")
         self.searchText.SetHint("Alt+D: Set focus here!")
@@ -114,13 +120,15 @@ class ListPanel(wx.Panel):
         self.parent.save_memo_panel()
         self.parent.run_advanced_find()
 
-    def _OnUpdateMemo(self, event):
+    def _on_update_memo(self, event):
         self.parent.save_memo_panel()
-        self.OnUpdateMemo()
+        self.on_update_memo()
 
-    def OnUpdateMemo(self):
+    def on_update_memo(self):
         if not self._has_item():
             return
+
+        current_search_keyword = self.searchText.GetValue()
 
         chosen_item = self.memo_list.GetItem(self.current_item, 0).GetText()
         self.logger.info(f'{str(self.current_item)}:{chosen_item}')
@@ -136,8 +144,11 @@ class ListPanel(wx.Panel):
         dlg.Destroy()
 
         title = memo['id']
-        self._on_set_search_keyword(title)
-        self._OnSearchKeywordInTitle(title)
+        if self.cb_lock_search_text.GetValue():
+            self._OnSearchKeyword(current_search_keyword)
+        else:
+            self._on_set_search_keyword(title)
+            self._OnSearchKeywordInTitle(title)
         self.cache.add(title)
 
     def _OnDeleteMemo(self, event):
@@ -316,3 +327,6 @@ class ListPanel(wx.Panel):
             self.memoSaveBtn.Show()
         elif (enable is False) and self.memoSaveBtn.IsShown():
             self.memoSaveBtn.Hide()
+    def on_toggle_search_lock(self):
+        value = self.cb_lock_search_text.GetValue() ^ True
+        self.cb_lock_search_text.SetValue(value)

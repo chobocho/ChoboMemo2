@@ -58,6 +58,7 @@ class MemoUIFrame(wx.Frame, Observer):
         self.Bind(wx.EVT_MENU, self._OnDeleteMemo, id=(ctrl_alt_D_id := wx.NewId()))
         self.Bind(wx.EVT_MENU, self._OnUpdateMemo, id=(edit_popup_id := wx.NewId()))
         self.Bind(wx.EVT_MENU, self.OnFind, id=(ctrl_F_Id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self._on_toggle_search_lock, id=(ctrl_L_Id := wx.NewId()))
         self.Bind(wx.EVT_MENU, self._on_open_uri, id=(ctrl_G_Id := wx.NewId()))
         self.Bind(wx.EVT_MENU, self._on_create_memo, id=(ctrl_N_Id := wx.NewId()))
         self.Bind(wx.EVT_MENU, self._OnPressCtrlP, id=(ctrl_P_Id := wx.NewId()))
@@ -128,6 +129,7 @@ class MemoUIFrame(wx.Frame, Observer):
             (wx.ACCEL_CTRL, ord('E'), on_edit_mode_id),
             (wx.ACCEL_CTRL, ord('F'), on_advanced_find_id),
             (wx.ACCEL_CTRL, ord('G'), ctrl_G_Id),
+            (wx.ACCEL_CTRL, ord('L'), ctrl_L_Id),
             (wx.ACCEL_CTRL, ord('M'), ctrl_M_Id),
             (wx.ACCEL_CTRL, ord('N'), ctrl_N_Id),
             (wx.ACCEL_CTRL, ord('P'), ctrl_P_Id),
@@ -186,7 +188,7 @@ class MemoUIFrame(wx.Frame, Observer):
         self.leftPanel.OnCreateMemo()
 
     def _OnUpdateMemo(self, event):
-        self.leftPanel.OnUpdateMemo()
+        self.leftPanel.on_update_memo()
 
     def _OnDeleteMemo(self, event):
         self.leftPanel.OnDeleteMemo()
@@ -258,6 +260,9 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def _on_open_uri(self, event):
         self.leftPanel.open_uri()
+
+    def _on_toggle_search_lock(self, event):
+        self.leftPanel.on_toggle_search_lock()
 
     def on_set_config_menu(self, event):
         filter_item = {
