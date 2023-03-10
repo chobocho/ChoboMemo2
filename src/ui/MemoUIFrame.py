@@ -185,13 +185,13 @@ class MemoUIFrame(wx.Frame, Observer):
         self.leftPanel.on_copy_title()
 
     def _on_create_memo(self, event):
-        self.leftPanel.OnCreateMemo()
+        self.leftPanel.on_create_memo()
 
     def _OnUpdateMemo(self, event):
         self.leftPanel.on_update_memo()
 
     def _OnDeleteMemo(self, event):
-        self.leftPanel.OnDeleteMemo()
+        self.leftPanel.on_delete_memo()
 
     def _OnSaveMemo(self, event):
         self.OnSaveMemo()

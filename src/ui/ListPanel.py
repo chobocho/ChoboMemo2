@@ -62,7 +62,7 @@ class ListPanel(wx.Panel):
         memo_mng_btn_box.Add(self.createMemoBtn, 1, wx.ALIGN_CENTRE, 1)
         self.memoDeleteBtn = wx.Button(self, wx.NewId(), "Delete", size=(55, 30))
         self.memoDeleteBtn.SetToolTip("Delete a selected memo (Ctrl+Alte+D)")
-        self.memoDeleteBtn.Bind(wx.EVT_BUTTON, self._OnDeleteMemo)
+        self.memoDeleteBtn.Bind(wx.EVT_BUTTON, self._on_delete_memo)
         memo_mng_btn_box.Add(self.memoDeleteBtn, 1, wx.ALIGN_CENTRE, 1)
         self.memoSaveBtn = wx.Button(self, wx.NewId(), "Save", size=(55, 30))
         self.memoSaveBtn.SetToolTip("Save as a CFM (Ctrl+S)")
@@ -99,9 +99,9 @@ class ListPanel(wx.Panel):
 
     def _on_create_memo(self, event):
         self.parent.save_memo_panel()
-        self.OnCreateMemo()
+        self.on_create_memo()
 
-    def OnCreateMemo(self):
+    def on_create_memo(self):
         new_memo = {'id': '', 'memo': ''}
 
         dlg = MemoDialog(None, title='Create new memo')
@@ -113,7 +113,7 @@ class ListPanel(wx.Panel):
 
         title = new_memo['id']
         self._on_set_search_keyword(title)
-        self._OnSearchKeyword(title)
+        self._on_search_keyword(title)
         self.cache.add(title)
 
     def _on_find_memo(self, event):
@@ -145,22 +145,23 @@ class ListPanel(wx.Panel):
 
         title = memo['id']
         if self.cb_lock_search_text.GetValue():
-            self._OnSearchKeyword(current_search_keyword)
+            self._on_search_keyword(current_search_keyword)
         else:
             self._on_set_search_keyword(title)
             self._OnSearchKeywordInTitle(title)
         self.cache.add(title)
 
-    def _OnDeleteMemo(self, event):
+    def _on_delete_memo(self, event):
         self.parent.save_memo_panel()
-        self.OnDeleteMemo()
+        self.on_delete_memo()
 
-    def OnDeleteMemo(self):
+    def on_delete_memo(self):
         self.logger.info(self.current_item)
 
         if not self._has_item():
             return
 
+        current_search_keyword = self.searchText.GetValue()
         chosen_item = self.memo_list.GetItem(self.current_item, 0).GetText()
         memo_title = self.memo_list.GetItem(self.current_item, 1).GetText()
         ask_delete_dialog = wx.MessageDialog(None, msg := f'Do you want to delete [{chosen_item}] {memo_title}',
@@ -170,7 +171,12 @@ class ListPanel(wx.Panel):
             self.parent.OnDeleteMemo(chosen_item)
             self.logger.info(msg)
         ask_delete_dialog.Destroy()
-        self._OnSearchKeywordInTitle(memo_title)
+
+        if self.cb_lock_search_text.GetValue():
+            self._on_search_keyword(current_search_keyword)
+        else:
+            self._on_set_search_keyword(title)
+            self._OnSearchKeywordInTitle(title)
 
     def OnSearchClear(self, event):
         self.parent.save_memo_panel()
@@ -178,7 +184,7 @@ class ListPanel(wx.Panel):
 
     def on_clear_filter(self):
         self.searchText.SetValue("")
-        self._OnSearchKeyword("")
+        self._on_search_keyword("")
 
     def on_focus_filter(self):
         self.searchText.SetFocus()
@@ -187,7 +193,7 @@ class ListPanel(wx.Panel):
         self.parent.save_memo_panel()
         input_search_keyword = self.searchText.GetValue()
         search_keyword = input_search_keyword.strip()
-        self._OnSearchKeyword(search_keyword)
+        self._on_search_keyword(search_keyword)
 
     def on_set_filter_keyword(self, keyword):
         self._on_set_search_keyword(keyword)
@@ -195,7 +201,7 @@ class ListPanel(wx.Panel):
     def _on_set_search_keyword(self, keyword):
         self.searchText.SetValue(keyword)
 
-    def _OnSearchKeyword(self, search_keyword):
+    def _on_search_keyword(self, search_keyword):
         self.parent.OnSearchKeyword(search_keyword)
 
     def _OnSearchKeywordInTitle(self, search_keyword):
