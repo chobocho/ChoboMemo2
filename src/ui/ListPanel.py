@@ -10,6 +10,7 @@ from manager import memo_cache
 class ListPanel(wx.Panel):
     def __init__(self, parent, *args, list_height=600, **kw):
         super(ListPanel, self).__init__(*args, **kw)
+        self.INDEX_COLUMN_WIDTH = 60
         self.logger = logging.getLogger("chobomemo")
         self.parent = parent
         self.max_list_count = 99
@@ -17,6 +18,7 @@ class ListPanel(wx.Panel):
         self.current_item = -1
         self.list_height = list_height
         self._init_ui()
+        self.is_resized = False
 
     def _init_ui(self):
         self.logger.info('.')
@@ -36,7 +38,7 @@ class ListPanel(wx.Panel):
         self.memo_list.Bind(wx.EVT_LIST_ITEM_SELECTED, self._OnItemSelected)
         self.memo_list.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self._on_update_memo)
         self.memo_list.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._open_uri)
-        self.memo_list.InsertColumn(0, "No", width=60)
+        self.memo_list.InsertColumn(0, "No", width=self.INDEX_COLUMN_WIDTH)
         self.memo_list.InsertColumn(1, "Title", width=240)
         self.memo_list.SetFont(font)
         self.current_item = -1
@@ -45,6 +47,9 @@ class ListPanel(wx.Panel):
         ##
         self.SetSizer(sizer)
         self.SetSizerAndFit(sizer, True)
+
+        self.Bind(wx.EVT_SIZE, self.on_resize)
+        self.Bind(wx.EVT_IDLE, self.on_idle)
 
     def _add_memo_btn_box(self, sizer):
         memo_mng_btn_box = wx.BoxSizer(wx.HORIZONTAL)
@@ -333,6 +338,16 @@ class ListPanel(wx.Panel):
             self.memoSaveBtn.Show()
         elif (enable is False) and self.memoSaveBtn.IsShown():
             self.memoSaveBtn.Hide()
+
     def on_toggle_search_lock(self):
         value = self.cb_lock_search_text.GetValue() ^ True
         self.cb_lock_search_text.SetValue(value)
+
+    def on_resize(self, event):
+        self.is_resized = True
+
+    def on_idle(self, event):
+        if self.is_resized:
+            self.memo_list.SetColumnWidth(1, self.GetSize()[0])
+            self.Layout()
+            self.is_resized = False
