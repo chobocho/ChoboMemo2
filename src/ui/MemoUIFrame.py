@@ -459,7 +459,7 @@ class MemoUIFrame(wx.Frame, Observer):
         elif (len(search_keyword) > 1) and (search_keyword[0] == '`'):
             self.OnSearchKeywordInTitle(search_keyword[1:])
             return
-        elif (len(search_keyword) > 1) and (search_keyword[0] == '\''):
+        elif (len(search_keyword) > 1) and (search_keyword[0] == "'"):
             self.OnSearchKeywordInTitle(search_keyword[1:])
             return
         elif (len(search_keyword) > 2) and (search_keyword[:2].lower() == 't:'):
