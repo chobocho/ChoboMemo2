@@ -21,7 +21,7 @@ class DataManager:
     def on_set_need_to_save(self, flag):
         self.has_updated = flag
 
-    def OnGetNeedToSave(self):
+    def on_get_need_to_save(self):
         return self.has_updated
 
     def on_create_memo(self, memo, dbm):
@@ -31,7 +31,7 @@ class DataManager:
         self.logger.info(memo['index'])
         self.memo_list = self.memo_list_origin.copy()
 
-    def OnUpdateMemo(self, memo, dbm):
+    def on_update_memo(self, memo, dbm):
         key = memo['index']
         dbm.update((memo['id'], memo['memo'], memo['index']))
         self.memo_list_origin[key] = memo.copy()
@@ -53,33 +53,33 @@ class DataManager:
     def OnGetMemoList(self):
         return self.memo_list_origin
 
-    def OnSetMemoList(self, list):
-        self.memo_list_origin = list.copy()
-        self.memo_list =  list.copy()
+    def on_set_memo_list(self, memo_list):
+        self.memo_list_origin = memo_list.copy()
+        self.memo_list =  memo_list.copy()
         self.logger.info("length of memoList is " + str(len(self.memo_list)))
 
-    def OnGetMemo(self, dbm, memoIdx, searchKeyword=""):
+    def on_get_memo(self, dbm, memo_idx, search_keyword=""):
         if len(self.memo_list) == 0:
-            return self.__get_emptyMemo(memoIdx)
+            return self.__get_emptyMemo(memo_idx)
 
-        if len(memoIdx) == 0:
-            return self.__get_emptyMemo(memoIdx)
+        if len(memo_idx) == 0:
+            return self.__get_emptyMemo(memo_idx)
 
-        if len(self.memo_list.get(memoIdx, "")) == 0:
-            return self.__get_emptyMemo(memoIdx)
+        if len(self.memo_list.get(memo_idx, "")) == 0:
+            return self.__get_emptyMemo(memo_idx)
 
-        memo_from_db = dbm.read(memoIdx)
+        memo_from_db = dbm.read(memo_idx)
         if len(memo_from_db) == 0:
-            self.OnDeleteMemo(memoIdx, dbm)
-            memo = self.__get_emptyMemo(memoIdx)
+            self.OnDeleteMemo(memo_idx, dbm)
+            memo = self.__get_emptyMemo(memo_idx)
             memo['memo'] = "\n It is removed memo.\n\n Please press Clear button."
             return memo
         else:
-            self.memo_list[memoIdx]['title'] = memo_from_db['title']
-            self.memo_list[memoIdx]['memo'] = memo_from_db['memo']
-            self.logger.info("DB updated: " + memoIdx)
-        memo = self.memo_list[memoIdx].copy()
-        keywordList = searchKeyword.lower().split('|')
+            self.memo_list[memo_idx]['title'] = memo_from_db['title']
+            self.memo_list[memo_idx]['memo'] = memo_from_db['memo']
+            self.logger.info("DB updated: " + memo_idx)
+        memo = self.memo_list[memo_idx].copy()
+        keywordList = search_keyword.lower().split('|')
         highLightPosition = textutil.searchKeyword(memo['memo'].lower(), keywordList)
         memo['highlight'] = highLightPosition[:]
         return memo

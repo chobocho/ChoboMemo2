@@ -40,17 +40,20 @@ class MemoManager(Observable):
             tick = 0
             progress = 0
 
+            big_data = []
             for data in memo_data:
                 # print(memoData[data]['id'])
-                self.dbm.insert([memo_data[data]['id'], memo_data[data]['memo']])
+                big_data.append([memo_data[data]['id'], memo_data[data]['memo']])
                 tick += 1
                 if tick >= gap:
                     tick = 0
-                    if (None != callback) and (progress < 99):
+                    if (None != callback) and (progress < 98):
                         progress += 1
                         callback.Update(progress, str(progress) + "% done!")
+            self.dbm.insert_bigdata(big_data)
+            callback.Update(progress, "100% done!")
 
-        self.dataManager.OnSetMemoList(memo_data)
+        self.dataManager.on_set_memo_list(memo_data)
         self.OnNotify(UPDATE_MEMO)
 
     def set_split_op(self, and_op, or_op):
@@ -64,11 +67,11 @@ class MemoManager(Observable):
 
     def OnLoadFile(self, filename):
         self.canChange = False
-        self.dataManager.OnSetMemoList(self.fileManager.loadDataFile(filename))
+        self.dataManager.on_set_memo_list(self.fileManager.loadDataFile(filename))
         self.OnNotify(UPDATE_MEMO)
 
     def on_load_db(self):
-        self.dataManager.OnSetMemoList(self.dbm.load())
+        self.dataManager.on_set_memo_list(self.dbm.load())
         self.OnNotify(UPDATE_MEMO)
 
     def on_create_memo(self, memo):
@@ -91,11 +94,11 @@ class MemoManager(Observable):
         if not self.canChange:
             return
         self.logger.info(memo['index'])
-        self.dataManager.OnUpdateMemo(memo, self.dbm)
+        self.dataManager.on_update_memo(memo, self.dbm)
         self.OnNotify(UPDATE_MEMO)
 
     def OnGetMemo(self, memo_idx, search_keyword =""):
-        return self.dataManager.OnGetMemo(self.dbm, memo_idx, search_keyword)
+        return self.dataManager.on_get_memo(self.dbm, memo_idx, search_keyword)
 
     def OnGetMemoList(self):
         return self.dataManager.OnGetFilteredMemoList()
@@ -111,7 +114,7 @@ class MemoManager(Observable):
 
     def OnSave(self, filter_name="", filename=""):
         if len(filter_name) == 0:
-            if not self.dataManager.OnGetNeedToSave():
+            if not self.dataManager.on_get_need_to_save():
                 self.logger.info("No need to save CFM!")
                 return
             if self.fileManager.saveDataFile(self.dataManager.OnGetMemoList(), need_compress=self.save_compressed):

@@ -276,7 +276,7 @@ class ListPanel(wx.Panel):
             return ""
         return raw_data[:idx]
 
-    def OnUpdateList(self, memo_data):
+    def on_update_list(self, memo_data):
         self.logger.info('.')
         memo_list = []
 

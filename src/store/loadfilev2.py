@@ -9,7 +9,7 @@ class LoadFile:
         self.logger = logging.getLogger("chobomemo")
 
     def loadfile(self, filename):
-        memoList = {}
+        memo_list = {}
         try:
             if os.path.isfile(filename):
                 file = open(filename, 'r', encoding="UTF-8")
@@ -24,9 +24,9 @@ class LoadFile:
                     item['id'] = memo["id"]
                     item['memo'] = memo["memo"]
                     item['index'] = str(idx)
-                    memoList[item['index']] = item
+                    memo_list[item['index']] = item
                 self.logger.info("Success to load " + filename)
-            return memoList
+            return memo_list
         except:
             self.logger.exception("Loading failed:" + filename)
 

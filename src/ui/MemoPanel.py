@@ -215,7 +215,7 @@ class MemoPanel(wx.Panel):
     def _OnSearchKeyword(self):
         searchKeyword = self.searchText.GetValue()
         self.logger.info(searchKeyword)
-        self.parent.OnGetMemo(self.memo_idx)
+        self.parent.on_get_memo(self.memo_idx)
 
     def OnShowHighLight(self, highLightPosition):
         self.logger.info(highLightPosition)

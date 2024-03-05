@@ -484,7 +484,7 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def OnUpdateMemoList(self, memo_list):
         self.logger.info('.')
-        self.leftPanel.OnUpdateList(memo_list)
+        self.leftPanel.on_update_list(memo_list)
 
     def OnGetMemoItem(self, memo_idx, search_keyword=""):
         self.logger.info(memo_idx + ":" + search_keyword)

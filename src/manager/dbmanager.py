@@ -5,10 +5,10 @@ class DBManager:
     def __init__(self, db_filename):
         print(db_filename)
         self.db_file = db_filename
-        isExistDB = os.path.exists(self.db_file)
+        is_exist_db = os.path.exists(self.db_file)
         self.db_conn = None
         self.create_db_connection()
-        if not isExistDB:
+        if not is_exist_db:
             self.create_db_table()
 
     def create_db_connection(self):
@@ -34,13 +34,31 @@ class DBManager:
         insert_memo_sql = '''INSERT INTO minim(title, memo) VALUES(?, ?);'''
         try:
             cur = self.db_conn.cursor()
+            cur.execute("BEGIN TRANSACTION")
             cur.execute(insert_memo_sql, (data[0], data[1]))
             self.db_conn.commit()
             print(cur.lastrowid)
             return cur.lastrowid
         except sqlite3.Error as e:
             print(e)
+            self.db_conn.rollback()  # rollback the transaction if there's any error
         return -1
+
+    def insert_bigdata(self, big_data):
+        insert_memo_sql = '''INSERT INTO minim(title, memo) VALUES(?, ?);'''
+        try:
+            cur = self.db_conn.cursor()
+            cur.execute("BEGIN TRANSACTION")
+            for data in big_data:
+                cur.execute(insert_memo_sql, (data[0], data[1]))
+            self.db_conn.commit()
+            print(cur.lastrowid)
+            return cur.lastrowid
+        except sqlite3.Error as e:
+            print(e)
+            self.db_conn.rollback()  # rollback the transaction if there's any error
+        return -1
+
 
     def update(self, data):
         update_memo_sql = '''UPDATE minim SET title=?, memo=? WHERE id=?;'''
