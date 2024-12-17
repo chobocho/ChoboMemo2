@@ -1,6 +1,7 @@
 #!/usr/bin/python
 #-*- coding: utf-8 -*-
 import logging
+import random
 from util import textutil
 
 
@@ -134,7 +135,6 @@ class DataManager:
         else:
             self._FindHasFilterList(filter_keyword)
 
-
     def _FindHasFilterList(self, filter_keyword):
         self.memo_list = {}
         for key in self.memo_list_origin.keys():
@@ -142,7 +142,6 @@ class DataManager:
                 self.memo_list[key] = self.memo_list_origin[key]
             elif filter_keyword in self.memo_list_origin[key]['memo'].lower():
                 self.memo_list[key] = self.memo_list_origin[key]
-
 
     def _FindHasNotFilterList(self, filter_keyword):
         self.memo_list = {}
@@ -156,7 +155,6 @@ class DataManager:
 
             if not hasKeyword:
                 self.memo_list[key] = self.memo_list_origin[key]
-
 
     def __OnFindOrKeywordList(self, filter_keyword):
         self.memo_list = {}
@@ -172,7 +170,6 @@ class DataManager:
                 elif filter in self.memo_list_origin[key]['memo'].lower():
                     self.memo_list[key] = self.memo_list_origin[key]
                     break
-
 
     def __OnFindAndKeywordList(self, filter_keyword):
         self.memo_list = {}
@@ -206,6 +203,22 @@ class DataManager:
 
             if is_find:
                 self.memo_list[key] = self.memo_list_origin[key]
+
+    def on_display_random_story(self):
+        MAX_STORY_COUNT = 20
+        self.memo_list = self.memo_list_origin.copy()
+
+        if (memo_count := len(self.memo_list)) < MAX_STORY_COUNT:
+            return
+
+        random_story_list = random.sample(range(memo_count), MAX_STORY_COUNT)
+        random_story_list.sort()
+        self.memo_list = {}
+        for i in random_story_list:
+            idx = str(i)
+            if idx not in self.memo_list_origin:
+                continue
+            self.memo_list[idx] = self.memo_list_origin[idx]
 
 
 def test():

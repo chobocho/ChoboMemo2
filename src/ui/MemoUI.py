@@ -12,41 +12,41 @@ NEXT_STEP = 800
 class MemoDialog(sized_controls.SizedDialog):
     def __init__(self, *args, **kwargs):
         super(MemoDialog, self).__init__(*args, **kwargs)
-        pane = self.GetContentsPane()
+        panel = self.GetContentsPane()
         self.pos = 0
 
-        self.topic = wx.TextCtrl(pane, size=(WINDOW_SIZE_W,30))
+        self.topic = wx.TextCtrl(panel, size=(WINDOW_SIZE_W,30))
         self.topic.SetValue("")
         self.saved_topic = ""
 
-        self.text = wx.TextCtrl(pane, style = wx.TE_MULTILINE,size=(WINDOW_SIZE_W,WINDOW_SIZE_H))
+        self.text = wx.TextCtrl(panel, style = wx.TE_MULTILINE,size=(WINDOW_SIZE_W,WINDOW_SIZE_H))
         self.text.SetValue("")
         self.saved_text = ""
         self.text.SetFont(wx.Font(14, wx.FONTFAMILY_TELETYPE, wx.NORMAL, wx.NORMAL))
 
-        static_line = wx.StaticLine(pane, style=wx.LI_HORIZONTAL)
+        static_line = wx.StaticLine(panel, style=wx.LI_HORIZONTAL)
         static_line.SetSizerProps(border=('all', 0), expand=True)
 
-        pane_btns = sized_controls.SizedPanel(pane)
-        pane_btns.SetSizerType('horizontal')
-        pane_btns.SetSizerProps(align='center')
+        panel_btns = sized_controls.SizedPanel(panel)
+        panel_btns.SetSizerType('horizontal')
+        panel_btns.SetSizerProps(align='center')
 
-        button_ok = wx.Button(pane_btns, wx.ID_OK, label='&OK')
+        button_ok = wx.Button(panel_btns, wx.ID_OK, label='&OK')
         button_ok.Bind(wx.EVT_BUTTON, self.on_button)
 
-        button_cancel = wx.Button(pane_btns, wx.ID_CANCEL, label='Cance&l')
+        button_cancel = wx.Button(panel_btns, wx.ID_CANCEL, label='Cance&l')
         button_cancel.Bind(wx.EVT_BUTTON, self.on_button)
 
-        add_info_btn = wx.Button(pane_btns, (add_info_btn_id := wx.NewId()), label='&Add Info')
+        add_info_btn = wx.Button(panel_btns, (add_info_btn_id := wx.NewId()), label='&Add Info')
         add_info_btn.Bind(wx.EVT_BUTTON, self.add_info)
 
-        append_btn = wx.Button(pane_btns, (append_btn_id := wx.NewId()), label='A&ppend')
+        append_btn = wx.Button(panel_btns, (append_btn_id := wx.NewId()), label='A&ppend')
         append_btn.Bind(wx.EVT_BUTTON, self.append_from_clipboard)
 
-        remove_space_btn = wx.Button(pane_btns, (remove_space_btn_id := wx.NewId()), label='&Trim')
+        remove_space_btn = wx.Button(panel_btns, (remove_space_btn_id := wx.NewId()), label='&Trim')
         remove_space_btn.Bind(wx.EVT_BUTTON, self.remove_space)
 
-        undo_btn = wx.Button(pane_btns, (undo_btn_id := wx.NewId()), label='&Undo')
+        undo_btn = wx.Button(panel_btns, (undo_btn_id := wx.NewId()), label='&Undo')
         undo_btn.Bind(wx.EVT_BUTTON, self.undo)
 
         self.Bind(wx.EVT_MENU, self.save_text, id=(save_text_id := wx.NewId()))
@@ -54,6 +54,10 @@ class MemoDialog(sized_controls.SizedDialog):
         self.Bind(wx.EVT_MENU, self.move_end, id=(move_end_id := wx.NewId()))
         self.Bind(wx.EVT_MENU, self.move_forward, id=(move_forward_id := wx.NewId()))
         self.Bind(wx.EVT_MENU, self.move_backward, id=(move_backward_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.insert_arrow, id=(insert_arrow_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.insert_black_box, id=(insert_black_box_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.insert_white_box, id=(insert_white_box_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.insert_check_box, id=(insert_check_box_id := wx.NewId()))
 
         accel_tbl = wx.AcceleratorTable([
             (wx.ACCEL_ALT, ord('A'), add_info_btn_id),
@@ -66,7 +70,11 @@ class MemoDialog(sized_controls.SizedDialog):
             (wx.ACCEL_ALT, ord('P'), append_btn_id),
             (wx.ACCEL_ALT, ord('S'), save_text_id),
             (wx.ACCEL_ALT, ord('T'), remove_space_btn_id),
-            (wx.ACCEL_ALT, ord('U'), undo_btn_id)
+            (wx.ACCEL_ALT, ord('U'), undo_btn_id),
+            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('A'), insert_arrow_id),
+            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('B'), insert_black_box_id),
+            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('C'), insert_check_box_id),
+            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('W'), insert_white_box_id),
         ])
         self.SetAcceleratorTable(accel_tbl)
         self.Fit()
@@ -78,7 +86,7 @@ class MemoDialog(sized_controls.SizedDialog):
             self.Close()
 
     def add_info(self, event):
-        text = f"{self.text.GetValue()}\n\n---[Memo]---\nCreate: {get_today()}\nUpdate:\n\n→■□●○▶▷"
+        text = f"{self.text.GetValue()}\n\n---[Memo]---\nCreate: {get_today()}\nUpdate:\n\n●○▶▷✿"
         self.text.SetValue(text)
 
     def append_from_clipboard(self, event):
@@ -138,6 +146,23 @@ class MemoDialog(sized_controls.SizedDialog):
 
         self.text.SetInsertionPoint(self.pos)
         self.text.SetFocus()
+
+    def insert_string(self, str):
+        pos = self.text.GetInsertionPoint()
+        self.text.WriteText(str)
+        self.text.SetInsertionPoint(pos + len(str))
+
+    def insert_arrow(self, event):
+        self.insert_string('→')
+
+    def insert_check_box(self, event):
+        self.insert_string('√')
+
+    def insert_black_box(self, event):
+        self.insert_string('■')
+
+    def insert_white_box(self, event):
+        self.insert_string('□')
 
     def GetValue(self):
         return self.text.GetValue()

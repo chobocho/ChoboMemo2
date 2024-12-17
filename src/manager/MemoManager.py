@@ -103,6 +103,10 @@ class MemoManager(Observable):
     def OnGetMemoList(self):
         return self.dataManager.OnGetFilteredMemoList()
 
+    def on_display_random_story(self):
+        self.dataManager.on_display_random_story()
+        self.OnNotify(UPDATE_MEMO)
+
     def OnNotify(self, evt):
         if self.observer is None:
             return

@@ -104,6 +104,7 @@ class MemoUIFrame(wx.Frame, Observer):
         self.Bind(wx.EVT_MENU, self.rightPanel.set_focus_on_search_text, id=(set_focus_on_memo_panel_id := wx.NewId()))
         self.Bind(wx.EVT_MENU, self.on_toggle_edit_mode, id=(on_edit_mode_id := wx.NewId()))
         self.Bind(wx.EVT_MENU, self.rightPanel.OnSearchClear, id=(on_clear_high_light_id := wx.NewId()))
+        self.Bind(wx.EVT_MENU, self.on_display_random_story, id=(on_display_random_story_id := wx.NewId()))
         self.Bind(wx.EVT_CLOSE, self.on_close_window)
 
         accel_tbl = wx.AcceleratorTable([
@@ -145,7 +146,8 @@ class MemoUIFrame(wx.Frame, Observer):
             (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('I'), on_about_id),
             (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('C'), on_clone_item_id),
             (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('E'), on_edit_filter_id),
-            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('F'), ctrl_F_Id)])
+            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('F'), ctrl_F_Id),
+            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('S'), on_display_random_story_id)])
 
         self.SetAcceleratorTable(accel_tbl)
 
@@ -246,6 +248,9 @@ class MemoUIFrame(wx.Frame, Observer):
         dlg.Destroy()
         if is_update:
             self.config.SetMemo('\n'.join(user_memo))
+
+    def on_display_random_story(self, event):
+        self.memoManager.on_display_random_story()
 
     def _OnFindMemo(self, event):
         keyword = self.config.GetValue('ctrl_1')
@@ -431,6 +436,7 @@ class MemoUIFrame(wx.Frame, Observer):
         self.about_text['Alt+Shift+I'] = "Display this windows\n"
         self.about_text['Ctrl+Shift+E'] = "Set configuration"
         self.about_text['Alt+Shift+E'] = "Set configuration\n"
+        self.about_text['Ctrl+Shift+S'] = "Display 20 random items\n"
         self.about_text['Ctrl+F'] = "Find memo\n"
         self.about_text['Ctrl+Shift+F'] = "Simple Find memo"
         self.about_text['Ctrl+S'] = "Save"
