@@ -49,35 +49,42 @@ class MemoDialog(sized_controls.SizedDialog):
         undo_btn = wx.Button(panel_btns, (undo_btn_id := wx.NewId()), label='&Undo')
         undo_btn.Bind(wx.EVT_BUTTON, self.undo)
 
-        self.Bind(wx.EVT_MENU, self.save_text, id=(save_text_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.move_home, id=(move_home_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.move_end, id=(move_end_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.move_forward, id=(move_forward_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.move_backward, id=(move_backward_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.insert_arrow, id=(insert_arrow_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.insert_black_box, id=(insert_black_box_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.insert_white_box, id=(insert_white_box_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.insert_check_box, id=(insert_check_box_id := wx.NewId()))
+        key_map = [
+            (wx.ACCEL_ALT, ord('A'), self.add_info, add_info_btn_id),  # Add Info
+            (wx.ACCEL_ALT, ord('B'), self.move_backward, None),  # Move Backward
+            (wx.ACCEL_ALT, ord('E'), self.move_end, None),  # Move End
+            (wx.ACCEL_ALT, ord('F'), self.move_forward, None),  # Move Forward
+            (wx.ACCEL_ALT, ord('H'), self.move_home, None), # Move Home
+            (wx.ACCEL_ALT, ord('L'), self.on_button, wx.ID_CANCEL),  # Cancel
+            (wx.ACCEL_ALT, ord('O'), self.on_button, wx.ID_OK),  # OK
+            (wx.ACCEL_ALT, ord('P'), self.append_from_clipboard, append_btn_id),  # Append
+            (wx.ACCEL_ALT, ord('S'), self.save_text, None),  # Save Text
+            (wx.ACCEL_ALT, ord('T'), self.remove_space, remove_space_btn_id),  # Remove Space
+            (wx.ACCEL_ALT, ord('U'), self.undo, undo_btn_id),  # Undo
+            (wx.ACCEL_ALT, ord('1'), self.set_focus_topic, None),
+            (wx.ACCEL_ALT, ord('2'), self.set_focus_memo, None),
+            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('A'), self.insert_arrow, None),  # Insert Arrow
+            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('B'), self.insert_black_box, None),  # Insert Black Box
+            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('C'), self.insert_check_box, None),  # Insert Check Box
+            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('W'), self.insert_white_box, None)  # Insert White Box
+        ]
 
-        accel_tbl = wx.AcceleratorTable([
-            (wx.ACCEL_ALT, ord('A'), add_info_btn_id),
-            (wx.ACCEL_ALT, ord('B'), move_backward_id),
-            (wx.ACCEL_ALT, ord('E'), move_end_id),
-            (wx.ACCEL_ALT, ord('F'), move_forward_id),
-            (wx.ACCEL_ALT, ord('H'), move_home_id),
-            (wx.ACCEL_ALT, ord('L'), wx.ID_CANCEL),
-            (wx.ACCEL_ALT, ord('O'), wx.ID_OK),
-            (wx.ACCEL_ALT, ord('P'), append_btn_id),
-            (wx.ACCEL_ALT, ord('S'), save_text_id),
-            (wx.ACCEL_ALT, ord('T'), remove_space_btn_id),
-            (wx.ACCEL_ALT, ord('U'), undo_btn_id),
-            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('A'), insert_arrow_id),
-            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('B'), insert_black_box_id),
-            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('C'), insert_check_box_id),
-            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('W'), insert_white_box_id),
-        ])
-        self.SetAcceleratorTable(accel_tbl)
+        accel_tbl = []
+        for func_key, key, func, key_id in key_map:
+            if key_id is None:
+                key_id = wx.NewId()
+            self.Bind(wx.EVT_MENU, func, id = key_id)
+            accel_tbl.append((func_key, key, key_id))
+
+
+        self.SetAcceleratorTable(wx.AcceleratorTable(accel_tbl))
         self.Fit()
+
+    def set_focus_topic(self, event):
+        self.topic.SetFocus()
+
+    def set_focus_memo(self, event):
+        self.text.SetFocus()
 
     def on_button(self, event):
         if self.IsModal():
