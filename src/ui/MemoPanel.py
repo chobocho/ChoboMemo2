@@ -273,7 +273,7 @@ class MemoPanel(wx.Panel):
         self.text.SetFocus()
 
     def move_end(self):
-        self.text.SetInsertionPoint(len(self.text.GetValue()))
+        self.text.SetInsertionPointEnd()
         self.text.SetFocus()
 
     def move_forward(self):
@@ -296,3 +296,6 @@ class MemoPanel(wx.Panel):
 
     def set_focus_on_search_text(self, event):
         self.searchText.SetFocus()
+
+    def set_focus_on_memo(self, event):
+        self.text.SetFocus()

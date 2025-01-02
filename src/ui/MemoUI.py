@@ -135,8 +135,7 @@ class MemoDialog(sized_controls.SizedDialog):
         self.text.SetFocus()
 
     def move_end(self, event):
-        text = self.text.GetValue()
-        self.text.SetInsertionPoint(len(text))
+        self.text.SetInsertionPointEnd()
         self.text.SetFocus()
 
     def move_forward(self, event):

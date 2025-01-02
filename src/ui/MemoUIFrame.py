@@ -54,102 +54,56 @@ class MemoUIFrame(wx.Frame, Observer):
         self.menu = MemoMenu(self, self.config)
 
     def _add_short_key(self):
-        self.Bind(wx.EVT_MENU, self._OnCopyTitle, id=(ctrl_C_Id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self._OnDeleteMemo, id=(ctrl_alt_D_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self._OnUpdateMemo, id=(edit_popup_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.OnFind, id=(ctrl_F_Id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self._on_toggle_search_lock, id=(ctrl_L_Id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self._on_open_uri, id=(ctrl_G_Id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self._on_create_memo, id=(ctrl_N_Id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self._OnPressCtrlP, id=(ctrl_P_Id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self._OnPressCtrlM, id=(ctrl_M_Id := wx.NewId()))
+        key_map = self.init_key_map()
 
-        ctrl_Q_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.OnQuit, id=ctrl_Q_Id)
-        ctrl_S_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self._OnSaveMemo, id=ctrl_S_Id)
+        accel_tbl = []
+        for item in key_map:
+            self.Bind(wx.EVT_MENU, item["func"], id=(new_id := wx.NewId()))
+            accel_tbl.append((item["key"][0], item["key"][1], new_id))
 
-        ctrl_1_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self._OnFindMemo, id=ctrl_1_Id)
-        ctrl_2_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.on_ctrl_2, id=ctrl_2_Id)
-        ctrl_3_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.on_ctrl_3, id=ctrl_3_Id)
-        ctrl_4_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.on_ctrl_4, id=ctrl_4_Id)
-        ctrl_5_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.on_ctrl_5, id=ctrl_5_Id)
-        ctrl_6_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.on_ctrl_6, id=ctrl_6_Id)
-        ctrl_7_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.on_ctrl_7, id=ctrl_7_Id)
-        ctrl_8_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.on_ctrl_8, id=ctrl_8_Id)
-        ctrl_9_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.on_ctrl_9, id=ctrl_9_Id)
-        ctrl_0_Id = wx.NewId()
-        self.Bind(wx.EVT_MENU, self.on_ctrl_0, id=ctrl_0_Id)
-
-        self.Bind(wx.EVT_MENU, self.__on_clear_filter, id=(clear_filter_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.__on_focus_filter, id=(focus_filter_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.__on_open_uri_from_clipboard, id=(alt_p_Id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.move_home, id=(move_home_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.move_end, id=(move_end_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.move_forward, id=(move_forward_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.move_backward, id=(move_backward_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.on_clone_memo, id=(on_clone_item_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.on_set_config_menu, id=(on_edit_filter_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.OnAbout, id=(on_about_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.on_advanced_find, id=(on_advanced_find_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.rightPanel.set_focus_on_search_text, id=(set_focus_on_memo_panel_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.on_toggle_edit_mode, id=(on_edit_mode_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.rightPanel.OnSearchClear, id=(on_clear_high_light_id := wx.NewId()))
-        self.Bind(wx.EVT_MENU, self.on_display_random_story, id=(on_display_random_story_id := wx.NewId()))
+        self.SetAcceleratorTable(wx.AcceleratorTable(accel_tbl))
         self.Bind(wx.EVT_CLOSE, self.on_close_window)
 
-        accel_tbl = wx.AcceleratorTable([
-            (wx.ACCEL_ALT, ord('B'), move_backward_id),
-            (wx.ACCEL_ALT, ord('C'), clear_filter_id),
-            (wx.ACCEL_ALT, ord('D'), focus_filter_id),
-            (wx.ACCEL_ALT, ord('E'), move_end_id),
-            (wx.ACCEL_ALT, ord('F'), move_forward_id),
-            (wx.ACCEL_ALT, ord('H'), move_home_id),
-            (wx.ACCEL_ALT, ord('P'), alt_p_Id),
-            (wx.ACCEL_ALT, ord('U'), set_focus_on_memo_panel_id),
-            (wx.ACCEL_CTRL, ord('1'), ctrl_1_Id),
-            (wx.ACCEL_CTRL, ord('2'), ctrl_2_Id),
-            (wx.ACCEL_CTRL, ord('3'), ctrl_3_Id),
-            (wx.ACCEL_CTRL, ord('4'), ctrl_4_Id),
-            (wx.ACCEL_CTRL, ord('5'), ctrl_5_Id),
-            (wx.ACCEL_CTRL, ord('6'), ctrl_6_Id),
-            (wx.ACCEL_CTRL, ord('7'), ctrl_7_Id),
-            (wx.ACCEL_CTRL, ord('8'), ctrl_8_Id),
-            (wx.ACCEL_CTRL, ord('9'), ctrl_9_Id),
-            (wx.ACCEL_CTRL, ord('0'), ctrl_0_Id),
-            (wx.ACCEL_CTRL, ord('C'), ctrl_C_Id),
-            (wx.ACCEL_CTRL, ord('E'), on_edit_mode_id),
-            (wx.ACCEL_CTRL, ord('F'), on_advanced_find_id),
-            (wx.ACCEL_CTRL, ord('G'), ctrl_G_Id),
-            (wx.ACCEL_CTRL, ord('L'), ctrl_L_Id),
-            (wx.ACCEL_CTRL, ord('M'), ctrl_M_Id),
-            (wx.ACCEL_CTRL, ord('N'), ctrl_N_Id),
-            (wx.ACCEL_CTRL, ord('P'), ctrl_P_Id),
-            (wx.ACCEL_CTRL, ord('U'), edit_popup_id),
-            (wx.ACCEL_CTRL, ord('S'), ctrl_S_Id),
-            (wx.ACCEL_CTRL, ord('Q'), ctrl_Q_Id),
-            (wx.ACCEL_ALT | wx.ACCEL_SHIFT, ord('I'), on_about_id),
-            (wx.ACCEL_ALT | wx.ACCEL_SHIFT, ord('C'), on_clone_item_id),
-            (wx.ACCEL_ALT | wx.ACCEL_SHIFT, ord('E'), on_edit_filter_id),
-            (wx.ACCEL_ALT | wx.ACCEL_SHIFT, ord('F'), ctrl_F_Id),
-            (wx.ACCEL_CTRL | wx.ACCEL_ALT, ord('C'), on_clear_high_light_id),
-            (wx.ACCEL_CTRL | wx.ACCEL_ALT, ord('D'), ctrl_alt_D_id),
-            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('I'), on_about_id),
-            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('C'), on_clone_item_id),
-            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('E'), on_edit_filter_id),
-            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('F'), ctrl_F_Id),
-            (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('S'), on_display_random_story_id)])
-
-        self.SetAcceleratorTable(accel_tbl)
+    def init_key_map(self):
+        key_map = []
+        key_map.append({"key": (wx.ACCEL_ALT, ord('B')), "func": self.move_backward})
+        key_map.append({"key": (wx.ACCEL_ALT, ord('C')), "func": self.__on_clear_filter})
+        key_map.append({"key": (wx.ACCEL_ALT, ord('D')), "func": self.__on_focus_filter})
+        key_map.append({"key": (wx.ACCEL_ALT, ord('E')), "func": self.move_end})
+        key_map.append({"key": (wx.ACCEL_ALT, ord('F')), "func": self.move_forward})
+        key_map.append({"key": (wx.ACCEL_ALT, ord('H')), "func": self.move_home})
+        key_map.append({"key": (wx.ACCEL_ALT, ord('P')), "func": self.__on_open_uri_from_clipboard})
+        key_map.append({"key": (wx.ACCEL_ALT, ord('U')), "func": self.rightPanel.set_focus_on_search_text})
+        key_map.append({"key": (wx.ACCEL_ALT, ord('1')), "func": self.leftPanel.set_focus_on_list})
+        key_map.append({"key": (wx.ACCEL_ALT, ord('2')), "func": self.rightPanel.set_focus_on_memo})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('1')), "func": self.on_ctrl_1})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('2')), "func": self.on_ctrl_2})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('3')), "func": self.on_ctrl_3})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('4')), "func": self.on_ctrl_4})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('5')), "func": self.on_ctrl_5})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('6')), "func": self.on_ctrl_6})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('7')), "func": self.on_ctrl_7})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('8')), "func": self.on_ctrl_8})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('9')), "func": self.on_ctrl_9})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('0')), "func": self.on_ctrl_0})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('C')), "func": self._OnCopyTitle})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('E')), "func": self._OnUpdateMemo})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('F')), "func": self.on_advanced_find})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('G')), "func": self._on_open_uri})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('L')), "func": self._on_toggle_search_lock})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('M')), "func": self._OnPressCtrlM})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('N')), "func": self._on_create_memo})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('P')), "func": self._OnPressCtrlP})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('U')), "func": self._OnUpdateMemo})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('S')), "func": self._OnSaveMemo})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('Q')), "func": self.on_close_window})
+        key_map.append({"key": (wx.ACCEL_ALT | wx.ACCEL_SHIFT, ord('I')), "func": self.OnAbout})
+        key_map.append({"key": (wx.ACCEL_ALT | wx.ACCEL_SHIFT, ord('C')), "func": self.on_clone_memo})
+        key_map.append({"key": (wx.ACCEL_ALT | wx.ACCEL_SHIFT, ord('E')), "func": self.on_set_config_menu})
+        key_map.append({"key": (wx.ACCEL_CTRL | wx.ACCEL_ALT, ord('C')), "func": self.rightPanel.OnSearchClear})
+        key_map.append({"key": (wx.ACCEL_CTRL | wx.ACCEL_ALT, ord('D')), "func": self._OnDeleteMemo})
+        key_map.append({"key": (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('S')), "func": self.on_display_random_story})
+        return key_map
 
     def OnCallback(self, filelist):
         """

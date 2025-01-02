@@ -351,3 +351,6 @@ class ListPanel(wx.Panel):
             self.memo_list.SetColumnWidth(1, self.GetSize()[0])
             self.Layout()
             self.is_resized = False
+
+    def set_focus_on_list(self, event):
+        self.memo_list.SetFocus()
