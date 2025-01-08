@@ -94,6 +94,7 @@ class MemoUIFrame(wx.Frame, Observer):
         key_map.append({"key": (wx.ACCEL_CTRL, ord('M')), "func": self._OnPressCtrlM})
         key_map.append({"key": (wx.ACCEL_CTRL, ord('N')), "func": self._on_create_memo})
         key_map.append({"key": (wx.ACCEL_CTRL, ord('P')), "func": self._OnPressCtrlP})
+        key_map.append({"key": (wx.ACCEL_CTRL, ord('R')), "func": self.on_rename_topic})
         key_map.append({"key": (wx.ACCEL_CTRL, ord('U')), "func": self._OnUpdateMemo})
         key_map.append({"key": (wx.ACCEL_CTRL, ord('S')), "func": self._OnSaveMemo})
         key_map.append({"key": (wx.ACCEL_CTRL, ord('Q')), "func": self.on_close_window})
@@ -145,6 +146,27 @@ class MemoUIFrame(wx.Frame, Observer):
 
     def _OnUpdateMemo(self, event):
         self.leftPanel.on_update_memo()
+
+    def on_rename_topic(self, event):
+        topic = self.leftPanel.get_topic()
+        if topic is None:
+            return
+
+        title = 'Input new topic'
+        msg = ""
+
+        rename_dialog = wx.TextEntryDialog(None, msg, title, style = wx.OK|wx.CANCEL)
+        rename_dialog.SetValue(topic)
+        rename_dialog.SetMaxLength(128)
+        new_topic = ""
+        if rename_dialog.ShowModal() == wx.ID_OK:
+            new_topic = rename_dialog.GetValue()
+        rename_dialog.Destroy()
+
+        if len(new_topic) == 0 or new_topic == topic:
+            return
+        self.leftPanel.update_topic(new_topic)
+
 
     def _OnDeleteMemo(self, event):
         self.leftPanel.on_delete_memo()

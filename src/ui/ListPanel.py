@@ -129,6 +129,28 @@ class ListPanel(wx.Panel):
         self.parent.save_memo_panel()
         self.on_update_memo()
 
+    def get_topic(self):
+        if not self._has_item():
+            return None
+        return self.memo_list.GetItem(self.current_item, 1).GetText()
+
+    def update_topic(self, new_topic):
+        if not self._has_item():
+            return
+
+        chosen_item = self.memo_list.GetItem(self.current_item, 0).GetText()
+        memo = self.parent.OnGetMemoItem(chosen_item)
+        memo['id'] = new_topic
+        self.parent.OnUpdateMemo(memo)
+
+        current_search_keyword = self.searchText.GetValue()
+        if self.cb_lock_search_text.GetValue():
+            self._on_search_keyword(current_search_keyword)
+        else:
+            self._on_set_search_keyword(new_topic)
+            self._OnSearchKeywordInTitle(new_topic)
+        self.cache.add(new_topic)
+
     def on_update_memo(self):
         if not self._has_item():
             return
