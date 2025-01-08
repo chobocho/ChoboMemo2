@@ -44,8 +44,12 @@ class MemoMenu:
         self.parent.Bind(wx.EVT_MENU, self.parent.on_clone_memo, clone_memo)
 
         create_memo_id = wx.NewId()
-        create_memo = edit_menu.Append(create_memo_id, '&Create memo\tCtrl+N', '')
+        create_memo = edit_menu.Append(create_memo_id, 'Cre&ate memo\tCtrl+N', '')
         self.parent.Bind(wx.EVT_MENU, self.parent._on_create_memo, create_memo)
+
+        change_topic_id = wx.NewId()
+        change_topic = edit_menu.Append(change_topic_id, 'Cha&nge Topic\tCtrl+R', '')
+        self.parent.Bind(wx.EVT_MENU, self.parent.on_rename_topic, change_topic)
 
         edit_memo_id = wx.NewId()
         edit_memo = edit_menu.Append(edit_memo_id, '&Edit memo\tCtrl+U', '')

@@ -90,7 +90,6 @@ class MemoUIFrame(wx.Frame, Observer):
         key_map.append({"key": (wx.ACCEL_CTRL, ord('E')), "func": self._OnUpdateMemo})
         key_map.append({"key": (wx.ACCEL_CTRL, ord('F')), "func": self.on_advanced_find})
         key_map.append({"key": (wx.ACCEL_CTRL, ord('G')), "func": self._on_open_uri})
-        key_map.append({"key": (wx.ACCEL_CTRL, ord('L')), "func": self._on_toggle_search_lock})
         key_map.append({"key": (wx.ACCEL_CTRL, ord('M')), "func": self._OnPressCtrlM})
         key_map.append({"key": (wx.ACCEL_CTRL, ord('N')), "func": self._on_create_memo})
         key_map.append({"key": (wx.ACCEL_CTRL, ord('P')), "func": self._OnPressCtrlP})
@@ -102,6 +101,7 @@ class MemoUIFrame(wx.Frame, Observer):
         key_map.append({"key": (wx.ACCEL_ALT | wx.ACCEL_SHIFT, ord('C')), "func": self.on_clone_memo})
         key_map.append({"key": (wx.ACCEL_ALT | wx.ACCEL_SHIFT, ord('E')), "func": self.on_set_config_menu})
         key_map.append({"key": (wx.ACCEL_CTRL | wx.ACCEL_ALT, ord('C')), "func": self.rightPanel.OnSearchClear})
+        key_map.append({"key": (wx.ACCEL_CTRL | wx.ACCEL_ALT, ord('L')), "func": self._on_toggle_search_lock})
         key_map.append({"key": (wx.ACCEL_CTRL | wx.ACCEL_ALT, ord('D')), "func": self._OnDeleteMemo})
         key_map.append({"key": (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord('S')), "func": self.on_display_random_story})
         return key_map
