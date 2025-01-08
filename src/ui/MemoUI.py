@@ -52,6 +52,7 @@ class MemoDialog(sized_controls.SizedDialog):
         key_map = [
             (wx.ACCEL_ALT, ord('A'), self.add_info, add_info_btn_id),  # Add Info
             (wx.ACCEL_ALT, ord('B'), self.move_backward, None),  # Move Backward
+            (wx.ACCEL_ALT, ord('D'), self.insert_date, None),  # Move End
             (wx.ACCEL_ALT, ord('E'), self.move_end, None),  # Move End
             (wx.ACCEL_ALT, ord('F'), self.move_forward, None),  # Move Forward
             (wx.ACCEL_ALT, ord('H'), self.move_home, None), # Move Home
@@ -152,6 +153,9 @@ class MemoDialog(sized_controls.SizedDialog):
 
         self.text.SetInsertionPoint(self.pos)
         self.text.SetFocus()
+
+    def insert_date(self, event):
+        self.text.WriteText(get_today())
 
     def insert_string(self, str):
         pos = self.text.GetInsertionPoint()
